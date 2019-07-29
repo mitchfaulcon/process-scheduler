@@ -16,11 +16,15 @@ public class Node {
         this.weight = weight;
     }
 
-    public void addParent(Node parent){
-
-    }
-
+    /**
+     * Method to add another node as a child to this one.
+     * @param child The child node to be added
+     */
     public void addChild(Node child){
+        this.children.put(child, child.weight);
 
+        //Add this node to the predecessor list of the child node
+        child.parents.add(this);
     }
+
 }

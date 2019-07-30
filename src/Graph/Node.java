@@ -10,10 +10,14 @@ public class Node {
     private List<Node> parents = new ArrayList<>();
     private HashMap<Node, Integer> children = new HashMap<>();
     private int weight;
+    private int startTime;
+    private int processor;
 
     public Node(String name, int weight){
         this.name = name;
         this.weight = weight;
+        // set as 1 by default.
+        processor = 1;
     }
 
     /**
@@ -25,6 +29,18 @@ public class Node {
 
         //Add this node to the predecessor list of the child node
         child.parents.add(this);
+    }
+
+    public List<Node> getParents(){
+        return this.parents;
+    }
+
+    public void setStartTime(int startTime) {
+        this.startTime = startTime;
+    }
+
+    public int getWeight() {
+        return this.weight;
     }
 
 }

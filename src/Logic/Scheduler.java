@@ -47,10 +47,11 @@ public class Scheduler {
 
         // iterates until all nodes reached - have had their startTime updated
         while (!unreached.isEmpty()) {
-            for (Node node: unreached) {
+            int j = 0;
+            for (j = 0; j < unreached.size(); j++) {
                 parentsFound = true;
                 // finding if all parents are reached (nodes can only run if all parents reached)
-                for (Node parent: node.getParents()) {
+                for (Node parent: unreached.get(j).getParents()) {
                     if (unreached.contains(parent)) {
                         parentsFound = false;
                         break;
@@ -59,11 +60,13 @@ public class Scheduler {
                 if (parentsFound) {
                     // if all parents met then node can start at current time and processor will be occupied for
                     // however long the node's weight is.
-                    unreached.remove(node);
-                    node.setStartTime(currentTime);
-                    currentTime += node.getWeight();
+                    unreached.get(j).setStartTime(currentTime);
+                    currentTime += unreached.get(j).getWeight();
+                    break;
                 }
             }
+            unreached.remove(j);
+
         }
         return graph;
     }

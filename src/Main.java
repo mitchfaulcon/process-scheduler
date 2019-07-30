@@ -6,7 +6,7 @@ public class Main {
             DotFile dot = new DotFile(args[0]);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-//            System.out.println("Input Error: File not found");
+            System.out.println("Input Error: File not found");
         }
     }
 }

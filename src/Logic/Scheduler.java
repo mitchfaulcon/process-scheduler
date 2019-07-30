@@ -9,7 +9,7 @@ public class Scheduler {
 
     private static final Scheduler scheduler = new Scheduler();
 
-    private List<Node> graph = new ArrayList<>();
+    private ArrayList<Node> graph = new ArrayList<>();
 
     public static Scheduler getScheduler(){
         return scheduler;
@@ -19,15 +19,19 @@ public class Scheduler {
 
     }
 
-    public void addNode(String name, int weight){
-        graph.add(new Node(name, weight));
+    public void addNode(Node node){
+        graph.add(node);
+    }
+
+    public void addChild(Node parent, Node child, int edgeWeight){
+        graph.get(graph.indexOf(parent)).addChild(graph.get(graph.indexOf(child)), edgeWeight);
     }
 
     /**
      * Edits the nodes in List<Node> graph to have the correct start time based on a valid schedule running on a single
      * processor.
      */
-    public void schedule(){
+    public ArrayList<Node> schedule(){
         // As nodes are reached in main loop they will be removed from here
         List<Node> unreached = new ArrayList<>(graph);
         boolean parentsFound;
@@ -61,6 +65,7 @@ public class Scheduler {
                 }
             }
         }
+        return graph;
     }
 
 }

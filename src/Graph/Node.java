@@ -44,4 +44,15 @@ public class Node {
         return this.weight;
     }
 
+    public String getName() {
+        return this.name;
+    }
+
+    public HashMap<Node, Integer> getChildren() {
+        return this.children;
+    }
+
+    public int getStartTime() {
+        return this.startTime;
+    }
 }

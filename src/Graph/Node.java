@@ -23,9 +23,10 @@ public class Node {
     /**
      * Method to add another node as a child to this one.
      * @param child The child node to be added
+     * @param edgeWeight the weight of the link between the child node and this node
      */
-    public void addChild(Node child){
-        this.children.put(child, child.weight);
+    public void addChild(Node child, int edgeWeight){
+        this.children.put(child, edgeWeight);
 
         //Add this node to the predecessor list of the child node
         child.parents.add(this);

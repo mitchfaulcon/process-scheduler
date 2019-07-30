@@ -1,11 +1,13 @@
-import Graph.Node;
+package se306.scheduler.graph;
+
 import org.junit.jupiter.api.Test;
+import se306.scheduler.graph.Node;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This class tests various methods within the Graph.Node class
  */
-class NodeClassTests {
+class NodeClassTest {
 
     /**
      * This test case checks that a node can be created successfully with the intended fields
@@ -32,7 +34,7 @@ class NodeClassTests {
         assertEquals(1, nodeA.getChildren().size());
         assertEquals(0, nodeA.getParents().size());
         assertTrue(nodeA.getChildren().containsKey(nodeB));
-        assertEquals(1, nodeA.getChildren().get(nodeB));
+        assertEquals(1, (int)nodeA.getChildren().get(nodeB));
         assertEquals(0, nodeB.getChildren().size());
         assertEquals(1, nodeB.getParents().size());
         assertTrue(nodeB.getParents().contains(nodeA));

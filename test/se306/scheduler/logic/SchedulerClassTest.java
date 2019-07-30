@@ -1,6 +1,8 @@
-import Graph.Node;
-import Logic.Scheduler;
-import org.junit.jupiter.api.BeforeAll;
+package se306.scheduler.logic;
+
+import se306.scheduler.graph.Node;
+import se306.scheduler.logic.Scheduler;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -9,7 +11,7 @@ import java.util.ArrayList;
 /**
  * This class tests various methods within the Logic.Scheduler class
  */
-class SchedulerClassTests {
+class SchedulerClassTest {
 
     private Scheduler scheduler = Scheduler.getScheduler();
 

@@ -1,3 +1,5 @@
+package se306.scheduler;
+
 import com.martiansoftware.jsap.FlaggedOption;
 import com.martiansoftware.jsap.JSAP;
 import com.martiansoftware.jsap.JSAPException;
@@ -7,12 +9,12 @@ import com.martiansoftware.jsap.SimpleJSAP;
 import com.martiansoftware.jsap.Switch;
 import com.martiansoftware.jsap.UnflaggedOption;
 
-public class ArgParse {
+public class ProcessScheduler {
 
 	public static void main(String[] args) {
 		SimpleJSAP jsap = buildParser();
-		JSAPResult config = jsap.parse(args);    
-		if (config.success()) {
+		JSAPResult config = jsap.parse(args);
+		if (!config.success()) {
             System.out.println("Usage: java -jar scheduler.jar "  + jsap.getUsage() + "\n");
             System.out.println(jsap.getHelp(JSAP.DEFAULT_SCREENWIDTH, ""));
             System.exit(1);
@@ -40,7 +42,7 @@ public class ArgParse {
 				"Visualise the search");
 		
 		Parameter output = new FlaggedOption("OUTPUT", JSAP.STRING_PARSER, null, JSAP.NOT_REQUIRED, 'o', null,
-				"Set output filename (default is INPUT-output.dot");
+				"Set output filename (default is INPUT-output.dot)");
 
 		try {
 			return new SimpleJSAP("scheduler.jar", "Finds optimal schedule for given tasks",

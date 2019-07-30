@@ -1,9 +1,9 @@
-package Logic;
-
-import Graph.Node;
+package se306.scheduler.logic;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import se306.scheduler.graph.Node;
 
 public class Scheduler {
 

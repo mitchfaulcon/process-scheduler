@@ -1,4 +1,4 @@
-package Graph;
+package se306.scheduler.graph;
 
 import java.util.ArrayList;
 import java.util.HashMap;

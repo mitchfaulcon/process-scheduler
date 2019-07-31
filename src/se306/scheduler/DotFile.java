@@ -19,6 +19,7 @@ import se306.scheduler.logic.Scheduler;
 public class DotFile {
 
     private File file;
+    private String fileName;
     private List<String> lines;
 
     private static String NAME_REGEX = "\t\\w+\t";
@@ -37,6 +38,7 @@ public class DotFile {
      */
     DotFile(String fileName) {
         lines = new ArrayList<>();
+        this.fileName = fileName;
         this.file = new File(fileName);
     }
 
@@ -140,7 +142,11 @@ public class DotFile {
         }
         
         output += "}" + LS;
-        
+
+        //Set output filename to default of none was entered
+        if (fileName == null){
+            fileName = this.fileName.substring(0,this.fileName.length()-4) + "-output.dot";
+        }
         OutputStream fos = new FileOutputStream(new File(fileName));
         fos.write(output.getBytes(StandardCharsets.UTF_8));
         fos.close();

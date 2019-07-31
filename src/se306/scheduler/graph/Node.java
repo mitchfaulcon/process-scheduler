@@ -55,4 +55,8 @@ public class Node {
     public int getStartTime() {
         return this.startTime;
     }
+    
+    public int getProcessor() {
+        return this.processor;
+    }
 }

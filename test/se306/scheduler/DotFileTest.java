@@ -4,8 +4,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.Scanner;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -64,6 +70,8 @@ public class DotFileTest {
     
     /**
      * Test that a graph can be successfully saved to a file
+     * 
+     * TODO: don't use hashmap because we don't know the key ordering
      */
     @Test
     void testWriteGraph() {
@@ -85,8 +93,32 @@ public class DotFileTest {
         scheduler.addChild(nodeC.getName(), nodeE.getName(), 1);
         scheduler.addChild(nodeD.getName(), nodeE.getName(), 1);
 
-        dot = new DotFile("");
+        scheduler.schedule();
         
-        dot.write("test1_out.dot", scheduler.getNodes());
+        dot = new DotFile("");
+        String outFile = "test_data/test1_out.dot";
+        String outFileValid = "test_data/test1_out_valid.dot";
+        try {
+            dot.write(outFile, scheduler.getNodes());
+        } catch (IOException e) {
+            e.printStackTrace();
+            fail("Could not save to test_data/test1_out.dot");
+        }
+
+        // https://stackoverflow.com/a/3403112
+        try {
+            Scanner outScanner = new Scanner(new File(outFile));
+            Scanner outScannerValid = new Scanner(new File(outFileValid));
+            
+            String outContent = outScanner.useDelimiter("\\Z").next();
+            String outContentValid = outScannerValid.useDelimiter("\\Z").next();
+            assertEquals(outContentValid, outContent);
+
+            outScanner.close();
+            outScannerValid.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            fail("Shouldn't happen");
+        }
     }
 }

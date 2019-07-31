@@ -2,8 +2,13 @@ package se306.scheduler;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -18,8 +23,10 @@ public class DotFile {
 
     private static String NAME_REGEX = "[^>]\\w\\s+\\[";
     private static String WEIGHT_REGEX = "=\\d+\\]";
-    private static String PARENT_NODE_REGEX = "\\w+->"; //Important to note that the hyphen is not an ordinary hyphen
+    private static String PARENT_NODE_REGEX = "\\w+->";
     private static String CHILD_NODE_REGEX = "->\\w+";
+    
+    private static String LS = System.lineSeparator();
 
     /**
      * Converts fileName into file
@@ -106,8 +113,27 @@ public class DotFile {
         return out;
     }
     
-    public void write(String fileName, List<Node> nodes) {
+    public void write(String fileName, List<Node> nodes) throws IOException {
+        String output = "digraph \"outputExample\" {" + LS;
+
+        for (Node node: nodes) {
+            output += String.format("\t%s\t[Weight=%d,Start=%d,Processor=%d];" + LS, node.getName(), node.getWeight(),
+                    node.getStartTime(), node.getProcessor());
+        }
         
+        for (Node node: nodes) {
+            Map<Node, Integer> children = node.getChildren();
+            for (Node child: children.keySet()) {
+                output += String.format("\t%s -> %s\t[Weight=%d];" + LS, node.getName(), child.getName(),
+                        children.get(child));
+            }
+        }
+        
+        output += "}" + LS;
+        
+        OutputStream fos = new FileOutputStream(new File(fileName));
+        fos.write(output.getBytes(StandardCharsets.UTF_8));
+        fos.close();
     }
 
 }

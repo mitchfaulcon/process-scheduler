@@ -1,3 +1,6 @@
+import Graph.Node;
+import Logic.Scheduler;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -13,6 +16,8 @@ public class DotFile {
 
     private static String NAME_REGEX = "[^>]\\w\\s+\\[";
     private static String WEIGHT_REGEX = "=\\d+\\]";
+    private static String PARENT_NODE_REGEX = "\\w+−>";
+    private static String CHILD_NODE_REGEX = "−>\\w+";
 
     /**
      * Converts fileName into file
@@ -40,8 +45,13 @@ public class DotFile {
         }
 
         for (String line : lines) {
-            if (!line.contains("{") || line.contains("}")) {
-                addNode(line);
+            if (!(line.contains("{") && line.contains("}"))) {
+                // Only get lines that create node dependencies
+                if (line.contains("->")) {
+                    addDependency(line);
+                } else {
+                    addNode(line);
+                }
             }
         }
     }
@@ -51,10 +61,18 @@ public class DotFile {
         int weight = findWeight(s);
 
         if (name != null) {
-            //TODO add nodes to list of existing nodes
+            Scheduler.getScheduler().addNode(new Node(name, weight));
         }
+    }
 
-        System.out.println(name + weight); //TODO Find node dependencies and weights
+    private void addDependency(String s) {
+        String parentString = regex(regex(s, PARENT_NODE_REGEX), "\\w+");
+        String childString = regex(regex(s, CHILD_NODE_REGEX), "\\w+");
+        int weight = findWeight(s);
+
+        if (parentString != null && childString != null) {
+            //Scheduler.getScheduler().addChild(new Node());
+        }
     }
 
     private String findName(String s) {

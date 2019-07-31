@@ -124,8 +124,12 @@ public class DotFile {
      * @throws IOException if the file cannot be written to
      */
     public void write(String fileName, List<Node> nodes) throws IOException {
-        //TODO change outputExample to correct name
-        String output = "digraph \"outputExample\" {" + LS;
+        //Create correct name for top of dot file
+        String dotFileName = file.getName();
+        String extensionRemoved = dotFileName.substring(0,dotFileName.length()-4);
+        String capitalised = extensionRemoved.substring(0, 1).toUpperCase() + extensionRemoved.substring(1);
+
+        String output = "digraph \"output" + capitalised + "\" {" + LS;
 
         // write all tasks
         for (Node node: nodes) {

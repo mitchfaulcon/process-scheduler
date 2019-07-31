@@ -23,8 +23,12 @@ public class Scheduler {
         graph.add(node);
     }
 
-    public void addChild(Node parent, Node child, int edgeWeight){
-        graph.get(graph.indexOf(parent)).addChild(graph.get(graph.indexOf(child)), edgeWeight);
+    public void addChild(String parent, String child, int edgeWeight) {
+        try {
+            getNode(parent).addChild(getNode(child), edgeWeight);
+        } catch (NullPointerException e) {
+            System.out.println("Input Error: Node being referenced does not exist");
+        }
     }
 
     /**
@@ -72,4 +76,12 @@ public class Scheduler {
         return graph;
     }
 
+    private Node getNode(String name) {
+        for (Node node : graph) {
+            if (node.getName().equals(name)) {
+                return node;
+            }
+        }
+        return null;
+    }
 }

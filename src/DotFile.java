@@ -16,7 +16,7 @@ public class DotFile {
 
     private static String NAME_REGEX = "[^>]\\w\\s+\\[";
     private static String WEIGHT_REGEX = "=\\d+\\]";
-    private static String PARENT_NODE_REGEX = "\\w+−>";
+    private static String PARENT_NODE_REGEX = "\\w+−>"; //Important to note that the hyphen is not an ordinary hyphen
     private static String CHILD_NODE_REGEX = "−>\\w+";
 
     /**
@@ -47,7 +47,7 @@ public class DotFile {
         for (String line : lines) {
             if (!(line.contains("{") && line.contains("}"))) {
                 // Only get lines that create node dependencies
-                if (line.contains("->")) {
+                if (line.contains("−>")) {
                     addDependency(line);
                 } else {
                     addNode(line);
@@ -66,12 +66,12 @@ public class DotFile {
     }
 
     private void addDependency(String s) {
-        String parentString = regex(regex(s, PARENT_NODE_REGEX), "\\w+");
-        String childString = regex(regex(s, CHILD_NODE_REGEX), "\\w+");
+        String parent = regex(regex(s, PARENT_NODE_REGEX), "\\w+");
+        String child = regex(regex(s, CHILD_NODE_REGEX), "\\w+");
         int weight = findWeight(s);
 
-        if (parentString != null && childString != null) {
-            //Scheduler.getScheduler().addChild(new Node());
+        if (parent != null && child != null) {
+            Scheduler.getScheduler().addChild(parent, child, weight);
         }
     }
 

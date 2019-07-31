@@ -28,7 +28,7 @@ public class ProcessScheduler {
 		System.out.println("Output file: " + config.getString("OUTPUT", config.getString("INPUT") + "-output.dot"));
 	}
 
-	private static SimpleJSAP buildParser() {
+	static SimpleJSAP buildParser() {
 		Parameter input = new UnflaggedOption("INPUT", JSAP.STRING_PARSER, JSAP.REQUIRED,
 				"A task graph with integer weights in dot format");
 

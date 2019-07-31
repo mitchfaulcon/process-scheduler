@@ -12,7 +12,7 @@ public class DotFile {
     private List<String> lines;
 
     private static String NAME_REGEX = "[^>]\\w\\s+\\[";
-    private static String WEIGHT_REGEX;
+    private static String WEIGHT_REGEX = "=\\d+\\]";
 
     /**
      * Converts fileName into file
@@ -48,7 +48,13 @@ public class DotFile {
 
     private void addNode(String s) {
         String name = findName(s);
-        System.out.println(name); //TODO Find node dependencies and weights
+        int weight = findWeight(s);
+
+        if (name != null) {
+            //TODO add nodes to list of existing nodes
+        }
+
+        System.out.println(name + weight); //TODO Find node dependencies and weights
     }
 
     private String findName(String s) {
@@ -57,6 +63,14 @@ public class DotFile {
             return regex(tempName, "\\w+");
         }
         return null;
+    }
+
+    private int findWeight(String s) {
+        String tempWeight = regex(s, WEIGHT_REGEX);
+        if (tempWeight != null) {
+            return Integer.parseInt(regex(tempWeight, "\\d+"));
+        }
+        return -1;
     }
 
     private String regex(String s, String regex) {

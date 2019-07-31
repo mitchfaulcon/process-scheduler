@@ -1,27 +1,21 @@
 package se306.scheduler;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import se306.scheduler.graph.Node;
+import se306.scheduler.logic.Scheduler;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Scanner;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import se306.scheduler.graph.Node;
-import se306.scheduler.logic.Scheduler;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This class tests various methods within the se306.scheduler.DotFile class
+ * This class tests various methods within {@link DotFile}
  */
 public class DotFileTest {
 

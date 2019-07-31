@@ -10,6 +10,10 @@ import org.junit.jupiter.api.Test;
 import com.martiansoftware.jsap.JSAPResult;
 import com.martiansoftware.jsap.SimpleJSAP;
 
+/**
+ * This class tests the ability to parse arguments from the command line
+ * in {@link ProcessScheduler}
+ */
 public class ArgParseTest {
 	private static SimpleJSAP jsap;
 	
@@ -18,6 +22,9 @@ public class ArgParseTest {
 		jsap = ProcessScheduler.buildParser();
 	}
 
+	/**
+	 * Test parsing of a simple input with no extra options.
+	 */
 	@Test
 	void validSimple() {
 		JSAPResult result = jsap.parse("input.dot 5");
@@ -30,60 +37,75 @@ public class ArgParseTest {
 		assertEquals(false, result.getBoolean("V"));
 		assertEquals("input.dot-output.dot", result.getString("OUTPUT", result.getString("INPUT") + "-output.dot"));
 	}
-	
+
+	/**
+	 * Test parsing of input with a custom number of processors/threads
+	 */
 	@Test
 	void customN() {
-		JSAPResult result = jsap.parse("input.dot 5 -p 5");
+		JSAPResult result = jsap.parse("input.dot 5 -p 3");
 		assertTrue(result.success());
-		assertEquals(5, result.getInt("N"));
+		assertEquals(3, result.getInt("N"));
 	}
-	
+
+	/**
+	 * Test parsing of input with visual enabled
+	 */
 	@Test
 	void visualEnabled() {
 		JSAPResult result = jsap.parse("input.dot 5 -v");
 		assertTrue(result.success());
-		assertEquals(true, result.getBoolean("V"));
+		assertTrue(result.getBoolean("V"));
 	}
-	
+
+	/**
+	 * Test parsing of input with a specified output file
+	 */
 	@Test
 	void customOutput() {
 		JSAPResult result = jsap.parse("input.dot 5 -o out.dot");
 		assertTrue(result.success());
 		assertEquals("out.dot", result.getString("OUTPUT", result.getString("INPUT") + "-output.dot"));
 	}
-	
+
+	/**
+	 * Test parsing of input with an option selected but no
+	 * argument entered
+	 */
 	@Test
 	void missingArgument() {
 		JSAPResult result = jsap.parse("input.dot 5 -p ");
 		assertFalse(result.success());
 	}
-	
+
+	/**
+	 * Test parsing of input with an invalid argument entered
+	 * for an option
+	 */
 	@Test
-	void invlaidArgument() {
+	void invalidArgument() {
 		JSAPResult result = jsap.parse("input.dot 5 -p two");
 		assertFalse(result.success());
 	}
-	
+
+	/**
+	 * Test parsing of input with an unknown flag
+	 */
 	@Test
 	void unknownFlag() {
 		JSAPResult result = jsap.parse("input.dot 5 -e");
 		assertFalse(result.success());
 	}
-	
-	
-	public static void mhnain(String[] args) {
-		jsap = ProcessScheduler.buildParser();
-		
-		JSAPResult result = jsap.parse("input.dot");
-		System.out.println(result.success());
-		
-		result = jsap.parse("input.dot 3");
-		System.out.println(result.success());
-		
-		result = jsap.parse("input.dot 3 -p 5 -v");
-		System.out.println(result.success());
-		
+
+	/**
+	 * Test parsing of input with multiple flags
+	 */
+	@Test
+	void multipleFlags() {
+		JSAPResult result = jsap.parse("input.dot 5 -v -p 2 -o out.dot");
+		assertTrue(result.success());
+		assertTrue(result.getBoolean("V"));
+		assertEquals(2, result.getInt("N"));
+		assertEquals("out.dot", result.getString("OUTPUT", result.getString("INPUT") + "-output.dot"));
 	}
-	
-	
 }

@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.ArrayList;
 
 /**
- * This class tests various methods within the Logic.Scheduler class
+ * This class tests various methods within {@link Scheduler}
  */
 class SchedulerClassTest {
 

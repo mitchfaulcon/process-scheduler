@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This class tests various methods within the Graph.Node class
+ * This class tests various methods within {@link Node}
  */
 class NodeClassTest {
 

@@ -18,8 +18,8 @@ public class DotFile {
 
     private static String NAME_REGEX = "[^>]\\w\\s+\\[";
     private static String WEIGHT_REGEX = "=\\d+\\]";
-    private static String PARENT_NODE_REGEX = "\\w+−>"; //Important to note that the hyphen is not an ordinary hyphen
-    private static String CHILD_NODE_REGEX = "−>\\w+";
+    private static String PARENT_NODE_REGEX = "\\w+->"; //Important to note that the hyphen is not an ordinary hyphen
+    private static String CHILD_NODE_REGEX = "->\\w+";
 
     /**
      * Converts fileName into file

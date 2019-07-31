@@ -21,10 +21,10 @@ public class DotFile {
     private File file;
     private List<String> lines;
 
-    private static String NAME_REGEX = "[^>]\\w\\s+\\[";
+    private static String NAME_REGEX = "\t\\w\t";
     private static String WEIGHT_REGEX = "=\\d+\\]";
-    private static String PARENT_NODE_REGEX = "\\w+->";
-    private static String CHILD_NODE_REGEX = "->\\w+";
+    private static String PARENT_NODE_REGEX = "\\w+\\s*->";
+    private static String CHILD_NODE_REGEX = "->\\s*\\w+";
     
     private static String LS = System.lineSeparator();
 

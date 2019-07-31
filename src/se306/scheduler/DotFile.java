@@ -1,5 +1,4 @@
-import Graph.Node;
-import Logic.Scheduler;
+package se306.scheduler;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -8,6 +7,9 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import se306.scheduler.graph.Node;
+import se306.scheduler.logic.Scheduler;
 
 public class DotFile {
 
@@ -23,7 +25,7 @@ public class DotFile {
      * Converts fileName into file
      *
      * @param fileName name of .dot file
-     * @throws FileNotFoundException to be caught in {@link Main}
+     * @throws FileNotFoundException to be caught in {@link ProcessScheduler}
      *                               and displayed on command line as input error
      */
     DotFile(String fileName) throws FileNotFoundException {
@@ -43,6 +45,8 @@ public class DotFile {
         while (sc.hasNextLine()) {
             lines.add(sc.nextLine());
         }
+        
+        sc.close();
 
         for (String line : lines) {
             if (!(line.contains("{") && line.contains("}"))) {

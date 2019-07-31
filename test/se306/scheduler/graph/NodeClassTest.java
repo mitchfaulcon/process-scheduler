@@ -1,11 +1,12 @@
-import Graph.Node;
+package se306.scheduler.graph;
+
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This class tests various methods within the Graph.Node class
  */
-class NodeClassTests {
+class NodeClassTest {
 
     /**
      * This test case checks that a node can be created successfully with the intended fields

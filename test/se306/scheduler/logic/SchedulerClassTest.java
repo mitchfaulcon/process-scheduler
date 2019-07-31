@@ -1,5 +1,7 @@
-import Graph.Node;
-import Logic.Scheduler;
+package se306.scheduler.logic;
+
+import se306.scheduler.graph.Node;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,7 +12,7 @@ import java.util.ArrayList;
 /**
  * This class tests various methods within the Logic.Scheduler class
  */
-class SchedulerClassTests {
+class SchedulerClassTest {
 
     private Scheduler scheduler = Scheduler.getScheduler();
 
@@ -38,7 +40,6 @@ class SchedulerClassTests {
         scheduler.addNode(nodeC);
         scheduler.addNode(nodeD);
         scheduler.addNode(nodeE);
-
 
         scheduler.addChild(nodeA.getName(), nodeC.getName(), 1);
         scheduler.addChild(nodeA.getName(), nodeD.getName(), 1);

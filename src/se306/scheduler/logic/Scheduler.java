@@ -9,7 +9,7 @@ public class Scheduler {
 
     private static final Scheduler scheduler = new Scheduler();
 
-    private ArrayList<Node> graph = new ArrayList<>();
+    private List<Node> graph = new ArrayList<>();
 
     public static Scheduler getScheduler(){
         return scheduler;

@@ -3,12 +3,13 @@ package se306.scheduler.graph;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Node {
 
     private String name;
     private List<Node> parents = new ArrayList<>();
-    private HashMap<Node, Integer> children = new HashMap<>();
+    private Map<Node, Integer> children = new HashMap<>();
     private int weight;
     private int startTime;
     private int processor;
@@ -48,7 +49,7 @@ public class Node {
         return this.name;
     }
 
-    public HashMap<Node, Integer> getChildren() {
+    public Map<Node, Integer> getChildren() {
         return this.children;
     }
 

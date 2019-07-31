@@ -1,6 +1,7 @@
 package se306.scheduler;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import com.martiansoftware.jsap.FlaggedOption;
 import com.martiansoftware.jsap.JSAP;
@@ -10,6 +11,7 @@ import com.martiansoftware.jsap.Parameter;
 import com.martiansoftware.jsap.SimpleJSAP;
 import com.martiansoftware.jsap.Switch;
 import com.martiansoftware.jsap.UnflaggedOption;
+import se306.scheduler.logic.Scheduler;
 
 public class ProcessScheduler {
 
@@ -32,10 +34,15 @@ public class ProcessScheduler {
 		try {
             DotFile dot = new DotFile(config.getString("INPUT"));
             dot.read();
+			Scheduler.getScheduler().schedule();
+			dot.write(config.getString("OUTPUT"), Scheduler.getScheduler().getNodes());
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             System.out.println("Input Error: File not found");
-        }
+        } catch (IOException e){
+			e.printStackTrace();
+			System.out.println("Output Error: File could not be written to");
+		}
 		
 	}
 

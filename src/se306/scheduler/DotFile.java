@@ -26,11 +26,10 @@ public class DotFile {
     private static String WEIGHT_REGEX = "=\\d+\\]";
     private static String PARENT_NODE_REGEX = "\\w+\\s*->";
     private static String CHILD_NODE_REGEX = "->\\s*\\w+";
-    
     private static String LS = System.lineSeparator();
 
     /**
-     * Converts fileName into file
+     * Constructor
      *
      * @param fileName name of .dot file
      * @throws FileNotFoundException to be caught in {@link ProcessScheduler}
@@ -56,6 +55,7 @@ public class DotFile {
         
         sc.close();
 
+        // Iterate through each line and add nodes or dependencies
         for (String line : lines) {
             if (!(line.contains("{") && line.contains("}"))) {
                 // Only get lines that create node dependencies
@@ -68,6 +68,11 @@ public class DotFile {
         }
     }
 
+    /**
+     * Add a new node to the graph
+     *
+     * @param s line read from .dot file
+     */
     private void addNode(String s) {
         String name = findName(s);
         int weight = findWeight(s);
@@ -77,6 +82,12 @@ public class DotFile {
         }
     }
 
+
+    /**
+     * Adds a new dependency to the graph
+     *
+     * @param s line read from .dot file
+     */
     private void addDependency(String s) {
         String parent = regex(regex(s, PARENT_NODE_REGEX), "\\w+");
         String child = regex(regex(s, CHILD_NODE_REGEX), "\\w+");
@@ -87,6 +98,12 @@ public class DotFile {
         }
     }
 
+    /**
+     * Extracts the name of the node from the input string
+     *
+     * @param s line read from .dot file
+     * @return the name of the node
+     */
     private String findName(String s) {
         String tempName = regex(s, NAME_REGEX);
         if (tempName != null) {
@@ -95,6 +112,13 @@ public class DotFile {
         return null;
     }
 
+    /**
+     * Extract the weight of the node or dependency from
+     * the input string
+     *
+     * @param s line read from .dot file
+     * @return the weight of the node or dependency
+     */
     private int findWeight(String s) {
         String tempWeight = regex(s, WEIGHT_REGEX);
         if (tempWeight != null) {
@@ -103,16 +127,21 @@ public class DotFile {
         return -1;
     }
 
+    /**
+     * Find the first matching regex pattern within a string
+     *
+     * @param s input string to apply regex to
+     * @param regex regex pattern to apply
+     * @return the first match to input string
+     */
     private String regex(String s, String regex) {
-        String out = null;
-
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(s);
         if (matcher.find()) {
-            out = matcher.group(0);
+            return matcher.group(0);
         }
 
-        return out;
+        return null;
     }
     
     /**

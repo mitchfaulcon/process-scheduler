@@ -127,4 +127,15 @@ public class DotFileTest {
             fail("Shouldn't happen");
         }
     }
+
+    @Test
+    void invalidFileFormat(){
+        try {
+            dot = new DotFile("invalid");
+            fail("Should have thrown InvalidFileFormatException");
+        }
+        catch (InvalidFileFormatException ignored){
+
+        }
+    }
 }

@@ -28,10 +28,9 @@ public class DotFile {
      * @throws FileNotFoundException to be caught in {@link ProcessScheduler}
      *                               and displayed on command line as input error
      */
-    DotFile(String fileName) throws FileNotFoundException {
+    DotFile(String fileName) {
         lines = new ArrayList<>();
         this.file = new File(fileName);
-        read();
     }
 
     /**
@@ -39,7 +38,7 @@ public class DotFile {
      *
      * @throws FileNotFoundException if file entered by user does not exist
      */
-    private void read() throws FileNotFoundException {
+    public void read() throws FileNotFoundException {
         Scanner sc = new Scanner(this.file);
 
         while (sc.hasNextLine()) {
@@ -105,6 +104,10 @@ public class DotFile {
         }
 
         return out;
+    }
+    
+    public void write(String fileName, List<Node> nodes) {
+        
     }
 
 }

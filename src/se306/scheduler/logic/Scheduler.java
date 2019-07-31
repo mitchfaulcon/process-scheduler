@@ -87,4 +87,8 @@ public class Scheduler {
     public void clearGraph(){
         graph.clear();
     }
+    
+    public List<Node> getNodes() {
+        return graph;
+    }
 }

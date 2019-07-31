@@ -31,6 +31,7 @@ public class ProcessScheduler {
 		
 		try {
             DotFile dot = new DotFile(config.getString("INPUT"));
+            dot.read();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             System.out.println("Input Error: File not found");

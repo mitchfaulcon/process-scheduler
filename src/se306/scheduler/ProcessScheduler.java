@@ -11,6 +11,7 @@ import com.martiansoftware.jsap.Parameter;
 import com.martiansoftware.jsap.SimpleJSAP;
 import com.martiansoftware.jsap.Switch;
 import com.martiansoftware.jsap.UnflaggedOption;
+import se306.scheduler.exception.InvalidFileFormatException;
 import se306.scheduler.logic.Scheduler;
 
 public class ProcessScheduler {
@@ -42,8 +43,11 @@ public class ProcessScheduler {
         } catch (IOException e){
 			e.printStackTrace();
 			System.out.println("Output Error: File could not be written to");
+		} catch (InvalidFileFormatException e) {
+			e.printStackTrace();
+			System.out.println("Invalid File format: Does not end in \".dot\"");
 		}
-		
+
 	}
 
 	static SimpleJSAP buildParser() {

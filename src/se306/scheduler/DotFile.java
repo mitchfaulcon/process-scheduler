@@ -1,20 +1,15 @@
 package se306.scheduler;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
+import com.sun.media.sound.InvalidFormatException;
+import se306.scheduler.exception.InvalidFileFormatException;
 import se306.scheduler.graph.Node;
 import se306.scheduler.logic.Scheduler;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class DotFile {
 
@@ -28,10 +23,14 @@ public class DotFile {
     private static String CHILD_NODE_REGEX = "->\\s*\\w+";
     private static String LS = System.lineSeparator();
 
-    DotFile(String fileName) {
-        lines = new ArrayList<>();
-        this.fileName = fileName;
-        this.file = new File(fileName);
+    DotFile(String fileName) throws InvalidFileFormatException {
+        if (fileName.endsWith(".dot")) {
+            lines = new ArrayList<>();
+            this.fileName = fileName;
+            this.file = new File(fileName);
+        } else {
+            throw new InvalidFileFormatException();
+        }
     }
 
     /**

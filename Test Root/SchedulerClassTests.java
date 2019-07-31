@@ -1,5 +1,6 @@
 import Graph.Node;
 import Logic.Scheduler;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,7 +21,7 @@ class SchedulerClassTests {
     private Node nodeE = new Node("e", 1);
 
     /**
-     * Initialise graph structure before each test
+     * Initialise graph structure before each test case
      *
      *        A(2)  B(3)
      *        ↓   ↘  ↓
@@ -44,6 +45,16 @@ class SchedulerClassTests {
         scheduler.addChild(nodeB.getName(), nodeD.getName(), 1);
         scheduler.addChild(nodeC.getName(), nodeE.getName(), 1);
         scheduler.addChild(nodeD.getName(), nodeE.getName(), 1);
+
+        scheduler.schedule();
+    }
+
+    /**
+     * Reset the graph after each test case so that it can be repopulated in the {@link #graphSetup()} method
+     */
+    @AfterEach
+    void graphReset(){
+        scheduler.clearGraph();
     }
 
     /**
@@ -51,19 +62,37 @@ class SchedulerClassTests {
      */
     @Test
     void testChildAdded(){
-
+        assertEquals(2, nodeA.getChildren().size(), "Node A should have 2 children");
+        assertTrue(nodeA.getChildren().containsKey(nodeC) && nodeA.getChildren().containsKey(nodeD),
+                "Node A should have Nodes C & D as its children");
+        assertEquals(1, nodeB.getChildren().size(), "Node B should have 1 child");
+        assertTrue(nodeB.getChildren().containsKey(nodeD), "Node B should have Node D as its child");
+        assertEquals(1, nodeC.getChildren().size(), "Node C should have 1 child");
+        assertTrue(nodeC.getChildren().containsKey(nodeE), "Node C should have Node E as its child");
+        assertEquals(1, nodeD.getChildren().size(), "Node D should have 1 child");
+        assertTrue(nodeD.getChildren().containsKey(nodeE), "Node D should have Node E as its child");
+        assertEquals(0, nodeE.getChildren().size(), "Node E should have 0 children");
     }
 
+    /**
+     * Tests that the schedule method produces a valid output
+     */
     @Test
     void testFirstMilestoneSchedule(){
-        ArrayList<Node> graph = scheduler.schedule();
-
-        assertNotEquals(nodeA.getStartTime(), nodeB.getStartTime());
-        assertTrue(nodeA.getStartTime() < nodeC.getStartTime());
-        assertTrue(nodeA.getStartTime() < nodeD.getStartTime());
+        assertNotEquals(nodeA.getStartTime(), nodeB.getStartTime(),
+                "Nodes A & B should have different start times");
+        assertTrue(nodeA.getStartTime() < nodeC.getStartTime(),
+                "Node A should be scheduled before Node C");
+        assertTrue(nodeA.getStartTime() < nodeD.getStartTime(),
+                "Node A should be scheduled before Node D");
 
         assertNotEquals(nodeC.getStartTime(), nodeD.getStartTime());
+        assertTrue(nodeB.getStartTime() < nodeD.getStartTime(),
+                "Node B should be scheduled before Node D");
 
-
+        assertTrue(nodeC.getStartTime() < nodeE.getStartTime(),
+                "Node C should be scheduled before Node E");
+        assertTrue(nodeD.getStartTime() < nodeE.getStartTime(),
+                "Node D should be scheduled before Node E");
     }
 }

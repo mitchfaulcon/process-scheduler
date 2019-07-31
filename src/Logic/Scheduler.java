@@ -35,7 +35,7 @@ public class Scheduler {
      * Edits the nodes in List<Node> graph to have the correct start time based on a valid schedule running on a single
      * processor.
      */
-    public ArrayList<Node> schedule(){
+    public void schedule(){
         // As nodes are reached in main loop they will be removed from here
         List<Node> unreached = new ArrayList<>(graph);
         boolean parentsFound;
@@ -73,7 +73,6 @@ public class Scheduler {
             unreached.remove(j);
 
         }
-        return graph;
     }
 
     private Node getNode(String name) {
@@ -83,5 +82,9 @@ public class Scheduler {
             }
         }
         return null;
+    }
+
+    public void clearGraph(){
+        graph.clear();
     }
 }

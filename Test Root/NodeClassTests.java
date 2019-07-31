@@ -29,13 +29,14 @@ class NodeClassTests {
         Node nodeB = new Node("b", 3);
         nodeA.addChild(nodeB, 1);
 
-        assertEquals(1, nodeA.getChildren().size());
-        assertEquals(0, nodeA.getParents().size());
-        assertTrue(nodeA.getChildren().containsKey(nodeB));
-        assertEquals(new Integer(1), nodeA.getChildren().get(nodeB));
-        assertEquals(0, nodeB.getChildren().size());
-        assertEquals(1, nodeB.getParents().size());
-        assertTrue(nodeB.getParents().contains(nodeA));
+        assertEquals(1, nodeA.getChildren().size(), "Node A should have 1 child");
+        assertEquals(0, nodeA.getParents().size(), "Node A should have 0 parents");
+        assertTrue(nodeA.getChildren().containsKey(nodeB), "Node A should have Node B as its child");
+        assertEquals(new Integer(1), nodeA.getChildren().get(nodeB),
+                "The edge weight between Node A and Node B should be 1");
+        assertEquals(0, nodeB.getChildren().size(), "Node B should have 0 children");
+        assertEquals(1, nodeB.getParents().size(), "Node B should have 1 parent");
+        assertTrue(nodeB.getParents().contains(nodeA), "Node B should have Node A as its parent");
     }
 
     /**
@@ -46,6 +47,6 @@ class NodeClassTests {
         Node nodeA = new Node("a", 2);
         nodeA.setStartTime(8);
 
-        assertEquals(8, nodeA.getStartTime());
+        assertEquals(8, nodeA.getStartTime(), "Node A should have a start time of 8");
     }
 }

@@ -75,6 +75,7 @@ public class DotFileTest {
      */
     @Test
     void testWriteGraph() {
+        // create a graph
         Node nodeA = new Node("a", 2);
         Node nodeB = new Node("b", 3);
         Node nodeC = new Node("c", 1);
@@ -93,8 +94,10 @@ public class DotFileTest {
         scheduler.addChild(nodeC.getName(), nodeE.getName(), 1);
         scheduler.addChild(nodeD.getName(), nodeE.getName(), 1);
 
+        // find a valid schedule (which is saved in the nodes)
         scheduler.schedule();
         
+        // write the nodes + schedule to a file
         dot = new DotFile("");
         String outFile = "test_data/test1_out.dot";
         String outFileValid = "test_data/test1_out_valid.dot";
@@ -105,6 +108,7 @@ public class DotFileTest {
             fail("Could not save to test_data/test1_out.dot");
         }
 
+        // check that the output we produced is the same as the known correct output (test1_out_valid.dot)
         // https://stackoverflow.com/a/3403112
         try {
             Scanner outScanner = new Scanner(new File(outFile));

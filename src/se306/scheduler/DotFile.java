@@ -113,14 +113,24 @@ public class DotFile {
         return out;
     }
     
+    /**
+     * Writes a graph to a file using the DOT format.
+     * All tasks are written (along with the values of the schedule we found), then all dependencies.
+     * 
+     * @param fileName Where the output will be written
+     * @param nodes The list of input nodes
+     * @throws IOException if the file cannot be written to
+     */
     public void write(String fileName, List<Node> nodes) throws IOException {
         String output = "digraph \"outputExample\" {" + LS;
 
+        // write all tasks
         for (Node node: nodes) {
             output += String.format("\t%s\t[Weight=%d,Start=%d,Processor=%d];" + LS, node.getName(), node.getWeight(),
                     node.getStartTime(), node.getProcessor());
         }
         
+        // write all dependencies
         for (Node node: nodes) {
             Map<Node, Integer> children = node.getChildren();
             for (Node child: children.keySet()) {

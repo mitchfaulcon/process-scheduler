@@ -96,4 +96,15 @@ class SchedulerClassTest {
         assertTrue(nodeD.getStartTime() < nodeE.getStartTime(),
                 "Node D should be scheduled before Node E");
     }
+
+    @Test
+    void testInvalidChild(){
+        try {
+            scheduler.addChild("a", "z", 5);
+            fail("NullPointerException should have been thrown");
+        }
+        catch (NullPointerException ignored){
+
+        }
+    }
 }

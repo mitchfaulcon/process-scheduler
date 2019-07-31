@@ -147,8 +147,12 @@ public class DotFile {
     public void write(String fileName, List<Node> nodes) throws IOException {
         //Create correct name for top of dot file
         String dotFileName = file.getName();
-        String extensionRemoved = dotFileName.substring(0,dotFileName.length()-4);
-        String capitalised = extensionRemoved.substring(0, 1).toUpperCase() + extensionRemoved.substring(1);
+        String extensionRemoved;
+        String capitalised = dotFileName;
+        if (dotFileName.length()>=4) {
+            extensionRemoved = dotFileName.substring(0, dotFileName.length() - 4);
+            capitalised = extensionRemoved.substring(0, 1).toUpperCase() + extensionRemoved.substring(1);
+        }
 
         StringBuilder output = new StringBuilder("digraph \"output" + capitalised + "\" {" + LS);
 

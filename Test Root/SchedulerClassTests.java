@@ -1,8 +1,8 @@
 import Graph.Node;
 import Logic.Scheduler;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 
@@ -13,25 +13,25 @@ class SchedulerClassTests {
 
     private Scheduler scheduler = Scheduler.getScheduler();
 
+    private Node nodeA = new Node("a", 2);
+    private Node nodeB = new Node("b", 3);
+    private Node nodeC = new Node("c", 1);
+    private Node nodeD = new Node("d", 2);
+    private Node nodeE = new Node("e", 1);
+
     /**
      * Initialise graph structure before each test
      *
-     *        A   B
-     *        ↓ ↘ ↓
-     *        C   D
-     *         ↘ ↙
-     *          E
+     *        A(2)  B(3)
+     *        ↓   ↘  ↓
+     *        C(1)  D(2)
+     *          ↘   ↙
+     *           E(1)
      *
      * (With each edge having weight 1)
      */
     @BeforeEach
     void graphSetup(){
-        Node nodeA = new Node("a", 2);
-        Node nodeB = new Node("b", 3);
-        Node nodeC = new Node("c", 1);
-        Node nodeD = new Node("d", 2);
-        Node nodeE = new Node("e", 1);
-
         scheduler.addNode(nodeA);
         scheduler.addNode(nodeB);
         scheduler.addNode(nodeC);
@@ -54,11 +54,15 @@ class SchedulerClassTests {
     }
 
     @Test
-    void testSchedule(){
+    void testFirstMilestoneSchedule(){
         ArrayList<Node> graph = scheduler.schedule();
 
-        for (Node n: graph) {
-            System.out.println(n.getStartTime());
-        }
+        assertNotEquals(nodeA.getStartTime(), nodeB.getStartTime());
+        assertTrue(nodeA.getStartTime() < nodeC.getStartTime());
+        assertTrue(nodeA.getStartTime() < nodeD.getStartTime());
+
+        assertNotEquals(nodeC.getStartTime(), nodeD.getStartTime());
+
+
     }
 }

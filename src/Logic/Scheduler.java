@@ -44,10 +44,11 @@ public class Scheduler {
         }
         unreached.remove(graph.get(i));
         graph.get(i).setStartTime(currentTime);
+        currentTime += graph.get(i).getWeight();
 
         // iterates until all nodes reached - have had their startTime updated
         while (!unreached.isEmpty()) {
-            int j = 0;
+            int j;
             for (j = 0; j < unreached.size(); j++) {
                 parentsFound = true;
                 // finding if all parents are reached (nodes can only run if all parents reached)

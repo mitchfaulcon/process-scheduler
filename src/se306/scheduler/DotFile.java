@@ -28,13 +28,6 @@ public class DotFile {
     private static String CHILD_NODE_REGEX = "->\\s*\\w+";
     private static String LS = System.lineSeparator();
 
-    /**
-     * Constructor
-     *
-     * @param fileName name of .dot file
-     * @throws FileNotFoundException to be caught in {@link ProcessScheduler}
-     *                               and displayed on command line as input error
-     */
     DotFile(String fileName) {
         lines = new ArrayList<>();
         this.fileName = fileName;
@@ -158,31 +151,31 @@ public class DotFile {
         String extensionRemoved = dotFileName.substring(0,dotFileName.length()-4);
         String capitalised = extensionRemoved.substring(0, 1).toUpperCase() + extensionRemoved.substring(1);
 
-        String output = "digraph \"output" + capitalised + "\" {" + LS;
+        StringBuilder output = new StringBuilder("digraph \"output" + capitalised + "\" {" + LS);
 
         // write all tasks
         for (Node node: nodes) {
-            output += String.format("\t%s\t[Weight=%d,Start=%d,Processor=%d];" + LS, node.getName(), node.getWeight(),
-                    node.getStartTime(), node.getProcessor());
+            output.append(String.format("\t%s\t[Weight=%d,Start=%d,Processor=%d];" + LS, node.getName(), node.getWeight(),
+                    node.getStartTime(), node.getProcessor()));
         }
         
         // write all dependencies
         for (Node node: nodes) {
             Map<Node, Integer> children = node.getChildren();
             for (Node child: children.keySet()) {
-                output += String.format("\t%s -> %s\t[Weight=%d];" + LS, node.getName(), child.getName(),
-                        children.get(child));
+                output.append(String.format("\t%s -> %s\t[Weight=%d];" + LS, node.getName(), child.getName(),
+                        children.get(child)));
             }
         }
         
-        output += "}" + LS;
+        output.append("}").append(LS);
 
         //Set output filename to default if none was entered
         if (fileName == null){
             fileName = this.fileName.substring(0,this.fileName.length()-4) + "-output.dot";
         }
         OutputStream fos = new FileOutputStream(new File(fileName));
-        fos.write(output.getBytes(StandardCharsets.UTF_8));
+        fos.write(output.toString().getBytes(StandardCharsets.UTF_8));
         fos.close();
     }
 

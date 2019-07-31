@@ -32,7 +32,7 @@ class NodeClassTests {
         assertEquals(1, nodeA.getChildren().size());
         assertEquals(0, nodeA.getParents().size());
         assertTrue(nodeA.getChildren().containsKey(nodeB));
-        assertEquals(1, nodeA.getChildren().get(nodeB));
+        assertEquals(new Integer(1), nodeA.getChildren().get(nodeB));
         assertEquals(0, nodeB.getChildren().size());
         assertEquals(1, nodeB.getParents().size());
         assertTrue(nodeB.getParents().contains(nodeA));

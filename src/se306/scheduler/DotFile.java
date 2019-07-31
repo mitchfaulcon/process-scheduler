@@ -124,6 +124,7 @@ public class DotFile {
      * @throws IOException if the file cannot be written to
      */
     public void write(String fileName, List<Node> nodes) throws IOException {
+        //TODO change outputExample to correct name
         String output = "digraph \"outputExample\" {" + LS;
 
         // write all tasks
@@ -143,7 +144,7 @@ public class DotFile {
         
         output += "}" + LS;
 
-        //Set output filename to default of none was entered
+        //Set output filename to default if none was entered
         if (fileName == null){
             fileName = this.fileName.substring(0,this.fileName.length()-4) + "-output.dot";
         }

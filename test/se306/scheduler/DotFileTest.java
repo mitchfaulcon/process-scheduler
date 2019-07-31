@@ -3,6 +3,7 @@ package se306.scheduler;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import se306.scheduler.exception.InvalidFileFormatException;
 import se306.scheduler.graph.Node;
 import se306.scheduler.logic.Scheduler;
 
@@ -44,8 +45,11 @@ public class DotFileTest {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             fail("File not found");
+        } catch (InvalidFileFormatException e) {
+            e.printStackTrace();
+            fail("Invalid file format");
         }
-        
+
         List<Node> nodes = scheduler.getNodes();
         Node nodeA = nodes.get(0);
         Node nodeB = nodes.get(1);
@@ -92,7 +96,11 @@ public class DotFileTest {
         scheduler.schedule();
         
         // write the nodes + schedule to a file
-        dot = new DotFile("");
+        try {
+            dot = new DotFile("input.dot");
+        } catch (InvalidFileFormatException e) {
+            e.printStackTrace();
+        }
         String outFile = "test_data/test1_out.dot";
         String outFileValid = "test_data/test1_out_valid.dot";
         try {

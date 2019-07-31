@@ -57,7 +57,7 @@ public class DotFile {
         for (String line : lines) {
             if (!(line.contains("{") && line.contains("}"))) {
                 // Only get lines that create node dependencies
-                if (line.contains("−>")) {
+                if (line.contains("->")) {
                     addDependency(line);
                 } else {
                     addNode(line);

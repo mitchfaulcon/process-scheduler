@@ -38,12 +38,12 @@ class SchedulerClassTests {
         scheduler.addNode(nodeD);
         scheduler.addNode(nodeE);
 
-        //TODO The setup will run differently since nodes will be firstly identified as Strings.
-//        scheduler.addChild(nodeA, nodeC, 1);
-//        scheduler.addChild(nodeA, nodeD, 1);
-//        scheduler.addChild(nodeB, nodeD, 1);
-//        scheduler.addChild(nodeC, nodeE, 1);
-//        scheduler.addChild(nodeD, nodeE, 1);
+
+        scheduler.addChild(nodeA.getName(), nodeC.getName(), 1);
+        scheduler.addChild(nodeA.getName(), nodeD.getName(), 1);
+        scheduler.addChild(nodeB.getName(), nodeD.getName(), 1);
+        scheduler.addChild(nodeC.getName(), nodeE.getName(), 1);
+        scheduler.addChild(nodeD.getName(), nodeE.getName(), 1);
     }
 
     /**

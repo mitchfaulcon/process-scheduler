@@ -23,12 +23,8 @@ public class Scheduler {
         graph.add(node);
     }
 
-    public void addChild(String parent, String child, int edgeWeight) {
-        try {
-            getNode(parent).addChild(getNode(child), edgeWeight);
-        } catch (NullPointerException e) {
-            System.out.println("Input Error: Node being referenced does not exist");
-        }
+    public void addChild(String parent, String child, int edgeWeight) throws NullPointerException {
+        getNode(parent).addChild(getNode(child), edgeWeight);
     }
 
     /**

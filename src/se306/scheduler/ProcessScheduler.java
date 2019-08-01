@@ -26,11 +26,11 @@ public class ProcessScheduler {
         }
 		
 		// Call methods with these values
-		System.out.println("Input file: " + config.getString("INPUT"));
-		System.out.println("N Processors: " + config.getInt("P"));
-		System.out.println("Cores to use: " + config.getInt("N"));
-		System.out.println("Visualise: " + config.getBoolean("V"));
-		System.out.println("Output file: " + config.getString("OUTPUT", config.getString("INPUT") + "-output.dot"));
+//		System.out.println("Input file: " + config.getString("INPUT"));
+//		System.out.println("N Processors: " + config.getInt("P"));
+//		System.out.println("Cores to use: " + config.getInt("N"));
+//		System.out.println("Visualise: " + config.getBoolean("V"));
+//		System.out.println("Output file: " + config.getString("OUTPUT", config.getString("INPUT") + "-output.dot"));
 		
 		try {
             DotFile dot = new DotFile(config.getString("INPUT"));

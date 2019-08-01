@@ -73,34 +73,22 @@ public class DotFileTest {
      */
     @Test
     void testWriteGraph() {
-        // create a graph
-        Node nodeA = new Node("a", 2);
-        Node nodeB = new Node("b", 3);
-        Node nodeC = new Node("c", 1);
-        Node nodeD = new Node("d", 2);
-        Node nodeE = new Node("e", 1);
-        
-        scheduler.addNode(nodeA);
-        scheduler.addNode(nodeB);
-        scheduler.addNode(nodeC);
-        scheduler.addNode(nodeD);
-        scheduler.addNode(nodeE);
-
-        scheduler.addChild(nodeA.getName(), nodeC.getName(), 1);
-        scheduler.addChild(nodeA.getName(), nodeD.getName(), 1);
-        scheduler.addChild(nodeB.getName(), nodeD.getName(), 1);
-        scheduler.addChild(nodeC.getName(), nodeE.getName(), 1);
-        scheduler.addChild(nodeD.getName(), nodeE.getName(), 1);
+        // load a graph
+        try {
+            dot = new DotFile("test_data/test1.dot");
+            dot.read();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            fail("File not found");
+        } catch (InvalidFileFormatException e) {
+            e.printStackTrace();
+            fail("Invalid file format");
+        }
 
         // find a valid schedule (which is saved in the nodes)
         scheduler.schedule();
         
         // write the nodes + schedule to a file
-        try {
-            dot = new DotFile("input.dot");
-        } catch (InvalidFileFormatException e) {
-            e.printStackTrace();
-        }
         String outFile = "test_data/test1_out.dot";
         String outFileValid = "test_data/test1_out_valid.dot";
         try {
@@ -129,12 +117,11 @@ public class DotFileTest {
     }
 
     @Test
-    void invalidFileFormat(){
+    void invalidFileFormat() {
         try {
             dot = new DotFile("invalid");
             fail("Should have thrown InvalidFileFormatException");
-        }
-        catch (InvalidFileFormatException ignored){
+        } catch (InvalidFileFormatException ignored) {
 
         }
     }

@@ -16,14 +16,34 @@ public class DotFile {
     private File file;
     private String fileName;
     private List<String> lines;
+    private List<LineRecord> lineRecords = new ArrayList<>();
 
     private static String NAME_REGEX = "\t\\w+\t";
     private static String WEIGHT_REGEX = "=\\d+\\]";
     private static String PARENT_NODE_REGEX = "\\w+\\s*->";
     private static String CHILD_NODE_REGEX = "->\\s*\\w+";
     private static String LS = System.lineSeparator();
+    
+    /**
+     * Struct to represent a line in a DOT file, so we can keep track of their order
+     */
+    public class LineRecord {
+        public boolean isDependency; // each record will be either a dependency or a task
+        public String taskName1;
+        public String taskName2; // will be empty if line is a task
+        
+        public LineRecord(boolean isDependency, String taskName1) {
+            this(isDependency, taskName1, "");
+        }
+        
+        public LineRecord(boolean isDependency, String taskName1, String taskName2) {
+            this.isDependency = isDependency;
+            this.taskName1 = taskName1;
+            this.taskName2 = taskName2;
+        }
+    }
 
-    DotFile(String fileName) throws InvalidFileFormatException {
+    public DotFile(String fileName) throws InvalidFileFormatException {
         if (fileName.endsWith(".dot")) {
             lines = new ArrayList<>();
             this.fileName = fileName;
@@ -71,6 +91,7 @@ public class DotFile {
 
         if (name != null) {
             Scheduler.getScheduler().addNode(new Node(name, weight));
+            lineRecords.add(new LineRecord(false, name));
         }
     }
 
@@ -87,6 +108,7 @@ public class DotFile {
 
         if (parent != null && child != null) {
             Scheduler.getScheduler().addChild(parent, child, weight);
+            lineRecords.add(new LineRecord(true, parent, child));
         }
     }
 
@@ -141,11 +163,12 @@ public class DotFile {
      * All tasks are written (along with the values of the schedule we found), then all dependencies.
      * 
      * @param fileName Where the output will be written
-     * @param nodes The list of input nodes
+     * @param nodes The list of nodes assigned to a schedule
      * @throws IOException if the file cannot be written to
      */
     public void write(String fileName, List<Node> nodes) throws IOException {
         //Create correct name for top of dot file
+        // TODO use graph name read from file instead of filename
         String dotFileName = file.getName();
         String extensionRemoved;
         String capitalised = dotFileName;
@@ -156,18 +179,33 @@ public class DotFile {
 
         StringBuilder output = new StringBuilder("digraph \"output" + capitalised + "\" {" + LS);
 
-        // write all tasks
+        // a map of task name to output string, which we will later access in the order specified by `lineRecords`
+        Map<String, String> taskStrings = new HashMap<String, String>();
+        // generate all task strings
         for (Node node: nodes) {
-            output.append(String.format("\t%s\t[Weight=%d,Start=%d,Processor=%d];" + LS, node.getName(), node.getWeight(),
+            taskStrings.put(node.getName(), String.format("\t%s\t[Weight=%d,Start=%d,Processor=%d];" + LS, node.getName(), node.getWeight(),
                     node.getStartTime(), node.getProcessor()));
         }
-        
-        // write all dependencies
+
+        // a map of both tasks in a dependency to output string, which we will later access in the order specified by `lineRecords`
+        // the dependency task names are joined by a space
+        Map<String, String> dependencyStrings = new HashMap<String, String>();
+        // generate all dependency strings
         for (Node node: nodes) {
             Map<Node, Integer> children = node.getChildren();
             for (Node child: children.keySet()) {
-                output.append(String.format("\t%s -> %s\t[Weight=%d];" + LS, node.getName(), child.getName(),
+                String dependencyKey = node.getName() + " " + child.getName();
+                dependencyStrings.put(dependencyKey, String.format("\t%s -> %s\t[Weight=%d];" + LS, node.getName(), child.getName(),
                         children.get(child)));
+            }
+        }
+        
+        // write the tasks and dependencies in the order specified by `lineRecords`
+        for (LineRecord record: lineRecords) {
+            if (record.isDependency) {
+                output.append(dependencyStrings.get(record.taskName1 + " " + record.taskName2));
+            } else {
+                output.append(taskStrings.get(record.taskName1));
             }
         }
         

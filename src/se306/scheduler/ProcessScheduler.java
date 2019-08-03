@@ -20,8 +20,8 @@ public class ProcessScheduler {
 		SimpleJSAP jsap = buildParser();
 		JSAPResult config = jsap.parse(args);
 		if (!config.success()) {
-            System.out.println("Usage: java -jar scheduler.jar "  + jsap.getUsage() + "\n");
-            System.out.println(jsap.getHelp(JSAP.DEFAULT_SCREENWIDTH, ""));
+//            System.out.println("Usage: java -jar scheduler.jar "  + jsap.getUsage() + "\n");
+//            System.out.println(jsap.getHelp(JSAP.DEFAULT_SCREENWIDTH, ""));
             System.exit(1);
         }
 		

@@ -1,7 +1,7 @@
 package se306.scheduler;
 
-import com.sun.media.sound.InvalidFormatException;
 import se306.scheduler.exception.InvalidFileFormatException;
+import se306.scheduler.graph.GraphDisplay;
 import se306.scheduler.graph.Node;
 import se306.scheduler.logic.Scheduler;
 
@@ -17,6 +17,8 @@ public class DotFile {
     private String fileName;
     private List<String> lines;
     private List<LineRecord> lineRecords = new ArrayList<>();
+
+    private GraphDisplay graphDisplay = GraphDisplay.getGraphDisplay();
 
     private static String NAME_REGEX = "\t\\w+\t";
     private static String WEIGHT_REGEX = "=\\d+\\]";
@@ -48,6 +50,8 @@ public class DotFile {
             lines = new ArrayList<>();
             this.fileName = fileName;
             this.file = new File(fileName);
+
+            graphDisplay.setGraphTitle(fileName);
         } else {
             throw new InvalidFileFormatException();
         }
@@ -91,6 +95,7 @@ public class DotFile {
 
         if (name != null) {
             Scheduler.getScheduler().addNode(new Node(name, weight));
+            graphDisplay.addNode(name, weight);
             lineRecords.add(new LineRecord(false, name));
         }
     }
@@ -108,6 +113,7 @@ public class DotFile {
 
         if (parent != null && child != null) {
             Scheduler.getScheduler().addChild(parent, child, weight);
+            graphDisplay.addEdge(parent, child, weight);
             lineRecords.add(new LineRecord(true, parent, child));
         }
     }

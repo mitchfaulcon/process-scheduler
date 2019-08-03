@@ -12,6 +12,7 @@ import com.martiansoftware.jsap.SimpleJSAP;
 import com.martiansoftware.jsap.Switch;
 import com.martiansoftware.jsap.UnflaggedOption;
 import se306.scheduler.exception.InvalidFileFormatException;
+import se306.scheduler.graph.GraphDisplay;
 import se306.scheduler.logic.Scheduler;
 
 public class ProcessScheduler {
@@ -37,6 +38,7 @@ public class ProcessScheduler {
             dot.read();
 			Scheduler.getScheduler().schedule();
 			dot.write(config.getString("OUTPUT"), Scheduler.getScheduler().getNodes());
+			GraphDisplay.getGraphDisplay().displayGraph();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             System.out.println("Input Error: File not found");

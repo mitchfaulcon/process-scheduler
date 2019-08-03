@@ -1,6 +1,5 @@
 package se306.scheduler;
 
-import com.sun.media.sound.InvalidFormatException;
 import se306.scheduler.exception.InvalidFileFormatException;
 import se306.scheduler.graph.GraphDisplay;
 import se306.scheduler.graph.Node;
@@ -96,7 +95,7 @@ public class DotFile {
 
         if (name != null) {
             Scheduler.getScheduler().addNode(new Node(name, weight));
-            graphDisplay.addNode(name);
+            graphDisplay.addNode(name, weight);
             lineRecords.add(new LineRecord(false, name));
         }
     }

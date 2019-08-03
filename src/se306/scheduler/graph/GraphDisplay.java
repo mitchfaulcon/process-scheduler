@@ -46,7 +46,6 @@ public class GraphDisplay {
         JFrame frame = new JFrame(title);
         Viewer viewer = new Viewer(graph, Viewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
         frame.add(viewer.addDefaultView(false));
-
         viewer.getDefaultView().setMouseManager(new DefaultMouseManager(){
             @Override
             protected void elementMoving(GraphicElement element, MouseEvent event) {
@@ -80,7 +79,8 @@ public class GraphDisplay {
         Sprite sprite = spriteManager.addSprite(nodeName);
         sprite.attachToNode(nodeName);
         sprite.addAttribute("ui.label", weight);
-        sprite.addAttribute("ui.style", "text-background-mode: plain;text-size: 15px;");
+        sprite.addAttribute("ui.style", "text-background-mode: plain;text-size: 15px;" +
+                "fill-color: white;");
         sprite.setPosition(StyleConstants.Units.PX, 40,0,0);
 
         //Set Label & Style

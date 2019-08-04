@@ -1,19 +1,13 @@
 package se306.scheduler;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
-import com.martiansoftware.jsap.FlaggedOption;
-import com.martiansoftware.jsap.JSAP;
-import com.martiansoftware.jsap.JSAPException;
-import com.martiansoftware.jsap.JSAPResult;
-import com.martiansoftware.jsap.Parameter;
-import com.martiansoftware.jsap.SimpleJSAP;
-import com.martiansoftware.jsap.Switch;
-import com.martiansoftware.jsap.UnflaggedOption;
+import com.martiansoftware.jsap.*;
 import se306.scheduler.exception.InvalidFileFormatException;
 import se306.scheduler.graph.GraphDisplay;
+import se306.scheduler.graph.OutputGraph;
 import se306.scheduler.logic.Scheduler;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 public class ProcessScheduler {
 
@@ -34,11 +28,15 @@ public class ProcessScheduler {
 //		System.out.println("Output file: " + config.getString("OUTPUT", config.getString("INPUT") + "-output.dot"));
 		
 		try {
-            DotFile dot = new DotFile(config.getString("INPUT"));
-            dot.read();
+			//Read the input and display the graph generated
+			DotFile dot = new DotFile(config.getString("INPUT"));
+			dot.read();
+			GraphDisplay.getGraphDisplay().displayGraph();
+
+			//Calculate the schedule, write it to a file, and display the schedule graph
 			Scheduler.getScheduler().schedule();
 			dot.write(config.getString("OUTPUT"), Scheduler.getScheduler().getNodes());
-			GraphDisplay.getGraphDisplay().displayGraph();
+			OutputGraph.getOutputGraph().displayGraph();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             System.out.println("Input Error: File not found");

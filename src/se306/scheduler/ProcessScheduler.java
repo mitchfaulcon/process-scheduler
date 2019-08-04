@@ -12,11 +12,12 @@ import java.io.IOException;
 public class ProcessScheduler {
 
 	public static void main(String[] args) {
+		System.err.close();  // Workaround to stop help being printed twice
 		SimpleJSAP jsap = buildParser();
 		JSAPResult config = jsap.parse(args);
 		if (!config.success()) {
-//            System.out.println("Usage: java -jar scheduler.jar "  + jsap.getUsage() + "\n");
-//            System.out.println(jsap.getHelp(JSAP.DEFAULT_SCREENWIDTH, ""));
+            System.out.println("Usage: java -jar scheduler.jar "  + jsap.getUsage() + "\n");
+            System.out.println(jsap.getHelp(JSAP.DEFAULT_SCREENWIDTH, ""));
             System.exit(1);
         }
 		
@@ -31,12 +32,15 @@ public class ProcessScheduler {
 			//Read the input and display the graph generated
 			DotFile dot = new DotFile(config.getString("INPUT"));
 			dot.read();
-			GraphDisplay.getGraphDisplay().displayGraph();
 
 			//Calculate the schedule, write it to a file, and display the schedule graph
 			Scheduler.getScheduler().schedule();
 			dot.write(config.getString("OUTPUT"), Scheduler.getScheduler().getNodes());
-			OutputGraph.getOutputGraph().displayGraph();
+
+			if(config.getBoolean("V")) {
+				GraphDisplay.getGraphDisplay().displayGraph();
+				OutputGraph.getOutputGraph().displayGraph();
+			}
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             System.out.println("Input Error: File not found");

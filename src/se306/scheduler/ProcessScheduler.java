@@ -2,8 +2,6 @@ package se306.scheduler;
 
 import com.martiansoftware.jsap.*;
 import se306.scheduler.exception.InvalidFileFormatException;
-import se306.scheduler.graph.GraphDisplay;
-import se306.scheduler.graph.OutputGraph;
 import se306.scheduler.logic.Scheduler;
 
 import java.io.FileNotFoundException;
@@ -37,10 +35,6 @@ public class ProcessScheduler {
 			Scheduler.getScheduler().schedule();
 			dot.write(config.getString("OUTPUT"), Scheduler.getScheduler().getNodes());
 
-			if(config.getBoolean("V")) {
-				GraphDisplay.getGraphDisplay().displayGraph();
-				OutputGraph.getOutputGraph().displayGraph();
-			}
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             System.out.println("Input Error: File not found");

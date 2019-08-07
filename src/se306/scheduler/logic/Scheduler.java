@@ -1,10 +1,9 @@
 package se306.scheduler.logic;
 
+import se306.scheduler.graph.Node;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import se306.scheduler.graph.Node;
-import se306.scheduler.graph.OutputGraph;
 
 public class Scheduler {
 
@@ -33,7 +32,6 @@ public class Scheduler {
      * processor.
      */
     public void schedule(){
-        OutputGraph outputGraph = OutputGraph.getOutputGraph();
         // As nodes are reached in main loop they will be removed from here
         List<Node> unreached = new ArrayList<>(graph);
         boolean parentsFound;
@@ -46,10 +44,6 @@ public class Scheduler {
         }
         unreached.remove(graph.get(i));
         graph.get(i).setStartTime(currentTime);
-
-        //Add node to the output schedule graph
-        outputGraph.addNode(graph.get(i).getName(), currentTime);
-        String lastNode = graph.get(i).getName();
 
         currentTime += graph.get(i).getWeight();
 
@@ -69,10 +63,6 @@ public class Scheduler {
                     // if all parents met then node can start at current time and processor will be occupied for
                     // however long the node's weight is.
                     unreached.get(j).setStartTime(currentTime);
-
-                    //Add the processed node and an edge to it from the previously processed node
-                    outputGraph.addNode(unreached.get(j).getName(), currentTime);
-                    outputGraph.addEdge(lastNode, lastNode=unreached.get(j).getName());
 
                     currentTime += unreached.get(j).getWeight();
                     break;

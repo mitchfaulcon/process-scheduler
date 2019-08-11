@@ -11,7 +11,7 @@ import java.awt.*;
 public class OutputGraph extends GraphParent {
 
     private static final OutputGraph outputGraph = new OutputGraph();
-
+    
     private int yCoord = 0;
 
     private OutputGraph(){
@@ -19,7 +19,7 @@ public class OutputGraph extends GraphParent {
         this.isOutputSchedule = true;
     }
 
-    public static OutputGraph getOutputGraph(){
+    public static OutputGraph getOutputGraph() {
         return outputGraph;
     }
 
@@ -55,7 +55,7 @@ public class OutputGraph extends GraphParent {
      * @param node1 A node in the graph
      * @param node2 The node with the next start time in the schedule
      */
-    public void addEdge(String node1, String node2){
+    public void addEdge(String node1, String node2, int weight){
         String edgeID = node1 + node2;
         graph.addEdge(edgeID, node1, node2, true);
         Edge edge = graph.getEdge(edgeID);

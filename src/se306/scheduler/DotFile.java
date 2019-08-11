@@ -17,7 +17,8 @@ public class DotFile {
     private String fileName;
     private List<String> lines;
     private List<LineRecord> lineRecords = new ArrayList<>();
-
+    
+    private Scheduler scheduler;
     private GraphDisplay graphDisplay = GraphDisplay.getGraphDisplay();
 
     private static String NAME_REGEX = "\t\\w+\t";
@@ -50,7 +51,7 @@ public class DotFile {
             lines = new ArrayList<>();
             this.fileName = fileName;
             this.file = new File(fileName);
-
+            
             graphDisplay.setGraphTitle(fileName);
         } else {
             throw new InvalidFileFormatException();
@@ -60,9 +61,11 @@ public class DotFile {
     /**
      * Reads lines within the .dot file
      *
+     * @param scheduler the scheduler to load the graph into
      * @throws FileNotFoundException if file entered by user does not exist
      */
-    public void read() throws FileNotFoundException {
+    public void read(Scheduler scheduler) throws FileNotFoundException {
+        this.scheduler = scheduler;
         Scanner sc = new Scanner(this.file);
 
         while (sc.hasNextLine()) {
@@ -94,7 +97,7 @@ public class DotFile {
         int weight = findWeight(s);
 
         if (name != null) {
-            Scheduler.getScheduler().addNode(new Node(name, weight));
+            scheduler.addNode(new Node(name, weight));
             graphDisplay.addNode(name, weight);
             lineRecords.add(new LineRecord(false, name));
         }
@@ -112,7 +115,7 @@ public class DotFile {
         int weight = findWeight(s);
 
         if (parent != null && child != null) {
-            Scheduler.getScheduler().addChild(parent, child, weight);
+            scheduler.addChild(parent, child, weight);
             graphDisplay.addEdge(parent, child, weight);
             lineRecords.add(new LineRecord(true, parent, child));
         }

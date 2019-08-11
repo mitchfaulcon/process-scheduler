@@ -3,51 +3,73 @@ package se306.scheduler;
 import com.martiansoftware.jsap.*;
 import se306.scheduler.exception.InvalidFileFormatException;
 import se306.scheduler.graph.GraphDisplay;
+import se306.scheduler.graph.Node;
 import se306.scheduler.graph.OutputGraph;
+import se306.scheduler.logic.Algorithm;
+import se306.scheduler.logic.AlgorithmListener;
 import se306.scheduler.logic.Scheduler;
+import se306.scheduler.logic.SequentialAlgorithm;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
 
-public class ProcessScheduler {
+public class ProcessScheduler implements AlgorithmListener {
 
+    private JSAPResult config;
+    private DotFile dot;
+    private Scheduler scheduler;
+    
 	public static void main(String[] args) {
-		System.err.close();  // Workaround to stop help being printed twice
-		SimpleJSAP jsap = buildParser();
-		JSAPResult config = jsap.parse(args);
-		if (!config.success()) {
+	    ProcessScheduler processScheduler = new ProcessScheduler();
+	    processScheduler.parse(args);
+	    processScheduler.schedule();
+	}
+	
+	public ProcessScheduler() {
+	    
+	}
+	
+	public void parse(String[] args) {
+        System.err.close();  // Workaround to stop help being printed twice
+        SimpleJSAP jsap = buildParser();
+        config = jsap.parse(args);
+        if (!config.success()) {
             System.out.println("Usage: java -jar scheduler.jar "  + jsap.getUsage() + "\n");
             System.out.println(jsap.getHelp(JSAP.DEFAULT_SCREENWIDTH, ""));
             System.exit(1);
         }
-		
-		// Call methods with these values
-//		System.out.println("Input file: " + config.getString("INPUT"));
-//		System.out.println("N Processors: " + config.getInt("P"));
-//		System.out.println("Cores to use: " + config.getInt("N"));
-//		System.out.println("Visualise: " + config.getBoolean("V"));
-//		System.out.println("Output file: " + config.getString("OUTPUT", config.getString("INPUT") + "-output.dot"));
-		
+        
+        // Call methods with these values
+//      System.out.println("Input file: " + config.getString("INPUT"));
+//      System.out.println("N Processors: " + config.getInt("P"));
+//      System.out.println("Cores to use: " + config.getInt("N"));
+//      System.out.println("Visualise: " + config.getBoolean("V"));
+//      System.out.println("Output file: " + config.getString("OUTPUT", config.getString("INPUT") + "-output.dot"));
+	}
+	
+	public void schedule() {
+        Algorithm algorithm = new SequentialAlgorithm();
+        scheduler = new Scheduler(algorithm);
+        
+        algorithm.addListener(this);
+        
+        // set up graphs if -v flag specified
+        if(config.getBoolean("V")) {
+            
+        }
+        
 		try {
-			//Read the input and display the graph generated
-			DotFile dot = new DotFile(config.getString("INPUT"));
-			dot.read();
+			// attempt to load the input file
+			dot = new DotFile(config.getString("INPUT"));
+			dot.read(scheduler);
 
-			//Calculate the schedule, write it to a file, and display the schedule graph
-			Scheduler.getScheduler().schedule();
-			dot.write(config.getString("OUTPUT"), Scheduler.getScheduler().getNodes());
-
-			if(config.getBoolean("V")) {
-				GraphDisplay.getGraphDisplay().displayGraph();
-				OutputGraph.getOutputGraph().displayGraph();
-			}
+			//Calculate the schedule
+			scheduler.start();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             System.out.println("Input Error: File not found");
-        } catch (IOException e){
-			e.printStackTrace();
-			System.out.println("Output Error: File could not be written to");
-		} catch (InvalidFileFormatException e) {
+        } catch (InvalidFileFormatException e) {
 			e.printStackTrace();
 			System.out.println("Invalid File format: Does not end in \".dot\"");
 		}
@@ -79,5 +101,21 @@ public class ProcessScheduler {
 			return null;
 		}
 	}
+
+    // once a schedule has been found, write the output to a file
+    @Override
+    public void algorithmCompleted(List<Node> schedule) {
+        try {
+            dot.write(config.getString("OUTPUT"), scheduler.getNodes());
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("Output Error: File could not be written to");
+        }
+        
+        if(config.getBoolean("V")) {
+            GraphDisplay.getGraphDisplay().displayGraph();
+            OutputGraph.getOutputGraph().displayGraph();
+        }
+    }
 
 }

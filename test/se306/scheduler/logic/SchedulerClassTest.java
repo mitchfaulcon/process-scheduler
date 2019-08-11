@@ -7,21 +7,19 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.ArrayList;
-
 /**
  * This class tests various methods within {@link Scheduler}
  */
 class SchedulerClassTest {
 
-    private Scheduler scheduler = Scheduler.getScheduler();
+    private Scheduler scheduler;
 
     private Node nodeA = new Node("a", 2);
     private Node nodeB = new Node("b", 3);
     private Node nodeC = new Node("c", 1);
     private Node nodeD = new Node("d", 2);
     private Node nodeE = new Node("e", 1);
-
+    
     /**
      * Initialise graph structure before each test case
      *
@@ -35,6 +33,9 @@ class SchedulerClassTest {
      */
     @BeforeEach
     void graphSetup(){
+        Algorithm algorithm = new SequentialAlgorithm();
+        scheduler = new Scheduler(algorithm);
+        
         scheduler.addNode(nodeA);
         scheduler.addNode(nodeB);
         scheduler.addNode(nodeC);
@@ -47,7 +48,7 @@ class SchedulerClassTest {
         scheduler.addChild(nodeC.getName(), nodeE.getName(), 1);
         scheduler.addChild(nodeD.getName(), nodeE.getName(), 1);
 
-        scheduler.schedule();
+        scheduler.start();
     }
 
     /**

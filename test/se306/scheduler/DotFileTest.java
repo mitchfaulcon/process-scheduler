@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import se306.scheduler.exception.InvalidFileFormatException;
 import se306.scheduler.graph.Node;
 import se306.scheduler.logic.Scheduler;
+import se306.scheduler.logic.SequentialAlgorithm;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -20,13 +21,13 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class DotFileTest {
 
-    private Scheduler scheduler = Scheduler.getScheduler();
+    private Scheduler scheduler;
 
     private DotFile dot;
     
     @BeforeEach
     void graphSetup() {
-        
+        scheduler = new Scheduler(new SequentialAlgorithm());
     }
 
     @AfterEach
@@ -41,7 +42,7 @@ public class DotFileTest {
     void testLoadGraph() {
         try {
             dot = new DotFile("test_data/test1.dot");
-            dot.read();
+            dot.read(scheduler);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             fail("File not found");
@@ -76,7 +77,7 @@ public class DotFileTest {
         // load a graph
         try {
             dot = new DotFile("test_data/test1.dot");
-            dot.read();
+            dot.read(scheduler);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             fail("File not found");
@@ -86,7 +87,7 @@ public class DotFileTest {
         }
 
         // find a valid schedule (which is saved in the nodes)
-        scheduler.schedule();
+        scheduler.start();
         
         // write the nodes + schedule to a file
         String outFile = "test_data/test1_out.dot";

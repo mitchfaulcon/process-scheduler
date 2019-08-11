@@ -1,8 +1,7 @@
 package se306.scheduler.graph;
 
 public interface Graph {
-
-    void displayGraph();
-    void addNode(String nodeName, int label);
-    void setFrameLocation();
+    public void addNode(String nodeName, int weight);
+    
+    public void addEdge(String node1, String node2, int weight);
 }

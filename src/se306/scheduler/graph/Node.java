@@ -9,16 +9,27 @@ public class Node {
 
     private String name;
     private List<Node> parents = new ArrayList<>();
-    private Map<Node, Integer> children = new HashMap<>();
+    private List<Node> children = new ArrayList<>();
+    private Map<String, Integer> childCosts = new HashMap<>();
     private int weight;
     private int startTime;
     private int processor;
 
-    public Node(String name, int weight){
+    public Node(String name, int weight) {
+        // set processor to -1 by default, meaning the node has not been assigned a processor.
         this.name = name;
         this.weight = weight;
-        // set as 1 by default.
-        processor = 1;
+        this.processor = -1;
+    }
+    
+    /**
+     * Creates a new node using the properties of the supplied one, but does NOT copy parents or children.
+     */
+    public Node(Node node) {
+        this.name = node.name;
+        this.weight = node.weight;
+        this.processor = node.processor;
+        this.startTime = node.startTime;
     }
 
     /**
@@ -27,7 +38,8 @@ public class Node {
      * @param edgeWeight the weight of the link between the child node and this node
      */
     public void addChild(Node child, int edgeWeight){
-        this.children.put(child, edgeWeight);
+        children.add(child);
+        childCosts.put(child.getName(), edgeWeight);
 
         //Add this node to the predecessor list of the child node
         child.parents.add(this);
@@ -40,6 +52,14 @@ public class Node {
     public void setStartTime(int startTime) {
         this.startTime = startTime;
     }
+    
+    public void setProcessor(int processor) {
+        this.processor = processor;
+    }
+    
+    public boolean isVisited() {
+        return processor != -1;
+    }
 
     public int getWeight() {
         return this.weight;
@@ -48,16 +68,29 @@ public class Node {
     public String getName() {
         return this.name;
     }
+    
+    public List<Node> getChildren() {
+        return children;
+    }
 
-    public Map<Node, Integer> getChildren() {
-        return this.children;
+    public Map<String, Integer> getChildCosts() {
+        return childCosts;
     }
 
     public int getStartTime() {
         return this.startTime;
     }
     
+    public int getFinishTime() {
+        return startTime + weight;
+    }
+    
     public int getProcessor() {
         return this.processor;
+    }
+    
+    @Override
+    public String toString() {
+        return String.format("(%s %d %d)", getName(), getProcessor(), getFinishTime());
     }
 }

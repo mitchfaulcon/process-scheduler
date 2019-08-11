@@ -58,12 +58,12 @@ public class DotFileTest {
         Node nodeD = nodes.get(3);
         
         assertEquals(2, nodeA.getChildren().size(), "Node A should have 2 children");
-        assertTrue(nodeA.getChildren().containsKey(nodeB) && nodeA.getChildren().containsKey(nodeC),
+        assertTrue(nodeA.getChildCosts().containsKey("b") && nodeA.getChildCosts().containsKey("c"),
                 "Node A should have Nodes B & C as its children");
         assertEquals(1, nodeB.getChildren().size(), "Node B should have 1 child");
-        assertTrue(nodeB.getChildren().containsKey(nodeD), "Node B should have Node D as its child");
+        assertTrue(nodeB.getChildCosts().containsKey("d"), "Node B should have Node D as its child");
         assertEquals(1, nodeC.getChildren().size(), "Node C should have 1 child");
-        assertTrue(nodeC.getChildren().containsKey(nodeD), "Node C should have Node D as its child");
+        assertTrue(nodeC.getChildCosts().containsKey("d"), "Node C should have Node D as its child");
         assertEquals(0, nodeD.getChildren().size(), "Node D should have 0 children");
     }
     

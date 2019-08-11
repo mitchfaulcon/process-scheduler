@@ -32,8 +32,8 @@ class NodeClassTest {
 
         assertEquals(1, nodeA.getChildren().size(), "Node A should have 1 child");
         assertEquals(0, nodeA.getParents().size(), "Node A should have 0 parents");
-        assertTrue(nodeA.getChildren().containsKey(nodeB), "Node A should have Node B as its child");
-        assertEquals(new Integer(1), nodeA.getChildren().get(nodeB),
+        assertTrue(nodeA.getChildCosts().containsKey("b"), "Node A should have Node B as its child");
+        assertEquals(new Integer(1), nodeA.getChildCosts().get("b"),
                 "The edge weight between Node A and Node B should be 1");
         assertEquals(0, nodeB.getChildren().size(), "Node B should have 0 children");
         assertEquals(1, nodeB.getParents().size(), "Node B should have 1 parent");

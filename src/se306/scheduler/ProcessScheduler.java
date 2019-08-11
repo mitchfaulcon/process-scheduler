@@ -7,6 +7,7 @@ import se306.scheduler.graph.Node;
 import se306.scheduler.graph.OutputGraph;
 import se306.scheduler.logic.Algorithm;
 import se306.scheduler.logic.AlgorithmListener;
+import se306.scheduler.logic.DFSAlgorithm;
 import se306.scheduler.logic.Scheduler;
 import se306.scheduler.logic.SequentialAlgorithm;
 
@@ -49,7 +50,8 @@ public class ProcessScheduler implements AlgorithmListener {
 	}
 	
 	public void schedule() {
-        Algorithm algorithm = new SequentialAlgorithm();
+        //Algorithm algorithm = new SequentialAlgorithm();
+        Algorithm algorithm = new DFSAlgorithm(config.getInt("P"));
         scheduler = new Scheduler(algorithm);
         
         algorithm.addListener(this);
@@ -106,7 +108,7 @@ public class ProcessScheduler implements AlgorithmListener {
     @Override
     public void algorithmCompleted(List<Node> schedule) {
         try {
-            dot.write(config.getString("OUTPUT"), scheduler.getNodes());
+            dot.write(config.getString("OUTPUT"), schedule);
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("Output Error: File could not be written to");

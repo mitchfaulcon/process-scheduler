@@ -9,11 +9,13 @@ public abstract class Algorithm {
     protected List<AlgorithmListener> listeners;
     protected List<Node> graph;
     protected int searchedNodes;
+    protected int numProcessors;
     
-    public Algorithm() {
+    public Algorithm(int numProcessors) {
         listeners = new ArrayList<AlgorithmListener>();
         graph = new ArrayList<Node>();
         searchedNodes = 0;
+        this.numProcessors = numProcessors;
     }
     
     public void addListener(AlgorithmListener listener) {

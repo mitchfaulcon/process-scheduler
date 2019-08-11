@@ -12,6 +12,10 @@ import se306.scheduler.graph.OutputGraph;
  */
 public class SequentialAlgorithm extends Algorithm {
 
+    public SequentialAlgorithm() {
+        super(1);
+    }
+
     @Override
     public void schedule() {
         // As nodes are reached in main loop they will be removed from here
@@ -26,6 +30,7 @@ public class SequentialAlgorithm extends Algorithm {
         }
         unreached.remove(graph.get(i));
         graph.get(i).setStartTime(currentTime);
+        graph.get(i).setProcessor(1);
 
         //Add node to the output schedule graph
         OutputGraph.getOutputGraph().addNode(graph.get(i).getName(), currentTime);
@@ -49,6 +54,7 @@ public class SequentialAlgorithm extends Algorithm {
                     // if all parents met then node can start at current time and processor will be occupied for
                     // however long the node's weight is.
                     unreached.get(j).setStartTime(currentTime);
+                    unreached.get(j).setProcessor(1);
 
                     //Add the processed node and an edge to it from the previously processed node
                     OutputGraph.getOutputGraph().addNode(unreached.get(j).getName(), currentTime);

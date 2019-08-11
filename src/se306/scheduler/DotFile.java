@@ -201,11 +201,12 @@ public class DotFile {
         Map<String, String> dependencyStrings = new HashMap<String, String>();
         // generate all dependency strings
         for (Node node: nodes) {
-            Map<Node, Integer> children = node.getChildren();
-            for (Node child: children.keySet()) {
+            List<Node> children = node.getChildren();
+            Map<String, Integer> childCosts = node.getChildCosts();
+            for (Node child: children) {
                 String dependencyKey = node.getName() + " " + child.getName();
                 dependencyStrings.put(dependencyKey, String.format("\t%s -> %s\t[Weight=%d];" + LS, node.getName(), child.getName(),
-                        children.get(child)));
+                        childCosts.get(child.getName())));
             }
         }
         

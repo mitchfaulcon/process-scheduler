@@ -65,14 +65,14 @@ class SchedulerClassTest {
     @Test
     void testChildAdded(){
         assertEquals(2, nodeA.getChildren().size(), "Node A should have 2 children");
-        assertTrue(nodeA.getChildren().containsKey(nodeC) && nodeA.getChildren().containsKey(nodeD),
+        assertTrue(nodeA.getChildCosts().containsKey("c") && nodeA.getChildCosts().containsKey("d"),
                 "Node A should have Nodes C & D as its children");
         assertEquals(1, nodeB.getChildren().size(), "Node B should have 1 child");
-        assertTrue(nodeB.getChildren().containsKey(nodeD), "Node B should have Node D as its child");
+        assertTrue(nodeB.getChildCosts().containsKey("d"), "Node B should have Node D as its child");
         assertEquals(1, nodeC.getChildren().size(), "Node C should have 1 child");
-        assertTrue(nodeC.getChildren().containsKey(nodeE), "Node C should have Node E as its child");
+        assertTrue(nodeC.getChildCosts().containsKey("e"), "Node C should have Node E as its child");
         assertEquals(1, nodeD.getChildren().size(), "Node D should have 1 child");
-        assertTrue(nodeD.getChildren().containsKey(nodeE), "Node D should have Node E as its child");
+        assertTrue(nodeD.getChildCosts().containsKey("e"), "Node D should have Node E as its child");
         assertEquals(0, nodeE.getChildren().size(), "Node E should have 0 children");
     }
 

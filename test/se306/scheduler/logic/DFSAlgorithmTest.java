@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 import org.junit.jupiter.api.Test;
 
@@ -34,32 +36,47 @@ public class DFSAlgorithmTest {
         
         Algorithm algorithm = new DFSAlgorithm(2);
         algorithm.setGraph(graph);
+        
+        // this is necessary to test the callback
+        CompletableFuture<List<Node>> outputSchedule = new CompletableFuture<>();
         algorithm.addListener(new AlgorithmListener() {
             @Override
             public void algorithmCompleted(List<Node> schedule) {
-                try {
-                    DotFile dot = new DotFile("test_data/test1.dot");
-                    
-                    dot.write("test_data/test1_outdfs.dot", schedule);
-                    
-                    Scanner outScanner = new Scanner(new File("test_data/test1_out_dfs.dot"));
-                    Scanner validOutScanner = new Scanner(new File("test_data/test1_out_dfs_valid.dot"));
-                    
-                    // https://stackoverflow.com/a/3403112
-                    String output = outScanner.useDelimiter("\\Z").next();
-                    String validOutput = validOutScanner.useDelimiter("\\Z").next();
-                    assertEquals(validOutput + "s", output);
-                    
-                    outScanner.close();
-                    validOutScanner.close();
-                } catch (InvalidFileFormatException e) {
-                    e.printStackTrace();
-                    fail("Could not open test_data/test1.dot.");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    fail("Could not write to test_data/test1_outdfs.dot.");
-                }
+                outputSchedule.complete(schedule);
             }
         });
+        algorithm.schedule();
+        
+        try {
+            DotFile dot = new DotFile("test_data/test1.dot");
+            
+            // we don't use the scheduler, the read is just there to get the line order
+            dot.read(new Scheduler(new DFSAlgorithm(2)));
+            
+            dot.write("test_data/test1_out_dfs.dot", outputSchedule.get());
+            
+            Scanner outScanner = new Scanner(new File("test_data/test1_out_dfs.dot"));
+            Scanner validOutScanner = new Scanner(new File("test_data/test1_out_dfs_valid.dot"));
+            
+            // https://stackoverflow.com/a/3403112
+            String output = outScanner.useDelimiter("\\Z").next();
+            String validOutput = validOutScanner.useDelimiter("\\Z").next();
+            assertEquals(validOutput, output);
+            
+            outScanner.close();
+            validOutScanner.close();
+        } catch (InvalidFileFormatException e) {
+            e.printStackTrace();
+            fail("Could not open test_data/test1.dot.");
+        } catch (IOException e) {
+            e.printStackTrace();
+            fail("Could not write to test_data/test1_outdfs.dot.");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            fail("Could not generate schedule.");
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+            fail("Could not generate schedule.");
+        }
     }
 }

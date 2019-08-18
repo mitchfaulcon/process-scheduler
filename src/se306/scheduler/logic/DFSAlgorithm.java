@@ -54,6 +54,12 @@ public class DFSAlgorithm extends Algorithm {
                         newNode.setStartTime(bestStart);
                         
                         stack.push(newState);
+                        
+                        // if this task can be placed at the very start of a processor then trying to place the
+                        // task on any subsequent processor will create an effectively identical schedule
+                        if (bestStart == 0) {
+                            break;
+                        }
                     }
                 }
             }

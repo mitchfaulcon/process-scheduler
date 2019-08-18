@@ -36,18 +36,26 @@ public class OutputGraph extends GraphParent {
         SpriteManager spriteManager = new SpriteManager(graph);
         Sprite startTimeLabel = spriteManager.addSprite(nodeName);
         startTimeLabel.attachToNode(nodeName);
-        startTimeLabel.addAttribute("ui.label", "Start time: " + startTime);
-        startTimeLabel.addAttribute("ui.style", "text-background-mode: plain;text-size: 15px;" +
+//        startTimeLabel.addAttribute("ui.label", "Start time: " + startTime);
+//        startTimeLabel.addAttribute("ui.style", "text-background-mode: plain;text-size: 15px;" +
+//                "fill-color: white;");
+        startTimeLabel.setAttribute("ui.label", "Start time: " + startTime);
+        startTimeLabel.setAttribute("ui.style", "text-background-mode: plain;text-size: 15px;" +
                 "fill-color: white;");
         startTimeLabel.setPosition(StyleConstants.Units.PX, 75,0,0);
 
         //Set Label & Style
-        node.addAttribute("ui.label", nodeName);
-        node.addAttribute("ui.style", "shape:circle;fill-color: white;size: 50px;" +
+//        node.addAttribute("ui.label", nodeName);
+//        node.addAttribute("ui.style", "shape:circle;fill-color: white;size: 50px;" +
+//                "stroke-color: black;stroke-mode: plain;stroke-width: 1px;" +
+//                "text-alignment: center;text-size: 30px;");
+        node.setAttribute("ui.label", nodeName);
+        node.setAttribute("ui.style", "shape:circle;fill-color: white;size: 50px;" +
                 "stroke-color: black;stroke-mode: plain;stroke-width: 1px;" +
                 "text-alignment: center;text-size: 30px;");
 
-        node.addAttribute("xy", 0, yCoord--);
+//        node.addAttribute("xy", 0, yCoord--);
+        node.setAttribute("xy", 0, yCoord--);
     }
 
     /**
@@ -61,7 +69,10 @@ public class OutputGraph extends GraphParent {
         Edge edge = graph.getEdge(edgeID);
 
         //Add weight label and set edge label & arrow style
-        edge.addAttribute("ui.style", "fill-color: rgb(100,100,100);" +
+//        edge.addAttribute("ui.style", "fill-color: rgb(100,100,100);" +
+//                "text-background-mode: plain;text-size: 20px;" +
+//                "arrow-size: 10px;");
+        edge.setAttribute("ui.style", "fill-color: rgb(100,100,100);" +
                 "text-background-mode: plain;text-size: 20px;" +
                 "arrow-size: 10px;");
     }

@@ -1,6 +1,13 @@
 package se306.scheduler;
 
 import com.martiansoftware.jsap.*;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.stage.Stage;
 import se306.scheduler.exception.InvalidFileFormatException;
 import se306.scheduler.graph.GraphDisplay;
 import se306.scheduler.graph.Node;
@@ -15,7 +22,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
-public class ProcessScheduler implements AlgorithmListener {
+public class ProcessScheduler extends Application implements AlgorithmListener {
 
     private JSAPResult config;
     private DotFile dot;
@@ -24,13 +31,33 @@ public class ProcessScheduler implements AlgorithmListener {
 	public static void main(String[] args) {
 	    ProcessScheduler processScheduler = new ProcessScheduler();
 	    processScheduler.parse(args);
-	    processScheduler.schedule();
+	    processScheduler.schedule(args);
 	}
 	
 	public ProcessScheduler() {
 	    
 	}
-	
+
+	@Override
+	public void start(Stage primaryStage) throws Exception {
+
+		//set event handler for when user presses 'x' button on stage.
+		primaryStage.setOnCloseRequest(evt -> {
+			// prevent window from closing
+			evt.consume();
+
+			// execute own shutdown procedure
+			shutdown();
+		});
+
+		//Change to home screen
+		Parent root = FXMLLoader.load(getClass().getResource("view/Home.fxml"));
+		primaryStage.setTitle("Process Scheduler");
+		primaryStage.setScene(new Scene(root, 1420, 800));
+		primaryStage.show();
+		primaryStage.setResizable(false);
+	}
+
 	public void parse(String[] args) {
         System.err.close();  // Workaround to stop help being printed twice
         SimpleJSAP jsap = buildParser();
@@ -49,22 +76,22 @@ public class ProcessScheduler implements AlgorithmListener {
 //      System.out.println("Output file: " + config.getString("OUTPUT", config.getString("INPUT") + "-output.dot"));
 	}
 	
-	public void schedule() {
+	public void schedule(String[] args) {
         //Algorithm algorithm = new SequentialAlgorithm();
         Algorithm algorithm = new DFSAlgorithm(config.getInt("P"));
         scheduler = new Scheduler(algorithm);
         
         algorithm.addListener(this);
-        
-        // set up graphs if -v flag specified
-        if(config.getBoolean("V")) {
-            
-        }
-        
+
 		try {
 			// attempt to load the input file
 			dot = new DotFile(config.getString("INPUT"));
 			dot.read(scheduler);
+
+			// set up graphs if -v flag specified
+			if(config.getBoolean("V")) {
+				launch(args);
+			}
 
 			//Calculate the schedule
 			scheduler.start();
@@ -115,9 +142,16 @@ public class ProcessScheduler implements AlgorithmListener {
         }
         
         if(config.getBoolean("V")) {
-            GraphDisplay.getGraphDisplay().displayGraph();
-            OutputGraph.getOutputGraph().displayGraph();
+//            GraphDisplay.getGraphDisplay().displayGraph();
+//            OutputGraph.getOutputGraph().displayGraph();
         }
     }
 
+	private void shutdown(){
+		Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to exit?", ButtonType.YES, ButtonType.NO);
+		if (alert.showAndWait().orElse(ButtonType.NO) == ButtonType.YES) {
+			//Quit
+			System.exit(1);
+		}
+	}
 }

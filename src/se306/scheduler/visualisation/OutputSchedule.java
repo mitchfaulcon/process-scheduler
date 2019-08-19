@@ -42,9 +42,9 @@ public class OutputSchedule<X,Y> extends XYChart<X,Y>{
 
     }
 
-    private NumberAxis xAxis = new NumberAxis();
-    private CategoryAxis yAxis = new CategoryAxis();
-    private OutputSchedule<Number, String> instance = new OutputSchedule<>(xAxis,yAxis,1);
+//    private NumberAxis xAxis = new NumberAxis();
+//    private CategoryAxis yAxis = new CategoryAxis();
+//    private OutputSchedule<Number, String> instance = new OutputSchedule<>(xAxis,yAxis,1);
 
     private double blockHeight = 10;
 

@@ -1,10 +1,7 @@
-package se306.scheduler.graph;
+package se306.scheduler.visualisation;
 
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
-import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants;
-import org.graphstream.ui.spriteManager.Sprite;
-import org.graphstream.ui.spriteManager.SpriteManager;
 
 import java.util.Random;
 
@@ -36,16 +33,16 @@ public class GraphDisplay extends GraphParent{
         Node node = graph.getNode(nodeName);
 
         //Add extra label for node weight
-        SpriteManager spriteManager = new SpriteManager(graph);
-        Sprite sprite = spriteManager.addSprite(nodeName);
-        sprite.attachToNode(nodeName);
-//        sprite.addAttribute("ui.label", weight);
-//        sprite.addAttribute("ui.style", "text-background-mode: plain;text-size: 15px;" +
+//        SpriteManager spriteManager = new SpriteManager(graph);
+//        Sprite sprite = spriteManager.addSprite(nodeName, Sprite.class);
+//        sprite.attachToNode(nodeName);
+////        sprite.addAttribute("ui.label", weight);
+////        sprite.addAttribute("ui.style", "text-background-mode: plain;text-size: 15px;" +
+////                "fill-color: white;");
+//        sprite.setAttribute("ui.label", weight);
+//        sprite.setAttribute("ui.style", "text-background-mode: plain;text-size: 15px;" +
 //                "fill-color: white;");
-        sprite.setAttribute("ui.label", weight);
-        sprite.setAttribute("ui.style", "text-background-mode: plain;text-size: 15px;" +
-                "fill-color: white;");
-        sprite.setPosition(StyleConstants.Units.PX, 40,0,0);
+//        sprite.setPosition(StyleConstants.Units.PX, 40,0,0);
 
         //Set Label & Style
 //        node.addAttribute("ui.label", nodeName);
@@ -74,17 +71,16 @@ public class GraphDisplay extends GraphParent{
         String edgeID = node1 + node2;
         graph.addEdge(edgeID, node1, node2, true);
         Edge edge = graph.getEdge(edgeID);
-
-        graph.addEdge(edgeID,"1","2");
+        //System.out.println(edge.toString());
 
         //Add weight label and set edge label & arrow style
 //        edge.addAttribute("ui.label", edgeWeight);
 //        edge.addAttribute("ui.style", "fill-color: rgb(100,100,100);" +
 //                "text-background-mode: plain;text-size: 20px;" +
 //                "arrow-size: 10px;");
-        edge.setAttribute("ui.label", edgeWeight);
-        edge.setAttribute("ui.style", "fill-color: rgb(100,100,100);" +
-                "text-background-mode: plain;text-size: 20px;" +
-                "arrow-size: 10px;");
+//        edge.setAttribute("ui.label", edgeWeight);
+//        edge.setAttribute("ui.style", "fill-color: rgb(100,100,100);" +
+//                "text-background-mode: plain;text-size: 20px;" +
+//                "arrow-size: 10px;");
     }
 }

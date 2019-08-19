@@ -4,6 +4,7 @@ import java.util.Stack;
 
 import se306.scheduler.graph.Node;
 import se306.scheduler.graph.NodeList;
+import se306.scheduler.visualisation.OutputSchedule;
 
 /**
  * Simple implementation of DFS to find the optimal schedule for a list of tasks.
@@ -35,6 +36,7 @@ public class DFSAlgorithm extends Algorithm {
                 if (makespan < bestMakespan) {
                     bestMakespan = makespan;
                     bestSchedule = state;
+//                    OutputSchedule.setSchedule(bestSchedule);
                 }
                 continue;
             }

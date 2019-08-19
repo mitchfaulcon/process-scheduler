@@ -1,7 +1,7 @@
 package se306.scheduler;
 
 import se306.scheduler.exception.InvalidFileFormatException;
-import se306.scheduler.graph.GraphDisplay;
+import se306.scheduler.visualisation.GraphDisplay;
 import se306.scheduler.graph.Node;
 import se306.scheduler.logic.Scheduler;
 

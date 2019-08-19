@@ -25,11 +25,14 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
     private JSAPResult config;
     private DotFile dot;
     private Scheduler scheduler;
+    private static int numProcessors;
     
 	public static void main(String[] args) {
 	    ProcessScheduler processScheduler = new ProcessScheduler();
 	    processScheduler.parse(args);
 	    processScheduler.schedule(args);
+
+	    System.exit(0);
 	}
 	
 	public ProcessScheduler() {
@@ -65,6 +68,8 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
             System.out.println(jsap.getHelp(JSAP.DEFAULT_SCREENWIDTH, ""));
             System.exit(1);
         }
+
+        numProcessors = config.getInt("P");
         
         // Call methods with these values
 //      System.out.println("Input file: " + config.getString("INPUT"));
@@ -144,6 +149,10 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
 //            OutputGraph.getOutputGraph().displayGraph();
         }
     }
+
+    public static int getNumProcessors(){
+		return numProcessors;
+	}
 
 	private void shutdown(){
 		Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to exit?", ButtonType.YES, ButtonType.NO);

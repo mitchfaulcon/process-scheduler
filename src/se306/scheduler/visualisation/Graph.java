@@ -1,4 +1,4 @@
-package se306.scheduler.graph;
+package se306.scheduler.visualisation;
 
 public interface Graph {
     public void addNode(String nodeName, int weight);

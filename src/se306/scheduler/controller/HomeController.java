@@ -1,32 +1,50 @@
 package se306.scheduler.controller;
 
+
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.chart.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Pane;
 import org.graphstream.ui.fx_viewer.FxDefaultView;
 import org.graphstream.ui.fx_viewer.FxViewer;
 import org.graphstream.ui.javafx.FxGraphRenderer;
 import org.graphstream.ui.view.GraphRenderer;
-import se306.scheduler.graph.GraphDisplay;
-import se306.scheduler.logic.Timer;
+import se306.scheduler.ProcessScheduler;
+import se306.scheduler.visualisation.GraphDisplay;
+import se306.scheduler.visualisation.OutputSchedule;
+import se306.scheduler.visualisation.Timer;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class HomeController implements Initializable{
+public class HomeController implements Initializable {
 
     @FXML Label timeDisplay;
     @FXML Button stopTimer;
     @FXML Pane graphPane;
+    @FXML ScrollPane scrollPane;
 
     private Timer timer = new Timer();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
+
+        NumberAxis xAxis = new NumberAxis();
+        CategoryAxis yAxis = new CategoryAxis();
+        int numProcessors = ProcessScheduler.getNumProcessors();
+
+        OutputSchedule outputSchedule = new OutputSchedule<>(xAxis,yAxis, numProcessors);
+
+        outputSchedule.setPrefWidth(1000);
+
+        scrollPane.setFitToHeight(true);
+        scrollPane.setContent(outputSchedule);
 
 //        Platform.runLater(() -> {
 //            Graph graph = GraphDisplay.getGraphDisplay().getGraph();
@@ -51,17 +69,19 @@ public class HomeController implements Initializable{
 //        graphPane.getChildren().add(fxDefaultView);
 //        });
 
-        org.graphstream.graph.Graph graph = GraphDisplay.getGraphDisplay().getGraph();
+        Platform.runLater(() -> {
+            org.graphstream.graph.Graph graph = GraphDisplay.getGraphDisplay().getGraph();
+            System.setProperty("org.graphstream.ui.javafx.renderer", "org.graphstream.ui.javafx.FxGraphRenderer");
 
-        System.setProperty("org.graphstream.ui.javafx.renderer", "org.graphstream.ui.javafx.FxGraphRenderer");
+            FxViewer fxViewer = new FxViewer(graph, FxViewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
+            GraphRenderer renderer = new FxGraphRenderer();
 
-        FxViewer fxViewer = new FxViewer(graph, FxViewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
-        GraphRenderer renderer = new FxGraphRenderer();
+            FxDefaultView view = (FxDefaultView) fxViewer.addView(FxViewer.DEFAULT_VIEW_ID, renderer);
 
-        FxDefaultView view = (FxDefaultView) fxViewer.addView(FxViewer.DEFAULT_VIEW_ID, renderer);
 
-        view.setPrefSize(graphPane.getPrefWidth(), graphPane.getPrefHeight());
-        graphPane.getChildren().add(view);
+            view.setPrefSize(graphPane.getPrefWidth(), graphPane.getPrefHeight());
+            graphPane.getChildren().add(view);
+        });
 
 
         //Set initial timer label

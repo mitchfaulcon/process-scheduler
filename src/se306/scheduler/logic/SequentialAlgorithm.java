@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import se306.scheduler.graph.Node;
-import se306.scheduler.graph.OutputGraph;
+import se306.scheduler.visualisation.OutputGraph;
 
 /**
  * Finds a valid schedule by scheduling all tasks on the same processor.

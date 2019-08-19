@@ -1,4 +1,4 @@
-package se306.scheduler.logic;
+package se306.scheduler.visualisation;
 
 import javafx.beans.property.SimpleStringProperty;
 

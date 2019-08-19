@@ -1,11 +1,11 @@
-package se306.scheduler.graph;
+package se306.scheduler.visualisation;
 
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.SingleGraph;
 
 import javax.swing.*;
 
-public abstract class GraphParent implements se306.scheduler.graph.Graph {
+public abstract class GraphParent implements se306.scheduler.visualisation.Graph {
 
     Graph graph = new SingleGraph("graphDisplay", false, true);
     String title = "Graph";

@@ -1,4 +1,4 @@
-package se306.scheduler.graph;
+package se306.scheduler.visualisation;
 
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;

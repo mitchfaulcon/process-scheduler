@@ -18,7 +18,7 @@ public class Node {
     }
     
     /**
-     * Creates a new node using the properties of the supplied one, including parents and children.
+     * Creates a new node using the properties of the supplied one, including parents.
      */
     public Node(Node node) {
         this.name = node.name;

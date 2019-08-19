@@ -17,8 +17,6 @@ public class DFSAlgorithm extends Algorithm {
 
     @Override
     public void schedule() {
-        System.out.println("scheduling");
-        
         Stack<NodeList> stack = new Stack<NodeList>();
         
         // add initial state
@@ -41,7 +39,7 @@ public class DFSAlgorithm extends Algorithm {
                 continue;
             }
             
-            for (Node node: state.getUnvisited()) {
+            for (Node node: state.getUnvisitedNodes()) {
                 // check if the node's parents have all been scheduled
                 if (state.dependenciesSatisfied(node)) {
                     // create new states by adding the new node to every processor
@@ -54,6 +52,7 @@ public class DFSAlgorithm extends Algorithm {
                         Node newNode = newState.getNode(node.getName());
                         newNode.setProcessor(p);
                         newNode.setStartTime(bestStart);
+                        newState.visitNode(node.getName());
                         
                         stack.push(newState);
                         

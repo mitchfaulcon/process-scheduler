@@ -2,14 +2,20 @@ package se306.scheduler.graph;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class NodeList {
     private Map<String, Node> nodes;
+    private Set<String> visited;
+    private Set<String> unvisited;
     
     public NodeList() {
         nodes = new HashMap<String, Node>();
+        visited = new HashSet<String>();
+        unvisited = new HashSet<String>();
     }
     
     public NodeList(List<Node> nodes) {
@@ -17,10 +23,16 @@ public class NodeList {
         for (Node node: nodes) {
             this.nodes.put(node.getName(), node);
         }
+
+        visited = new HashSet<String>();
+        unvisited = new HashSet<String>(this.nodes.keySet());
     }
     
     public NodeList(Map<String, Node> nodes) {
         this.nodes = nodes;
+
+        visited = new HashSet<String>();
+        unvisited = new HashSet<String>(this.nodes.keySet());
     }
     
     /**
@@ -30,11 +42,13 @@ public class NodeList {
         Map<String, Node> oldNodes = nodeList.getNodes();
         nodes = new HashMap<String, Node>();
         
-        // copy simple fields only
         for (Map.Entry<String, Node> entry: oldNodes.entrySet()) {
             Node newNode = new Node(entry.getValue());
             nodes.put(entry.getKey(), newNode);
         }
+
+        this.visited = new HashSet<String>(nodeList.getVisited());
+        this.unvisited = new HashSet<String>(nodeList.getUnvisited());
     }
     
     /**
@@ -48,34 +62,34 @@ public class NodeList {
         }
         return true;
     }
+    
+    public Set<Node> getUnvisitedNodes() {
+        Set<Node> unvisitedNodes = new HashSet<Node>();
+        for (String nodeName: unvisited) {
+            unvisitedNodes.add(nodes.get(nodeName));
+        }
+        return unvisitedNodes;
+    }
 
     /**
-     * Returns a list of all unvisited nodes (not assigned to any processor).
+     * Returns a set of all unvisited nodes.
      */
-    public List<Node> getUnvisited() {
-        // TODO: make this faster by storing unvisited nodes and modifying nodes through this class rather than directly
-        List<Node> unvisited = new ArrayList<Node>();
-        for (Node node: nodes.values()) {
-            if (!node.isVisited()) {
-                unvisited.add(node);
-            }
-        }
+    private Set<String> getUnvisited() {
         return unvisited;
     }
     
     /**
-     * Returns a list of all visited nodes (assigned to a processor).
+     * Returns a set of all visited node names.
      */
-    public List<Node> getVisited() {
-        List<Node> visited = new ArrayList<Node>();
-        for (Node node: nodes.values()) {
-            if (node.isVisited()) {
-                visited.add(node);
-            }
-        }
+    private Set<String> getVisited() {
         return visited;
     }
 
+    public void visitNode(String nodeName) {
+        visited.add(nodeName);
+        unvisited.remove(nodeName);
+    }
+    
     /**
      * Checks if all of a node's dependencies have already been assigned to processors.
      */
@@ -113,7 +127,8 @@ public class NodeList {
         int bestStartTime = 0;
         
         // a node cannot start until all previous nodes on that processor have finished
-        for (Node node: getVisited()) {
+        for (String nodeName: getVisited()) {
+            Node node = nodes.get(nodeName);
             if (node.getProcessor() == processor) {
                 int finishTime = node.getFinishTime();
                 if (finishTime > bestStartTime) {

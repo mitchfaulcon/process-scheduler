@@ -1,17 +1,25 @@
 package se306.scheduler.graph;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class NodeList {
-    private List<Node> nodes;
+    private Map<String, Node> nodes;
     
     public NodeList() {
-        nodes = new ArrayList<Node>();
+        nodes = new HashMap<String, Node>();
     }
     
     public NodeList(List<Node> nodes) {
+        this.nodes = new HashMap<String, Node>();
+        for (Node node: nodes) {
+            this.nodes.put(node.getName(), node);
+        }
+    }
+    
+    public NodeList(Map<String, Node> nodes) {
         this.nodes = nodes;
     }
     
@@ -19,25 +27,13 @@ public class NodeList {
      * Returns a deep copy of the supplied NodeList and its contents
      */
     public NodeList(NodeList nodeList) {
-        List<Node> oldNodes = nodeList.getNodes();
-        nodes = new ArrayList<Node>();
+        Map<String, Node> oldNodes = nodeList.getNodes();
+        nodes = new HashMap<String, Node>();
         
         // copy simple fields only
-        for (Node oldNode: oldNodes) {
-            Node newNode = new Node(oldNode);
-            nodes.add(newNode);
-        }
-        
-        // copy all parent/child relationships
-        for (Node oldNode: oldNodes) {
-            Node newNode = getNode(oldNode.getName());
-            for (Map.Entry<String, Integer> item: oldNode.getChildCosts().entrySet()) {
-                Node oldChild = nodeList.getNode(item.getKey());
-                int edgeCost = item.getValue();
-                Node newChildNode = getNode(oldChild.getName());
-                
-                newNode.addChild(newChildNode, edgeCost);
-            }
+        for (Map.Entry<String, Node> entry: oldNodes.entrySet()) {
+            Node newNode = new Node(entry.getValue());
+            nodes.put(entry.getKey(), newNode);
         }
     }
     
@@ -45,7 +41,7 @@ public class NodeList {
      * Checks if all nodes in the schedule have been visited, in which case the schedule is complete.
      */
     public boolean allVisited() {
-        for (Node node: nodes) {
+        for (Node node: nodes.values()) {
             if (!node.isVisited()) {
                 return false;
             }
@@ -59,7 +55,7 @@ public class NodeList {
     public List<Node> getUnvisited() {
         // TODO: make this faster by storing unvisited nodes and modifying nodes through this class rather than directly
         List<Node> unvisited = new ArrayList<Node>();
-        for (Node node: nodes) {
+        for (Node node: nodes.values()) {
             if (!node.isVisited()) {
                 unvisited.add(node);
             }
@@ -72,7 +68,7 @@ public class NodeList {
      */
     public List<Node> getVisited() {
         List<Node> visited = new ArrayList<Node>();
-        for (Node node: nodes) {
+        for (Node node: nodes.values()) {
             if (node.isVisited()) {
                 visited.add(node);
             }
@@ -84,7 +80,8 @@ public class NodeList {
      * Checks if all of a node's dependencies have already been assigned to processors.
      */
     public boolean dependenciesSatisfied(Node node) {
-        for (Node parent: node.getParents()) {
+        for (String parentName: node.getParents().keySet()) {
+            Node parent = nodes.get(parentName);
             if (!parent.isVisited()) {
                 return false;
             }
@@ -97,7 +94,7 @@ public class NodeList {
      */
     public int getMakespan() {
         int makespan = 0;
-        for (Node node: nodes) {
+        for (Node node: nodes.values()) {
             int finishTime = node.getFinishTime();
             if (finishTime > makespan) {
                 makespan = finishTime;
@@ -126,11 +123,13 @@ public class NodeList {
         }
         
         // account for dependency 'edge costs'
-        for (Node node: newNode.getParents()) {
+        for (Map.Entry<String, Integer> parentEntry: newNode.getParents().entrySet()) {
+            Node parent = nodes.get(parentEntry.getKey());
+            int edgeCost = parentEntry.getValue();
             // edge costs only are counted if the node is on a different processor to its parent
-            if (node.getProcessor() != processor) {
+            if (parent.getProcessor() != processor) {
                 // TODO: node should have weights stored with parents not with children
-                int newStartTime = node.getFinishTime() + node.getChildCosts().get(newNode.getName());
+                int newStartTime = parent.getFinishTime() + edgeCost;
                 if (newStartTime > bestStartTime) {
                     bestStartTime = newStartTime;
                 }
@@ -140,35 +139,33 @@ public class NodeList {
         return bestStartTime;
     }
     
-    public List<Node> getNodes() {
+    public Map<String, Node> getNodes() {
         return nodes;
+    }
+    
+    /**
+     * Returns the nodes using a list representation.
+     */
+    public List<Node> toList() {
+        return new ArrayList<Node>(nodes.values());
     }
     
     /**
      * Returns the node with this name.
      */
     public Node getNode(String name) {
-        for (Node node: nodes) {
-            if (node.getName() == name) {
-                return node;
-            }
-        }
-        return null;
+        return nodes.get(name);
     }
     
     @Override
     public String toString() {
-        String output = "";
-        for (int i = 0; i < nodes.size(); i++) {
-            if (!nodes.get(i).isVisited()) {
+        List<String> strings = new ArrayList<String>();
+        for (Node node: nodes.values()) {
+            if (node.isVisited()) {
                 continue;
             }
-            output += nodes.get(i);
-            
-            if (i != nodes.size() - 1) {
-                output += ", ";
-            }
+            strings.add(node.toString());
         }
-        return output;
+        return String.join(", ", strings);
     }
 }

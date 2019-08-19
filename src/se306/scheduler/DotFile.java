@@ -199,14 +199,20 @@ public class DotFile {
         // a map of both tasks in a dependency to output string, which we will later access in the order specified by `lineRecords`
         // the dependency task names are joined by a space
         Map<String, String> dependencyStrings = new HashMap<String, String>();
+        
+        // necessary for lookup because we don't store children in the Node class
+        Map<String, Node> nodeMap = new HashMap<String, Node>();
+        for (Node node: nodes) {
+            nodeMap.put(node.getName(), node);
+        }
+        
         // generate all dependency strings
         for (Node node: nodes) {
-            List<Node> children = node.getChildren();
-            Map<String, Integer> childCosts = node.getChildCosts();
-            for (Node child: children) {
-                String dependencyKey = node.getName() + " " + child.getName();
-                dependencyStrings.put(dependencyKey, String.format("\t%s -> %s\t[Weight=%d];" + LS, node.getName(), child.getName(),
-                        childCosts.get(child.getName())));
+            for (Map.Entry<String, Integer> entry: node.getParents().entrySet()) {
+                Node parent = nodeMap.get(entry.getKey());
+                String dependencyKey = parent.getName() + " " + node.getName();
+                dependencyStrings.put(dependencyKey, String.format("\t%s -> %s\t[Weight=%d];" + LS, parent.getName(), node.getName(),
+                        entry.getValue()));
             }
         }
         

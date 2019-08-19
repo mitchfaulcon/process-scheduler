@@ -28,10 +28,10 @@ public class DFSAlgorithmTest {
         Node b = new Node("b", 3);
         Node c = new Node("c", 3);
         Node d = new Node("d", 2);
-        a.addChild(b, 1);
-        a.addChild(c, 2);
-        b.addChild(d, 2);
-        c.addChild(d, 1);
+        b.addParent("a", 1);
+        c.addParent("a", 2);
+        d.addParent("b", 2);
+        d.addParent("c", 1);
         graph.addAll(Arrays.asList(a, b, c, d));
         
         Algorithm algorithm = new DFSAlgorithm(2);

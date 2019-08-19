@@ -17,6 +17,8 @@ public class DFSAlgorithm extends Algorithm {
 
     @Override
     public void schedule() {
+        System.out.println("scheduling");
+        
         Stack<NodeList> stack = new Stack<NodeList>();
         
         // add initial state
@@ -64,9 +66,9 @@ public class DFSAlgorithm extends Algorithm {
                 }
             }
         }
-        
-        // TODO: use NodeList everywhere instead of List<Node>
-        completed(bestSchedule.getNodes());
+
+        System.out.println(bestSchedule);
+        completed(bestSchedule.toList());
     }
 
 }

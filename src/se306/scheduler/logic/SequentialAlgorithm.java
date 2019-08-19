@@ -1,7 +1,9 @@
 package se306.scheduler.logic;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import se306.scheduler.graph.Node;
 import se306.scheduler.graph.OutputGraph;
@@ -20,6 +22,13 @@ public class SequentialAlgorithm extends Algorithm {
     public void schedule() {
         // As nodes are reached in main loop they will be removed from here
         List<Node> unreached = new ArrayList<>(graph);
+        
+        // this is necessary after some changes made to Node, but not going to rework the whole algorithm
+        Map<String, Node> nodeMap = new HashMap<String, Node>();
+        for (Node node: unreached) {
+            nodeMap.put(node.getName(), node);
+        }
+        
         boolean parentsFound;
         int currentTime = 0;
         int i = 0;
@@ -44,7 +53,8 @@ public class SequentialAlgorithm extends Algorithm {
             for (j = 0; j < unreached.size(); j++) {
                 parentsFound = true;
                 // finding if all parents are reached (nodes can only run if all parents reached)
-                for (Node parent: unreached.get(j).getParents()) {
+                for (String parentName: unreached.get(j).getParents().keySet()) {
+                    Node parent = nodeMap.get(parentName);
                     if (unreached.contains(parent)) {
                         parentsFound = false;
                         break;

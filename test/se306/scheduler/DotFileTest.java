@@ -57,14 +57,14 @@ public class DotFileTest {
         Node nodeC = nodes.get(2);
         Node nodeD = nodes.get(3);
         
-        assertEquals(2, nodeA.getChildren().size(), "Node A should have 2 children");
-        assertTrue(nodeA.getChildCosts().containsKey("b") && nodeA.getChildCosts().containsKey("c"),
-                "Node A should have Nodes B & C as its children");
-        assertEquals(1, nodeB.getChildren().size(), "Node B should have 1 child");
-        assertTrue(nodeB.getChildCosts().containsKey("d"), "Node B should have Node D as its child");
-        assertEquals(1, nodeC.getChildren().size(), "Node C should have 1 child");
-        assertTrue(nodeC.getChildCosts().containsKey("d"), "Node C should have Node D as its child");
-        assertEquals(0, nodeD.getChildren().size(), "Node D should have 0 children");
+        assertEquals(0, nodeA.getParents().size(), "Node A should have 0 parents");
+        assertEquals(1, nodeB.getParents().size(), "Node B should have 1 parent");
+        assertTrue(nodeB.getParents().containsKey("a"), "Node B should have Node A as its parent");
+        assertEquals(1, nodeC.getParents().size(), "Node C should have 1 parent");
+        assertTrue(nodeC.getParents().containsKey("a"), "Node C should have Node A as its parent");
+        assertEquals(2, nodeD.getParents().size(), "Node D should have 2 parents");
+        assertTrue(nodeD.getParents().containsKey("b") && nodeD.getParents().containsKey("c"),
+                "Node D should have Nodes B & C as its parents");
     }
     
     /**

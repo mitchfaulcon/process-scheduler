@@ -18,7 +18,6 @@ class NodeClassTest {
         assertEquals("a", nodeA.getName(), "Node name should be 'a'");
         assertEquals(2, nodeA.getWeight(), "Node weight should be 2");
         assertEquals(0, nodeA.getParents().size(), "Node should have no parents");
-        assertEquals(0, nodeA.getChildren().size(), "Node should have no children");
     }
 
     /**
@@ -28,16 +27,13 @@ class NodeClassTest {
     void testNodeWithChild(){
         Node nodeA = new Node("a", 2);
         Node nodeB = new Node("b", 3);
-        nodeA.addChild(nodeB, 1);
+        nodeB.addParent("a", 1);
 
-        assertEquals(1, nodeA.getChildren().size(), "Node A should have 1 child");
         assertEquals(0, nodeA.getParents().size(), "Node A should have 0 parents");
-        assertTrue(nodeA.getChildCosts().containsKey("b"), "Node A should have Node B as its child");
-        assertEquals(new Integer(1), nodeA.getChildCosts().get("b"),
-                "The edge weight between Node A and Node B should be 1");
-        assertEquals(0, nodeB.getChildren().size(), "Node B should have 0 children");
         assertEquals(1, nodeB.getParents().size(), "Node B should have 1 parent");
-        assertTrue(nodeB.getParents().contains(nodeA), "Node B should have Node A as its parent");
+        assertTrue(nodeB.getParents().containsKey("a"), "Node B should have Node A as its parent");
+        assertEquals(new Integer(1), nodeB.getParents().get("a"),
+                "The edge weight between Node A and Node B should be 1");
     }
 
     /**

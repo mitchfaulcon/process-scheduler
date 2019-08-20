@@ -61,7 +61,7 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
 	}
 
 	public void parse(String[] args) {
-        System.err.close();  // Workaround to stop help being printed twice
+//        System.err.close();  // Workaround to stop help being printed twice
         SimpleJSAP jsap = buildParser();
         config = jsap.parse(args);
         if (!config.success()) {

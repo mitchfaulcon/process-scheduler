@@ -41,35 +41,26 @@ public class HomeController implements Initializable, AlgorithmListener {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-
+        //Display output schedule
         NumberAxis xAxis = new NumberAxis();
         CategoryAxis yAxis = new CategoryAxis();
         int numProcessors = ProcessScheduler.getNumProcessors();
-
         outputSchedule = new OutputSchedule<>(xAxis,yAxis, numProcessors, scrollPane.getPrefHeight());
-
         scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(true);
         scrollPane.setContent(outputSchedule);
 
         //Display graph
         org.graphstream.graph.Graph graph = GraphDisplay.getGraphDisplay().getGraph();
-        System.setProperty("org.graphstream.ui.javafx.renderer", "org.graphstream.ui.javafx.FxGraphRenderer");
-
-        FxViewer fxViewer = new FxViewer(graph, FxViewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
+        FxViewer fxViewer = new FxViewer(graph, FxViewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
         GraphRenderer renderer = new FxGraphRenderer();
-
         FxDefaultView view = (FxDefaultView) fxViewer.addView(FxViewer.DEFAULT_VIEW_ID, renderer);
-
-
         view.setPrefSize(graphPane.getPrefWidth(), graphPane.getPrefHeight());
         graphPane.getChildren().add(view);
-
 
         //Get same scheduler & algorithm objects from main class
         Scheduler scheduler = ProcessScheduler.getScheduler();
         Algorithm algorithm = ProcessScheduler.getAlgorithm();
-
         algorithm.addListener(this);
 
         //Set initial timer label
@@ -80,7 +71,6 @@ public class HomeController implements Initializable, AlgorithmListener {
             //Update label in application thread
             Platform.runLater(() -> timeDisplay.setText(timer.getSspTime().get()));
         });
-
         timer.startTimer(0);
 
         //Calculate optimal schedule in new thread
@@ -98,11 +88,11 @@ public class HomeController implements Initializable, AlgorithmListener {
     @Override
     public void algorithmCompleted(List<Node> schedule) {
         timer.stopTimer();
-        outputSchedule.update(schedule);
     }
 
     @Override
     public void newOptimalFound(List<Node> schedule) {
-        outputSchedule.update(schedule);
+        //Update output schedule in GUI thread
+        Platform.runLater(() -> outputSchedule.update(schedule));
     }
 }

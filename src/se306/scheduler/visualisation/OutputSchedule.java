@@ -24,6 +24,7 @@ public class OutputSchedule<X,Y> extends XYChart<X,Y>{
         HoveredThresholdNode(Node node) {
             setPrefSize(15, 15);
 
+            //Add label with node description
             final Label label = new Label("Node: " + node.getName() +"\n" +
                     "Start Time: " + node.getStartTime() +"\n" +
                     "Finish Time: " + node.getFinishTime());
@@ -62,17 +63,12 @@ public class OutputSchedule<X,Y> extends XYChart<X,Y>{
 
     }
 
-    private double blockHeight = 10;
+    private double blockHeight;
     private String[] labels;
 
     public void update(List<Node> newSchedule){
 
-        //TODO Why does this not update sometimes
         this.getData().clear();
-
-        //Debugging
-//        System.out.println(this.getData().toString());
-//        System.out.println();
 
         //Run through each processor
         for (int processor=0; processor<labels.length; processor++){
@@ -81,7 +77,6 @@ public class OutputSchedule<X,Y> extends XYChart<X,Y>{
             //Check if any node is scheduled in that processor
             for (Node node: newSchedule){
                 if (node.getProcessor()-1==processor){
-//                    System.out.println(node.toString());
                     //Add node data to graph
                     Data data = new Data<>(node.getStartTime(), labels[processor], new ExtraData(node.getWeight(), "status-"+node.getName()));
                     data.setNode(new HoveredThresholdNode(node));
@@ -90,8 +85,6 @@ public class OutputSchedule<X,Y> extends XYChart<X,Y>{
             }
             this.getData().addAll(series);
         }
-//        System.out.println(this.getData().toString());
-//        layoutPlotChildren();
     }
 
     public OutputSchedule(Axis<X> xAxis, Axis<Y> yAxis, int numProcessors, double windowHeight) {
@@ -107,8 +100,8 @@ public class OutputSchedule<X,Y> extends XYChart<X,Y>{
             throw new IllegalArgumentException("Axis type incorrect, X should be NumberAxis and Y should be CategoryAxis");
         }
         //Apply Y-axis labels
-        ((CategoryAxis) yAxis).setCategories(FXCollections.observableArrayList(Arrays.asList(labels)));
         setData(FXCollections.observableArrayList());
+        ((CategoryAxis) yAxis).setCategories(FXCollections.observableArrayList(Arrays.asList(labels)));
 
         ((NumberAxis) xAxis).setMinorTickCount(0);
 

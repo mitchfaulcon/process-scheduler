@@ -52,18 +52,15 @@ public class DFSAlgorithm extends Algorithm {
                         // find the earliest time the new node can be added on this processor
                         int bestStart = state.findBestStartTime(node, p);
 
-                        // add the node at this time, note we have to deep copy the whole tree to do this which is slow
+                        // add the node at this time
                         NodeList newState = new NodeList(state);
-                        Node newNode = newState.getNode(node.getName());
-                        newNode.setProcessor(p);
-                        newNode.setStartTime(bestStart);
-                        newState.visitNode(node.getName());
+                        boolean isFirstOnProcessor = newState.scheduleTask(node.getName(), p, bestStart);
 
                         stack.push(newState);
 
-                        // if this task can be placed at the very start of a processor then trying to place the
+                        // if this task is placed as the first task on a processor then trying to place the
                         // task on any subsequent processor will create an effectively identical schedule
-                        if (bestStart == 0) {
+                        if (isFirstOnProcessor) {
                             break;
                         }
                     }

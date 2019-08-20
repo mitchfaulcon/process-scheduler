@@ -1,28 +1,56 @@
 package se306.scheduler.visualisation;
 
-import javafx.beans.NamedArg;
-import javafx.beans.property.ObjectProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.chart.*;
+import javafx.scene.chart.Axis;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
+import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
-import se306.scheduler.graph.NodeList;
+import se306.scheduler.graph.Node;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
+import static javafx.geometry.Pos.CENTER;
+
+/* Class to display output schedule in a graph
+ * Adapted from code at https://stackoverflow.com/questions/27975898/gantt-chart-from-scratch
+ */
 public class OutputSchedule<X,Y> extends XYChart<X,Y>{
+
+    /** a node which displays a value on hover, but is otherwise empty */
+    class HoveredThresholdNode extends StackPane {
+        HoveredThresholdNode(Node node) {
+            setPrefSize(15, 15);
+
+            final Label label = new Label("Node: " + node.getName() +"\n" +
+                    "Start Time: " + node.getStartTime() +"\n" +
+                    "Finish Time: " + node.getFinishTime());
+            label.setMinSize(120,80);
+            label.setStyle("-fx-background-color:lightgrey;" +
+                    "-fx-background-radius: 10;");
+            label.setAlignment(CENTER);
+
+            setOnMouseEntered(mouseEvent -> {
+                label.setTranslateX(mouseEvent.getX());
+                label.setTranslateY(mouseEvent.getY());
+                getChildren().setAll(label);
+                toFront();
+            });
+            setOnMouseExited(mouseEvent -> {
+                getChildren().clear();
+            });
+        }
+    }
 
     public static class ExtraData {
 
-        public double length;
+        public int length;
         public String styleClass;
 
 
-        public ExtraData(double lengthMs, String styleClass) {
+        public ExtraData(int lengthMs, String styleClass) {
             super();
             this.length = lengthMs;
             this.styleClass = styleClass;
@@ -30,40 +58,55 @@ public class OutputSchedule<X,Y> extends XYChart<X,Y>{
         public double getLength() {
             return length;
         }
-        public void setLength(long length) {
-            this.length = length;
-        }
-        public String getStyleClass() {
-            return styleClass;
-        }
-        public void setStyleClass(String styleClass) {
-            this.styleClass = styleClass;
-        }
 
 
     }
 
-//    private NumberAxis xAxis = new NumberAxis();
-//    private CategoryAxis yAxis = new CategoryAxis();
-//    private OutputSchedule<Number, String> instance = new OutputSchedule<>(xAxis,yAxis,1);
-
     private double blockHeight = 10;
+    private String[] labels;
 
-//    public static void setSchedule(NodeList nodeList){
-//        this.getData().add();
-//    }
+    public void update(List<Node> newSchedule){
 
-    public OutputSchedule(Axis<X> xAxis, Axis<Y> yAxis, int numProcessors) {
-//        this(xAxis, yAxis, FXCollections.<Series<X, Y>>observableArrayList());
+        //TODO Why does this not update sometimes
+        this.getData().clear();
+
+        //Debugging
+//        System.out.println(this.getData().toString());
+//        System.out.println();
+
+        //Run through each processor
+        for (int processor=0; processor<labels.length; processor++){
+            Series series = new Series();
+
+            //Check if any node is scheduled in that processor
+            for (Node node: newSchedule){
+                if (node.getProcessor()-1==processor){
+//                    System.out.println(node.toString());
+                    //Add node data to graph
+                    Data data = new Data<>(node.getStartTime(), labels[processor], new ExtraData(node.getWeight(), "status-"+node.getName()));
+                    data.setNode(new HoveredThresholdNode(node));
+                    series.getData().add(data);
+                }
+            }
+            this.getData().addAll(series);
+        }
+//        System.out.println(this.getData().toString());
+//        layoutPlotChildren();
+    }
+
+    public OutputSchedule(Axis<X> xAxis, Axis<Y> yAxis, int numProcessors, double windowHeight) {
         super(xAxis,yAxis);
 
-        String[] labels = new String[numProcessors];
+        //Create correct labels for Y-axis
+        labels = new String[numProcessors];
         for (int i=0; i<numProcessors; i++){
             labels[i] = "Processor " + Integer.toString(i+1);
         }
+
         if (!(xAxis instanceof NumberAxis && yAxis instanceof CategoryAxis)){
             throw new IllegalArgumentException("Axis type incorrect, X should be NumberAxis and Y should be CategoryAxis");
         }
+        //Apply Y-axis labels
         ((CategoryAxis) yAxis).setCategories(FXCollections.observableArrayList(Arrays.asList(labels)));
         setData(FXCollections.observableArrayList());
 
@@ -71,25 +114,9 @@ public class OutputSchedule<X,Y> extends XYChart<X,Y>{
 
         this.setAnimated(false);
 
-        Series series = new Series();
+        //Set block height based on parent window size
+        blockHeight = 0.8 * windowHeight/numProcessors;
 
-        series.getData().add(new Data<>(0, labels[0], new ExtraData(0.1, "status-red")));
-
-
-        this.getStylesheets().add(getClass().getResource("outputSchedule.css").toExternalForm());
-        this.getData().addAll(series);
-    }
-
-//    public OutputSchedule(@NamedArg("xAxis") Axis<X> xAxis, @NamedArg("yAxis") Axis<Y> yAxis, @NamedArg("data") ObservableList<Series<X,Y>> data) {
-//        super(xAxis, yAxis);
-//        if (!(xAxis instanceof ValueAxis && yAxis instanceof CategoryAxis)) {
-//            throw new IllegalArgumentException("Axis type incorrect, X and Y should both be NumberAxis");
-//        }
-//        setData(data);
-//    }
-
-    private static String getStyleClass( Object obj) {
-        return ((ExtraData) obj).getStyleClass();
     }
 
     private static double getLength( Object obj) {
@@ -111,26 +138,23 @@ public class OutputSchedule<X,Y> extends XYChart<X,Y>{
                     continue;
                 }
                 javafx.scene.Node block = item.getNode();
-                Rectangle ellipse;
+                Rectangle rectangle;
                 if (block != null) {
                     if (block instanceof StackPane) {
                         StackPane region = (StackPane)item.getNode();
                         if (region.getShape() == null) {
-                            ellipse = new Rectangle( getLength( item.getExtraValue()), getBlockHeight());
+                            rectangle = new Rectangle( getLength( item.getExtraValue()), getBlockHeight());
                         } else if (region.getShape() instanceof Rectangle) {
-                            ellipse = (Rectangle)region.getShape();
+                            rectangle = (Rectangle)region.getShape();
                         } else {
                             return;
                         }
-                        ellipse.setWidth( getLength( item.getExtraValue()) * ((getXAxis() instanceof NumberAxis) ? Math.abs(((NumberAxis)getXAxis()).getScale()) : 1));
-                        ellipse.setHeight(getBlockHeight() * ((getYAxis() instanceof NumberAxis) ? Math.abs(((NumberAxis)getYAxis()).getScale()) : 1));
+                        rectangle.setWidth( getLength( item.getExtraValue()) * ((getXAxis() instanceof NumberAxis) ? Math.abs(((NumberAxis)getXAxis()).getScale()) : 1));
+                        rectangle.setHeight(getBlockHeight() * ((getYAxis() instanceof NumberAxis) ? Math.abs(((NumberAxis)getYAxis()).getScale()) : 1));
                         y -= getBlockHeight() / 2.0;
 
-                        // Note: workaround for RT-7689 - saw this in ProgressControlSkin
-                        // The region doesn't update itself when the shape is mutated in place, so we
-                        // null out and then restore the shape in order to force invalidation.
                         region.setShape(null);
-                        region.setShape(ellipse);
+                        region.setShape(rectangle);
                         region.setScaleShape(false);
                         region.setCenterShape(false);
                         region.setCacheShape(false);
@@ -147,12 +171,8 @@ public class OutputSchedule<X,Y> extends XYChart<X,Y>{
         return blockHeight;
     }
 
-    public void setBlockHeight( double blockHeight) {
-        this.blockHeight = blockHeight;
-    }
-
     @Override protected void dataItemAdded(Series<X,Y> series, int itemIndex, Data<X,Y> item) {
-        javafx.scene.Node block = createContainer(series, getData().indexOf(series), item, itemIndex);
+        javafx.scene.Node block = createContainer(item);
         getPlotChildren().add(block);
     }
 
@@ -168,7 +188,7 @@ public class OutputSchedule<X,Y> extends XYChart<X,Y>{
     @Override protected  void seriesAdded(Series<X,Y> series, int seriesIndex) {
         for (int j=0; j<series.getData().size(); j++) {
             Data<X,Y> item = series.getData().get(j);
-            javafx.scene.Node container = createContainer(series, seriesIndex, item, j);
+            javafx.scene.Node container = createContainer(item);
             getPlotChildren().add(container);
         }
     }
@@ -183,7 +203,7 @@ public class OutputSchedule<X,Y> extends XYChart<X,Y>{
     }
 
 
-    private javafx.scene.Node createContainer(Series<X, Y> series, int seriesIndex, final Data<X,Y> item, int itemIndex) {
+    private javafx.scene.Node createContainer(final Data<X,Y> item) {
 
         javafx.scene.Node container = item.getNode();
 
@@ -192,7 +212,13 @@ public class OutputSchedule<X,Y> extends XYChart<X,Y>{
             item.setNode(container);
         }
 
-        container.getStyleClass().add( getStyleClass( item.getExtraValue()));
+        //Randomly pick a shade of blue for block
+        Random random = new Random();
+        int red = random.nextInt(100);
+        int green = random.nextInt(150);
+        int blue = 255;
+        String colour = "rgb(" + Integer.toString(red) + "," + Integer.toString(green) + "," + Integer.toString(blue) + ");";
+        container.setStyle("-fx-background-color:" + colour + ";");
 
         return container;
     }

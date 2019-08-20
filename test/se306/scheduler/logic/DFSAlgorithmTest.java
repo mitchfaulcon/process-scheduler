@@ -44,6 +44,11 @@ public class DFSAlgorithmTest {
             public void algorithmCompleted(List<Node> schedule) {
                 outputSchedule.complete(schedule);
             }
+
+            @Override
+            public void newOptimalFound(List<Node> schedule) {
+                
+            }
         });
         algorithm.schedule();
         

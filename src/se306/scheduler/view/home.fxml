@@ -30,7 +30,7 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <ScrollPane fx:id="scrollPane" prefHeight="1072.0" prefWidth="779.0" GridPane.columnIndex="1" />
+                  <ScrollPane fx:id="scrollPane" prefHeight="627.0" prefWidth="710.0" GridPane.columnIndex="1" />
                   <Pane fx:id="graphPane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="643.0" prefWidth="702.0" translateX="3.0" translateY="1.0" />
                </children>
             </GridPane>

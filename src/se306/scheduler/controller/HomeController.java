@@ -5,7 +5,8 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.chart.*;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -15,20 +16,26 @@ import org.graphstream.ui.fx_viewer.FxViewer;
 import org.graphstream.ui.javafx.FxGraphRenderer;
 import org.graphstream.ui.view.GraphRenderer;
 import se306.scheduler.ProcessScheduler;
+import se306.scheduler.graph.Node;
+import se306.scheduler.logic.Algorithm;
+import se306.scheduler.logic.AlgorithmListener;
+import se306.scheduler.logic.Scheduler;
 import se306.scheduler.visualisation.GraphDisplay;
 import se306.scheduler.visualisation.OutputSchedule;
 import se306.scheduler.visualisation.Timer;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
-public class HomeController implements Initializable {
+public class HomeController implements Initializable, AlgorithmListener {
 
     @FXML Label timeDisplay;
     @FXML Button stopTimer;
     @FXML Pane graphPane;
     @FXML ScrollPane scrollPane;
 
+    private OutputSchedule outputSchedule;
     private Timer timer = new Timer();
 
     @Override
@@ -39,50 +46,31 @@ public class HomeController implements Initializable {
         CategoryAxis yAxis = new CategoryAxis();
         int numProcessors = ProcessScheduler.getNumProcessors();
 
-        OutputSchedule outputSchedule = new OutputSchedule<>(xAxis,yAxis, numProcessors);
-
-        outputSchedule.setPrefWidth(1000);
+        outputSchedule = new OutputSchedule<>(xAxis,yAxis, numProcessors, scrollPane.getPrefHeight());
 
         scrollPane.setFitToHeight(true);
+        scrollPane.setFitToWidth(true);
         scrollPane.setContent(outputSchedule);
 
-//        Platform.runLater(() -> {
-//            Graph graph = GraphDisplay.getGraphDisplay().getGraph();
+        //Display graph
+        org.graphstream.graph.Graph graph = GraphDisplay.getGraphDisplay().getGraph();
+        System.setProperty("org.graphstream.ui.javafx.renderer", "org.graphstream.ui.javafx.FxGraphRenderer");
 
-//        FxViewer viewer = GraphDisplay.getGraphDisplay().getGraphView();
-//        viewer.enableAutoLayout();
+        FxViewer fxViewer = new FxViewer(graph, FxViewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
+        GraphRenderer renderer = new FxGraphRenderer();
 
-//            viewer.getDefaultView().setMouseManager(new FxMouseManager(){
-//                @Override
-//                protected void elementMoving(GraphicElement element, MouseEvent event) {
-//                    //Only move if the weight labels aren't clicked (i.e. only the nodes can be moved)
-////                    if(!element.getSelectorType().equals(Selector.Type.SPRITE)){
-////                        view.moveElementAtPx(element, event.getX(), event.getY());
-////                    }
-//                }
-//            });
-
-//        FxDefaultView fxDefaultView = (FxDefaultView) viewer.addDefaultView(false, new FxGraphRenderer());
-//        fxDefaultView.setPrefSize(graphPane.getPrefWidth(),graphPane.getPrefHeight());
-//
-//
-//        graphPane.getChildren().add(fxDefaultView);
-//        });
-
-        Platform.runLater(() -> {
-            org.graphstream.graph.Graph graph = GraphDisplay.getGraphDisplay().getGraph();
-            System.setProperty("org.graphstream.ui.javafx.renderer", "org.graphstream.ui.javafx.FxGraphRenderer");
-
-            FxViewer fxViewer = new FxViewer(graph, FxViewer.ThreadingModel.GRAPH_IN_GUI_THREAD);
-            GraphRenderer renderer = new FxGraphRenderer();
-
-            FxDefaultView view = (FxDefaultView) fxViewer.addView(FxViewer.DEFAULT_VIEW_ID, renderer);
+        FxDefaultView view = (FxDefaultView) fxViewer.addView(FxViewer.DEFAULT_VIEW_ID, renderer);
 
 
-            view.setPrefSize(graphPane.getPrefWidth(), graphPane.getPrefHeight());
-            graphPane.getChildren().add(view);
-        });
+        view.setPrefSize(graphPane.getPrefWidth(), graphPane.getPrefHeight());
+        graphPane.getChildren().add(view);
 
+
+        //Get same scheduler & algorithm objects from main class
+        Scheduler scheduler = ProcessScheduler.getScheduler();
+        Algorithm algorithm = ProcessScheduler.getAlgorithm();
+
+        algorithm.addListener(this);
 
         //Set initial timer label
         timeDisplay.setText(timer.getSspTime().get());
@@ -94,6 +82,9 @@ public class HomeController implements Initializable {
         });
 
         timer.startTimer(0);
+
+        //Calculate optimal schedule in new thread
+        new Thread(scheduler::start).start();
     }
 
 
@@ -102,5 +93,16 @@ public class HomeController implements Initializable {
         if (event.getSource().equals(stopTimer)){
             timer.stopTimer();
         }
+    }
+
+    @Override
+    public void algorithmCompleted(List<Node> schedule) {
+        timer.stopTimer();
+        outputSchedule.update(schedule);
+    }
+
+    @Override
+    public void newOptimalFound(List<Node> schedule) {
+        outputSchedule.update(schedule);
     }
 }

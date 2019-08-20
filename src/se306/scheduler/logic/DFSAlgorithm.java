@@ -2,6 +2,7 @@ package se306.scheduler.logic;
 
 import java.util.Stack;
 
+import javafx.application.Platform;
 import se306.scheduler.graph.Node;
 import se306.scheduler.graph.NodeList;
 import se306.scheduler.visualisation.OutputSchedule;
@@ -19,16 +20,16 @@ public class DFSAlgorithm extends Algorithm {
     @Override
     public void schedule() {
         Stack<NodeList> stack = new Stack<NodeList>();
-        
+
         // add initial state
         stack.push(new NodeList(graph));
-        
+
         int bestMakespan = Integer.MAX_VALUE;
         NodeList bestSchedule = null;
-        
+
         while (!stack.isEmpty()) {
             NodeList state = stack.pop();
-            
+
             // all nodes have been assigned to a processor
             if (state.allVisited()) {
                 // check if the current solution is better than the best one found so far
@@ -36,11 +37,13 @@ public class DFSAlgorithm extends Algorithm {
                 if (makespan < bestMakespan) {
                     bestMakespan = makespan;
                     bestSchedule = state;
-//                    OutputSchedule.setSchedule(bestSchedule);
+
+                    //Update listener with new schedule
+                    updateSchedule(bestSchedule.toList());
                 }
                 continue;
             }
-            
+
             for (Node node: state.getUnvisitedNodes()) {
                 // check if the node's parents have all been scheduled
                 if (state.dependenciesSatisfied(node)) {
@@ -48,16 +51,16 @@ public class DFSAlgorithm extends Algorithm {
                     for (int p = 1; p <= numProcessors; p++) {
                         // find the earliest time the new node can be added on this processor
                         int bestStart = state.findBestStartTime(node, p);
-                        
+
                         // add the node at this time, note we have to deep copy the whole tree to do this which is slow
                         NodeList newState = new NodeList(state);
                         Node newNode = newState.getNode(node.getName());
                         newNode.setProcessor(p);
                         newNode.setStartTime(bestStart);
                         newState.visitNode(node.getName());
-                        
+
                         stack.push(newState);
-                        
+
                         // if this task can be placed at the very start of a processor then trying to place the
                         // task on any subsequent processor will create an effectively identical schedule
                         if (bestStart == 0) {

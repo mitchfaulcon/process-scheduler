@@ -24,7 +24,8 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
 
     private JSAPResult config;
     private DotFile dot;
-    private Scheduler scheduler;
+    private static Scheduler scheduler;
+    private static Algorithm algorithm;
     private static int numProcessors;
     
 	public static void main(String[] args) {
@@ -81,7 +82,7 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
 	
 	public void schedule(String[] args) {
         //Algorithm algorithm = new SequentialAlgorithm();
-        Algorithm algorithm = new DFSAlgorithm(config.getInt("P"));
+        algorithm = new DFSAlgorithm(config.getInt("P"));
         scheduler = new Scheduler(algorithm);
         
         algorithm.addListener(this);
@@ -106,6 +107,14 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
 			System.out.println("Invalid File format: Does not end in \".dot\"");
 		}
 
+	}
+
+	public static Scheduler getScheduler(){
+		return scheduler;
+	}
+
+	public static Algorithm getAlgorithm(){
+		return algorithm;
 	}
 
 	static SimpleJSAP buildParser() {
@@ -143,12 +152,17 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
             e.printStackTrace();
             System.out.println("Output Error: File could not be written to");
         }
-        
+
         if(config.getBoolean("V")) {
 //            GraphDisplay.getGraphDisplay().displayGraph();
 //            OutputGraph.getOutputGraph().displayGraph();
         }
     }
+
+	@Override
+	public void newOptimalFound(List<Node> schedule) {
+
+	}
 
     public static int getNumProcessors(){
 		return numProcessors;

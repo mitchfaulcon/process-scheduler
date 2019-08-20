@@ -6,4 +6,6 @@ import se306.scheduler.graph.Node;
 
 public interface AlgorithmListener {
     public void algorithmCompleted(List<Node> schedule);
+
+    public void newOptimalFound(List<Node> schedule);
 }

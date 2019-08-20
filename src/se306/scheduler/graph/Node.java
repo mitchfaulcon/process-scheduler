@@ -83,6 +83,6 @@ public class Node {
     
     @Override
     public String toString() {
-        return String.format("(%s %d %d)", getName(), getProcessor(), getFinishTime());
+        return String.format("(Name: %s  Processor: %d  Start Time: %d  Finish Time: %d)", getName(), getProcessor(), getStartTime(), getFinishTime());
     }
 }

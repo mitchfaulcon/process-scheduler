@@ -33,4 +33,10 @@ public abstract class Algorithm {
             listener.algorithmCompleted(answer);
         }
     }
+
+    protected void updateSchedule(List<Node> newOptimal){
+        for (AlgorithmListener listener: listeners) {
+            listener.newOptimalFound(newOptimal);
+        }
+    }
 }

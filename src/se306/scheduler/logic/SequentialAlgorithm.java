@@ -1,12 +1,11 @@
 package se306.scheduler.logic;
 
+import se306.scheduler.graph.Node;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import se306.scheduler.graph.Node;
-import se306.scheduler.visualisation.OutputGraph;
 
 /**
  * Finds a valid schedule by scheduling all tasks on the same processor.
@@ -41,10 +40,6 @@ public class SequentialAlgorithm extends Algorithm {
         graph.get(i).setStartTime(currentTime);
         graph.get(i).setProcessor(1);
 
-        //Add node to the output schedule graph
-        OutputGraph.getOutputGraph().addNode(graph.get(i).getName(), currentTime);
-        String lastNode = graph.get(i).getName();
-
         currentTime += graph.get(i).getWeight();
 
         // iterates until all nodes reached - have had their startTime updated
@@ -65,10 +60,6 @@ public class SequentialAlgorithm extends Algorithm {
                     // however long the node's weight is.
                     unreached.get(j).setStartTime(currentTime);
                     unreached.get(j).setProcessor(1);
-
-                    //Add the processed node and an edge to it from the previously processed node
-                    OutputGraph.getOutputGraph().addNode(unreached.get(j).getName(), currentTime);
-                    OutputGraph.getOutputGraph().addEdge(lastNode, lastNode=unreached.get(j).getName(), 0);
 
                     currentTime += unreached.get(j).getWeight();
                     break;

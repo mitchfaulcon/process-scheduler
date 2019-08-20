@@ -1,17 +1,20 @@
 package se306.scheduler.visualisation;
 
 import org.graphstream.graph.Edge;
+import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
+import org.graphstream.graph.implementations.SingleGraph;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants;
 import org.graphstream.ui.spriteManager.Sprite;
 import org.graphstream.ui.spriteManager.SpriteManager;
 
 import java.util.Random;
 
-public class GraphDisplay extends GraphParent{
+public class GraphDisplay {
 
     private static final GraphDisplay graphDisplay = new GraphDisplay();
 
+    private Graph graph = new SingleGraph("graphDisplay", false, true);
     private int yCoord = 0;
 
     private GraphDisplay() {
@@ -22,8 +25,8 @@ public class GraphDisplay extends GraphParent{
         return graphDisplay;
     }
 
-    public void setGraphTitle(String title){
-        this.title = "Graph of " + title;
+    public Graph getGraph() {
+        return graph;
     }
 
     /**

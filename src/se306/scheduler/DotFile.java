@@ -51,8 +51,6 @@ public class DotFile {
             lines = new ArrayList<>();
             this.fileName = fileName;
             this.file = new File(fileName);
-            
-            graphDisplay.setGraphTitle(fileName);
         } else {
             throw new InvalidFileFormatException();
         }

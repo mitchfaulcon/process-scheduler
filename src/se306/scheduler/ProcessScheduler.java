@@ -152,11 +152,6 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
             e.printStackTrace();
             System.out.println("Output Error: File could not be written to");
         }
-
-        if(config.getBoolean("V")) {
-//            GraphDisplay.getGraphDisplay().displayGraph();
-//            OutputGraph.getOutputGraph().displayGraph();
-        }
     }
 
 	@Override

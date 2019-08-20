@@ -1,6 +1,7 @@
 package se306.scheduler.visualisation;
 
 import javafx.beans.NamedArg;
+import javafx.beans.property.ObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.chart.*;
@@ -70,9 +71,10 @@ public class OutputSchedule<X,Y> extends XYChart<X,Y>{
 
         this.setAnimated(false);
 
-
         Series series = new Series();
-        series.getData().add(new Data<>(0, labels[1], new ExtraData(0.1, "status-red")));
+
+        series.getData().add(new Data<>(0, labels[0], new ExtraData(0.1, "status-red")));
+
 
         this.getStylesheets().add(getClass().getResource("outputSchedule.css").toExternalForm());
         this.getData().addAll(series);

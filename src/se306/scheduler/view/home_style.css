@@ -13,8 +13,9 @@
 
 .button {
     -fx-font-family: "Arial Black";
-    -fx-font-size: 70px;
+    -fx-font-size: 50px;
     -fx-base: #004cff;
+    -fx-background-radius: 30px;
 }
 
 .consolas {

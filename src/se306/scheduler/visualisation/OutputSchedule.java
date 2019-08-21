@@ -52,11 +52,11 @@ public class OutputSchedule<X,Y> extends XYChart<X,Y>{
             for (Node node: newSchedule.getNodes()){
                 if (newSchedule.getProcessor(node)-1==processor){
                     //Add node data to graph
-                    Data data = new Data<>(node.getStartTime(), labels[numProcessors - processor - 1], new ExtraData(node.getWeight(), "status-"+node.getName()));
+                    Data data = new Data<>(newSchedule.getStartTime(node), labels[processor], new ExtraData(node.getWeight(), "status-"+node.getName()));
                     data.setNode(new StackPane());
                     Tooltip.install(data.getNode(),new Tooltip("Node: " + node.getName() +"\n" +
-                            "Start Time: " + node.getStartTime() +"\n" +
-                            "Finish Time: " + node.getFinishTime()));
+                            "Start Time: " + newSchedule.getStartTime(node) +"\n" +
+                            "Finish Time: " + Integer.toString(newSchedule.getStartTime(node) + node.getWeight())));
                     series.getData().add(data);
                 }
             }

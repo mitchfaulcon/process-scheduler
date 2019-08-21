@@ -2,10 +2,8 @@ package se306.scheduler.logic;
 
 import java.util.Stack;
 
-import javafx.application.Platform;
 import se306.scheduler.graph.Node;
-import se306.scheduler.graph.NodeList;
-import se306.scheduler.visualisation.OutputSchedule;
+import se306.scheduler.graph.PartialSchedule;
 
 /**
  * Simple implementation of DFS to find the optimal schedule for a list of tasks.
@@ -19,16 +17,16 @@ public class DFSAlgorithm extends Algorithm {
 
     @Override
     public void schedule() {
-        Stack<NodeList> stack = new Stack<NodeList>();
+        Stack<PartialSchedule> stack = new Stack<PartialSchedule>();
 
         // add initial state
-        stack.push(new NodeList(graph));
+        stack.push(new PartialSchedule(graph));
 
         int bestMakespan = Integer.MAX_VALUE;
-        NodeList bestSchedule = null;
+        PartialSchedule bestSchedule = null;
 
         while (!stack.isEmpty()) {
-            NodeList state = stack.pop();
+            PartialSchedule state = stack.pop();
 
             // all nodes have been assigned to a processor
             if (state.allVisited()) {
@@ -39,7 +37,7 @@ public class DFSAlgorithm extends Algorithm {
                     bestSchedule = state;
 
                     //Update listener with new schedule
-                    updateSchedule(bestSchedule.toList());
+                    updateSchedule(bestSchedule);
                 }
                 continue;
             }
@@ -53,8 +51,8 @@ public class DFSAlgorithm extends Algorithm {
                         int bestStart = state.findBestStartTime(node, p);
 
                         // add the node at this time
-                        NodeList newState = new NodeList(state);
-                        boolean isFirstOnProcessor = newState.scheduleTask(node.getName(), p, bestStart);
+                        PartialSchedule newState = new PartialSchedule(state);
+                        boolean isFirstOnProcessor = newState.scheduleTask(node, p, bestStart);
 
                         stack.push(newState);
 
@@ -69,7 +67,7 @@ public class DFSAlgorithm extends Algorithm {
         }
 
         System.out.println(bestSchedule);
-        completed(bestSchedule.toList());
+        completed(bestSchedule);
     }
 
 }

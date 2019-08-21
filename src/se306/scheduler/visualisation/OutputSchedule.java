@@ -9,6 +9,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
 import se306.scheduler.graph.Node;
+import se306.scheduler.graph.PartialSchedule;
 
 import java.util.*;
 
@@ -39,7 +40,7 @@ public class OutputSchedule<X,Y> extends XYChart<X,Y>{
     private String[] labels;
     private int numProcessors;
 
-    public void update(List<Node> newSchedule){
+    public void update(PartialSchedule newSchedule){
 
         this.getData().clear();
 
@@ -48,8 +49,8 @@ public class OutputSchedule<X,Y> extends XYChart<X,Y>{
             Series series = new Series();
 
             //Check if any node is scheduled in that processor
-            for (Node node: newSchedule){
-                if (node.getProcessor()-1==processor){
+            for (Node node: newSchedule.getNodes()){
+                if (newSchedule.getProcessor(node)-1==processor){
                     //Add node data to graph
                     Data data = new Data<>(node.getStartTime(), labels[numProcessors - processor - 1], new ExtraData(node.getWeight(), "status-"+node.getName()));
                     data.setNode(new StackPane());

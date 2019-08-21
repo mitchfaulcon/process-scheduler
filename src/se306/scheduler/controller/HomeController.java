@@ -18,6 +18,7 @@ import org.graphstream.ui.javafx.FxGraphRenderer;
 import org.graphstream.ui.view.GraphRenderer;
 import se306.scheduler.ProcessScheduler;
 import se306.scheduler.graph.Node;
+import se306.scheduler.graph.PartialSchedule;
 import se306.scheduler.logic.Algorithm;
 import se306.scheduler.logic.AlgorithmListener;
 import se306.scheduler.logic.Scheduler;
@@ -89,12 +90,12 @@ public class HomeController implements Initializable, AlgorithmListener {
     }
 
     @Override
-    public void algorithmCompleted(List<Node> schedule) {
+    public void algorithmCompleted(PartialSchedule schedule) {
         timer.stopTimer();
     }
 
     @Override
-    public void newOptimalFound(List<Node> schedule) {
+    public void newOptimalFound(PartialSchedule schedule) {
         //Update output schedule in GUI thread
         Platform.runLater(() -> outputSchedule.update(schedule));
     }

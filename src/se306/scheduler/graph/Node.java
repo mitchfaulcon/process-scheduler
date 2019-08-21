@@ -1,20 +1,22 @@
 package se306.scheduler.graph;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Node {
     private String name;
-    private Map<String, Integer> parents = new HashMap<>();
+    private List<IncomingEdge> incomingEdges = new ArrayList<>();
+    private List<Node> children = new ArrayList<>();
+    private int BLWeight;
     private int weight;
-    private int startTime;
-    private int processor;
 
     public Node(String name, int weight) {
         // set processor to -1 by default, meaning the node has not been assigned a processor.
         this.name = name;
         this.weight = weight;
-        this.processor = -1;
+        this.BLWeight = -1;
     }
     
     /**
@@ -23,34 +25,21 @@ public class Node {
     public Node(Node node) {
         this.name = node.name;
         this.weight = node.weight;
-        this.processor = node.processor;
-        this.startTime = node.startTime;
-        
-        this.parents = new HashMap<String, Integer>();
-        for (Map.Entry<String, Integer> entry: node.getParents().entrySet()) {
-            parents.put(entry.getKey(), entry.getValue());
-        }
+        this.incomingEdges = new ArrayList<>();
+        this.incomingEdges.addAll(node.getIncomingEdges());
+        this.children = new ArrayList<>();
+        this.children.addAll(node.children);
+        this.BLWeight = node.BLWeight;
     }
 
     /**
      * Method to add another node as a parent of this one.
-     * @param parent The name of the parent node to be added
+     * @param parent The parent node to be added
      * @param edgeWeight the weight of the link between the parent node and this node
      */
-    public void addParent(String parent, int edgeWeight){
-        parents.put(parent, edgeWeight);
-    }
-
-    public void setStartTime(int startTime) {
-        this.startTime = startTime;
-    }
-    
-    public void setProcessor(int processor) {
-        this.processor = processor;
-    }
-    
-    public boolean isVisited() {
-        return processor != -1;
+    public void addParent(Node parent, int edgeWeight){
+        this.incomingEdges.add(new IncomingEdge(parent, edgeWeight));
+        parent.children.add(this);
     }
 
     public int getWeight() {
@@ -61,28 +50,48 @@ public class Node {
         return this.name;
     }
     
-    /*public Set<String> getChildren() {
-        return children;
-    }*/
-
-    public Map<String, Integer> getParents() {
-        return parents;
+    public List<Node> getChildren() {
+        return this.children;
     }
 
-    public int getStartTime() {
-        return this.startTime;
+    public List<IncomingEdge> getIncomingEdges() {
+        return this.incomingEdges;
     }
-    
-    public int getFinishTime() {
-        return startTime + weight;
+
+    public int getBLWeight() {
+        return this.BLWeight;
     }
-    
-    public int getProcessor() {
-        return this.processor;
+
+    public void setBLWeight(int BLWeight) {
+        this.BLWeight = BLWeight;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof Node) {
+            Node node = (Node) o;
+            return (node.name.equals(this.name) && node.weight == this.weight);
+        }
+        return false;
     }
     
     @Override
     public String toString() {
-        return String.format("(Name: %s  Processor: %d  Start Time: %d  Finish Time: %d)", getName(), getProcessor(), getStartTime(), getFinishTime());
+        return "Name: " + name + ", Weight: " + weight;
+    }
+
+    public class IncomingEdge {
+        private Node parent;
+        private int weight;
+        private IncomingEdge(Node parent, int weight) {
+            this.parent = parent;
+            this.weight = weight;
+        }
+        public int getWeight() {
+            return this.weight;
+        }
+        public Node getParent() {
+            return this.parent;
+        }
     }
 }

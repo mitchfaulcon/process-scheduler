@@ -1,21 +1,19 @@
 package se306.scheduler.logic;
 
-import java.util.List;
-import java.util.Stack;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import se306.scheduler.graph.Node;
-import se306.scheduler.graph.NodeList;
+import se306.scheduler.graph.PartialSchedule;
 
 public class ParallelBruteForceAlgorithm extends Algorithm {
     
-    private BlockingDeque<NodeList> deque;
+    private BlockingDeque<PartialSchedule> deque;
     private int threadCount;
     private AtomicInteger activeThreads;
     private int bestMakespan;
-    private NodeList bestSchedule;
+    private PartialSchedule bestSchedule;
     private final Object lock = new Object();
 
     public ParallelBruteForceAlgorithm(int numProcessors) {
@@ -24,12 +22,12 @@ public class ParallelBruteForceAlgorithm extends Algorithm {
 
     @Override
     public void schedule() {
-        deque = new LinkedBlockingDeque<NodeList>();
+        deque = new LinkedBlockingDeque<PartialSchedule>();
         threadCount = 4;
         activeThreads = new AtomicInteger(0);
 
         // add initial state
-        deque.push(new NodeList(graph));
+        deque.push(new PartialSchedule(graph));
 
         bestMakespan = Integer.MAX_VALUE;
         bestSchedule = null;
@@ -40,7 +38,7 @@ public class ParallelBruteForceAlgorithm extends Algorithm {
                 @Override
                 public void run() {
                     while (true) {
-                        NodeList state = null;
+                        PartialSchedule state = null;
                         synchronized (lock) {
                             activeThreads.incrementAndGet();
                             
@@ -48,8 +46,8 @@ public class ParallelBruteForceAlgorithm extends Algorithm {
                                 if (activeThreads.get() == 1) { // all threads have no work to do
                                     activeThreads.decrementAndGet();
 //                                    System.out.println(bestSchedule);
-                                    completed(bestSchedule.toList());
-                                    updateSchedule(bestSchedule.toList());
+                                    completed(bestSchedule);
+                                    updateSchedule(bestSchedule);
                                     break;
                                 }
                                 
@@ -68,7 +66,7 @@ public class ParallelBruteForceAlgorithm extends Algorithm {
                                 bestSchedule = state;
 
                                 //Update listener with new schedule
-                                updateSchedule(bestSchedule.toList());
+                                updateSchedule(bestSchedule);
                             }
                             
                             synchronized (lock) {
@@ -86,8 +84,8 @@ public class ParallelBruteForceAlgorithm extends Algorithm {
                                     int bestStart = state.findBestStartTime(node, p);
 
                                     // add the node at this time
-                                    NodeList newState = new NodeList(state);
-                                    boolean isFirstOnProcessor = newState.scheduleTask(node.getName(), p, bestStart);
+                                    PartialSchedule newState = new PartialSchedule(state);
+                                    boolean isFirstOnProcessor = newState.scheduleTask(node, p, bestStart);
 
                                     synchronized (lock) {
                                         deque.push(newState);

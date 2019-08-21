@@ -37,6 +37,7 @@ public class OutputSchedule<X,Y> extends XYChart<X,Y>{
 
     private double blockHeight;
     private String[] labels;
+    private int numProcessors;
 
     public void update(List<Node> newSchedule){
 
@@ -50,7 +51,7 @@ public class OutputSchedule<X,Y> extends XYChart<X,Y>{
             for (Node node: newSchedule){
                 if (node.getProcessor()-1==processor){
                     //Add node data to graph
-                    Data data = new Data<>(node.getStartTime(), labels[processor], new ExtraData(node.getWeight(), "status-"+node.getName()));
+                    Data data = new Data<>(node.getStartTime(), labels[numProcessors - processor - 1], new ExtraData(node.getWeight(), "status-"+node.getName()));
                     data.setNode(new StackPane());
                     Tooltip.install(data.getNode(),new Tooltip("Node: " + node.getName() +"\n" +
                             "Start Time: " + node.getStartTime() +"\n" +
@@ -64,11 +65,13 @@ public class OutputSchedule<X,Y> extends XYChart<X,Y>{
 
     public OutputSchedule(Axis<X> xAxis, Axis<Y> yAxis, int numProcessors, double windowHeight) {
         super(xAxis,yAxis);
+        
+        this.numProcessors = numProcessors;
 
         //Create correct labels for Y-axis
         labels = new String[numProcessors];
-        for (int i=0; i<numProcessors; i++){
-            labels[i] = "Processor " + Integer.toString(i+1);
+        for (int i=numProcessors - 1; i>=0; i--){
+            labels[numProcessors - i - 1] = "Processor " + Integer.toString(i+1);
         }
 
         if (!(xAxis instanceof NumberAxis && yAxis instanceof CategoryAxis)){

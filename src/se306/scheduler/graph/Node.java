@@ -7,19 +7,15 @@ import java.util.Map;
 
 public class Node {
     private String name;
-    private Map<Node, Integer> parents = new HashMap<>();
-    private List<Node> children;
+    private List<IncomingEdge> incomingEdges = new ArrayList<>();
+    private List<Node> children = new ArrayList<>();
     private int BLWeight;
     private int weight;
-    private int startTime;
-    private int processor;
 
     public Node(String name, int weight) {
         // set processor to -1 by default, meaning the node has not been assigned a processor.
         this.name = name;
         this.weight = weight;
-        this.processor = -1;
-        this.children = new ArrayList<>();
         this.BLWeight = -1;
     }
     
@@ -29,12 +25,8 @@ public class Node {
     public Node(Node node) {
         this.name = node.name;
         this.weight = node.weight;
-        this.processor = node.processor;
-        this.startTime = node.startTime;
-        this.parents = new HashMap<Node, Integer>();
-        for (Map.Entry<Node, Integer> entry: node.getParents().entrySet()) {
-            parents.put(entry.getKey(), entry.getValue());
-        }
+        this.incomingEdges = new ArrayList<>();
+        this.incomingEdges.addAll(node.getIncomingEdges());
         this.children = new ArrayList<>();
         this.children.addAll(node.children);
         this.BLWeight = node.BLWeight;
@@ -46,20 +38,8 @@ public class Node {
      * @param edgeWeight the weight of the link between the parent node and this node
      */
     public void addParent(Node parent, int edgeWeight){
-        parents.put(parent, edgeWeight);
+        this.incomingEdges.add(new IncomingEdge(parent, edgeWeight));
         parent.children.add(this);
-    }
-
-    public void setStartTime(int startTime) {
-        this.startTime = startTime;
-    }
-    
-    public void setProcessor(int processor) {
-        this.processor = processor;
-    }
-    
-    public boolean isVisited() {
-        return processor != -1;
     }
 
     public int getWeight() {
@@ -71,23 +51,11 @@ public class Node {
     }
     
     public List<Node> getChildren() {
-        return children;
+        return this.children;
     }
 
-    public Map<Node, Integer> getParents() {
-        return parents;
-    }
-
-    public int getStartTime() {
-        return this.startTime;
-    }
-    
-    public int getFinishTime() {
-        return startTime + weight;
-    }
-    
-    public int getProcessor() {
-        return this.processor;
+    public List<IncomingEdge> getIncomingEdges() {
+        return this.incomingEdges;
     }
 
     public int getBLWeight() {
@@ -109,6 +77,21 @@ public class Node {
     
     @Override
     public String toString() {
-        return String.format("(Name: %s  Processor: %d  Start Time: %d  Finish Time: %d)", getName(), getProcessor(), getStartTime(), getFinishTime());
+        return "Name: " + name + ", Weight: " + weight;
+    }
+
+    public class IncomingEdge {
+        private Node parent;
+        private int weight;
+        private IncomingEdge(Node parent, int weight) {
+            this.parent = parent;
+            this.weight = weight;
+        }
+        public int getWeight() {
+            return this.weight;
+        }
+        public Node getParent() {
+            return this.parent;
+        }
     }
 }

@@ -1,6 +1,7 @@
 package se306.scheduler;
 
 import se306.scheduler.exception.InvalidFileFormatException;
+import se306.scheduler.graph.PartialSchedule;
 import se306.scheduler.visualisation.GraphDisplay;
 import se306.scheduler.graph.Node;
 import se306.scheduler.logic.Scheduler;
@@ -170,10 +171,10 @@ public class DotFile {
      * All tasks are written (along with the values of the schedule we found), then all dependencies.
      * 
      * @param fileName Where the output will be written
-     * @param nodes The list of nodes assigned to a schedule
+     * @param schedule The list of nodes assigned to a schedule
      * @throws IOException if the file cannot be written to
      */
-    public void write(String fileName, List<Node> nodes) throws IOException {
+    public void write(String fileName, PartialSchedule schedule) throws IOException {
         //Create correct name for top of dot file
         // TODO use graph name read from file instead of filename
         String dotFileName = file.getName();
@@ -189,28 +190,22 @@ public class DotFile {
         // a map of task name to output string, which we will later access in the order specified by `lineRecords`
         Map<String, String> taskStrings = new HashMap<String, String>();
         // generate all task strings
-        for (Node node: nodes) {
+        for (Node node: schedule.getNodes()) {
             taskStrings.put(node.getName(), String.format("\t%s\t[Weight=%d,Start=%d,Processor=%d];" + LS, node.getName(), node.getWeight(),
-                    node.getStartTime(), node.getProcessor()));
+                    schedule.getStartTime(node), schedule.getProcessor(node)));
         }
 
         // a map of both tasks in a dependency to output string, which we will later access in the order specified by `lineRecords`
         // the dependency task names are joined by a space
         Map<String, String> dependencyStrings = new HashMap<String, String>();
         
-        // necessary for lookup because we don't store children in the Node class
-        Map<String, Node> nodeMap = new HashMap<String, Node>();
-        for (Node node: nodes) {
-            nodeMap.put(node.getName(), node);
-        }
-        
         // generate all dependency strings
-        for (Node node: nodes) {
-            for (Map.Entry<Node, Integer> entry: node.getParents().entrySet()) {
-                Node parent = entry.getKey();
+        for (Node node: schedule.getNodes()) {
+            for (Node.IncomingEdge edge: node.getIncomingEdges()) {
+                Node parent = edge.getParent();
                 String dependencyKey = parent.getName() + " " + node.getName();
                 dependencyStrings.put(dependencyKey, String.format("\t%s -> %s\t[Weight=%d];" + LS, parent.getName(), node.getName(),
-                        entry.getValue()));
+                        edge.getWeight()));
             }
         }
         

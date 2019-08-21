@@ -1,6 +1,7 @@
 package se306.scheduler.logic;
 
 import se306.scheduler.graph.Node;
+import se306.scheduler.graph.PartialSchedule;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,7 +22,7 @@ public class SequentialAlgorithm extends Algorithm {
     public void schedule() {
         // As nodes are reached in main loop they will be removed from here
         List<Node> unreached = new ArrayList<>(graph);
-        
+        PartialSchedule schedule = new PartialSchedule(graph);
         // this is necessary after some changes made to Node, but not going to rework the whole algorithm
         Map<String, Node> nodeMap = new HashMap<String, Node>();
         for (Node node: unreached) {
@@ -33,12 +34,11 @@ public class SequentialAlgorithm extends Algorithm {
         int i = 0;
 
         // finding some node with no parents to set as root
-        while (!graph.get(i).getParents().isEmpty()) {
+        while (!schedule.getNodes().get(i).getIncomingEdges().isEmpty()) {
             i++;
         }
-        unreached.remove(graph.get(i));
-        graph.get(i).setStartTime(currentTime);
-        graph.get(i).setProcessor(1);
+        unreached.remove(schedule.getNodes().get(i));
+        schedule.scheduleTask(schedule.getNodes().get(i), 1, currentTime);
 
         currentTime += graph.get(i).getWeight();
 
@@ -48,8 +48,8 @@ public class SequentialAlgorithm extends Algorithm {
             for (j = 0; j < unreached.size(); j++) {
                 parentsFound = true;
                 // finding if all parents are reached (nodes can only run if all parents reached)
-                for (Node parent: unreached.get(j).getParents().keySet()) {
-                    if (unreached.contains(parent)) {
+                for (Node.IncomingEdge edge: unreached.get(j).getIncomingEdges()) {
+                    if (unreached.contains(edge.getParent())) {
                         parentsFound = false;
                         break;
                     }
@@ -57,8 +57,7 @@ public class SequentialAlgorithm extends Algorithm {
                 if (parentsFound) {
                     // if all parents met then node can start at current time and processor will be occupied for
                     // however long the node's weight is.
-                    unreached.get(j).setStartTime(currentTime);
-                    unreached.get(j).setProcessor(1);
+                    schedule.scheduleTask(schedule.getNodes().get(j), 1, currentTime);
 
                     currentTime += unreached.get(j).getWeight();
                     break;
@@ -67,7 +66,7 @@ public class SequentialAlgorithm extends Algorithm {
             unreached.remove(j);
         }
         
-        completed(graph);
+        completed(schedule);
     }
 
 }

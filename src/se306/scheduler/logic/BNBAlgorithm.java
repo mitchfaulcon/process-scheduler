@@ -1,12 +1,9 @@
 package se306.scheduler.logic;
 
 import se306.scheduler.graph.Node;
-import se306.scheduler.graph.NodeList;
+import se306.scheduler.graph.PartialSchedule;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * Branch and Bound DFS implementation to find the optimal schedule for a list of tasks.
@@ -22,16 +19,16 @@ public class BNBAlgorithm extends Algorithm {
 
     @Override
     public void schedule() {
-        Stack<NodeList> stack = new Stack<NodeList>();
-
+        Stack<PartialSchedule> stack = new Stack<>();
         // add initial state
-        stack.push(new NodeList(graph));
+        stack.push(new PartialSchedule(graph));
 
         int bestMakespan = Integer.MAX_VALUE;
-        NodeList bestSchedule = null;
+        PartialSchedule bestSchedule = null;
+        setBLWeights();
 
         while (!stack.isEmpty()) {
-            NodeList state = stack.pop();
+            PartialSchedule state = stack.pop();
 
             // all nodes have been assigned to a processor
             if (state.allVisited()) {
@@ -42,7 +39,9 @@ public class BNBAlgorithm extends Algorithm {
                     bestSchedule = state;
 
                     //Update listener with new schedule
-                    updateSchedule(bestSchedule.toList());
+                    updateSchedule(bestSchedule);
+                } else {
+                    updateBranchCut(0);
                 }
                 continue;
             }
@@ -54,25 +53,35 @@ public class BNBAlgorithm extends Algorithm {
                     for (int p = 1; p <= numProcessors; p++) {
                         // find the earliest time the new node can be added on this processor
                         int bestStart = state.findBestStartTime(node, p);
+                        if (bestStart + node.getBLWeight() < bestMakespan) {
+                            // add the node at this time
+                            PartialSchedule newState = new PartialSchedule(state);
+                            boolean isFirstOnProcessor = newState.scheduleTask(node, p, bestStart);
 
-                        // add the node at this time
-                        NodeList newState = new NodeList(state);
-                        boolean isFirstOnProcessor = newState.scheduleTask(node.getName(), p, bestStart);
+                            stack.push(newState);
 
-                        stack.push(newState);
-
-                        // if this task is placed as the first task on a processor then trying to place the
-                        // task on any subsequent processor will create an effectively identical schedule
-                        if (isFirstOnProcessor) {
-                            break;
+                            // if this task is placed as the first task on a processor then trying to place the
+                            // task on any subsequent processor will create an effectively identical schedule
+                            if (isFirstOnProcessor) {
+                                for (int i = 0; i < numProcessors - 1; i++) {
+                                    updateBranchCut(state.getUnvisitedNodes().size() - 1);
+                                }
+                                break;
+                            }
+                        } else {
+                            // indicating to listeners that all partial schedules based on this state and node combination
+                            // have been cut from tree
+                            updateBranchCut(state.getUnvisitedNodes().size() - 1);
                         }
                     }
+                } else {
+                    updateBranchCut(state.getUnvisitedNodes().size() - 1);
                 }
             }
         }
 
         System.out.println(bestSchedule);
-        completed(bestSchedule.toList());
+        completed(bestSchedule);
     }
 
     /**
@@ -91,9 +100,9 @@ public class BNBAlgorithm extends Algorithm {
             }
         }
         while (unvisited.size() > 0) {
-            for (Node node: unvisited) {
+            for (int i = 0; i < unvisited.size(); i++) {
                 int maxWeight = 0;
-                for (Node child: node.getChildren()) {
+                for (Node child: unvisited.get(i).getChildren()) {
                     if (child.getBLWeight() < 0) {
                         // this indicates that a child has not had its BLW calculated, so loop breaks.
                         maxWeight = -1;
@@ -103,8 +112,9 @@ public class BNBAlgorithm extends Algorithm {
                     }
                 }
                 if (maxWeight > 0) {
-                    node.setBLWeight(maxWeight);
-                    unvisited.remove(node);
+                    unvisited.get(i).setBLWeight(unvisited.get(i).getWeight() + maxWeight);
+                    unvisited.remove(i);
+                    break;
                 }
             }
         }

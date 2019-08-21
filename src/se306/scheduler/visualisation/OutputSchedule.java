@@ -9,6 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
 import se306.scheduler.graph.Node;
+import se306.scheduler.graph.PartialSchedule;
 
 import java.util.*;
 
@@ -18,19 +19,17 @@ import static javafx.geometry.Pos.CENTER;
  * Adapted from code at https://stackoverflow.com/questions/27975898/gantt-chart-from-scratch
  */
 public class OutputSchedule<X,Y> extends XYChart<X,Y>{
-
     /** a node which displays a value on hover, but is otherwise empty */
     class HoveredThresholdNode extends StackPane {
-        HoveredThresholdNode(Node node, double boxLength) {
+        HoveredThresholdNode(Node node, double boxLength, int startTime) {
             setPrefSize(15, 15);
-
             final int labelX = 120;
             final int labelY = 80;
 
             //Add label with node description
             final Label label = new Label("Node: " + node.getName() +"\n" +
-                    "Start Time: " + node.getStartTime() +"\n" +
-                    "Finish Time: " + node.getFinishTime());
+                    "Start Time: " + startTime +"\n" +
+                    "Finish Time: " + startTime + node.getWeight());
             label.setMinSize(labelX,labelY);
             label.setStyle("-fx-background-color:lightgrey;" +
                     "-fx-background-radius: 10;" +
@@ -100,7 +99,7 @@ public class OutputSchedule<X,Y> extends XYChart<X,Y>{
     private double blockHeight;
     private String[] labels;
 
-    public void update(List<Node> newSchedule){
+    public void update(PartialSchedule newSchedule){
 
         this.getData().clear();
 
@@ -109,12 +108,12 @@ public class OutputSchedule<X,Y> extends XYChart<X,Y>{
             Series series = new Series();
 
             //Check if any node is scheduled in that processor
-            for (Node node: newSchedule){
-                if (node.getProcessor()-1==processor){
+            for (Node node: newSchedule.getNodes()){
+                if (newSchedule.getProcessor(node)-1==processor){
                     //Add node data to graph
-                    Data data = new Data<>(node.getStartTime(), labels[processor], new ExtraData(node.getWeight(), "status-"+node.getName()));
+                    Data data = new Data<>(newSchedule.getStartTime(node), labels[processor], new ExtraData(node.getWeight(), "status-"+node.getName()));
                     double boxLength = getLength( data.getExtraValue()) * ((getXAxis() instanceof NumberAxis) ? Math.abs(((NumberAxis)getXAxis()).getScale()) : 1);
-                    HoveredThresholdNode hoverNode = new HoveredThresholdNode(node, boxLength);
+                    HoveredThresholdNode hoverNode = new HoveredThresholdNode(node, boxLength, newSchedule.getStartTime(node));
                     data.setNode(hoverNode);
                     series.getData().add(data);
                 }

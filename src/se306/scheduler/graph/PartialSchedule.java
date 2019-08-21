@@ -1,65 +1,50 @@
 package se306.scheduler.graph;
 
-import com.sun.javaws.exceptions.InvalidArgumentException;
-
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-public class NodeList {
-    private Map<String, Node> nodes; // all nodes in the graph
-    private Set<String> visited; // the names of all scheduled tasks
-    private Set<String> unvisited; // the names of all unscheduled tasks
+public class PartialSchedule {
+    private List<Node> nodes; // all nodes in the graph
+    private List<Node> visited; // all scheduled tasks
+    private List<Node> unvisited; // all unscheduled tasks
+    private HashMap<Node, Integer> processorMap;
+    private HashMap<Node, Integer> startTimes;
     private Set<Integer> traversedProcessors; // all processors that at least one task has been placed on
     
-    public NodeList() {
-        nodes = new HashMap<String, Node>();
-        visited = new HashSet<String>();
-        unvisited = new HashSet<String>();
+    public PartialSchedule() {
+        nodes = new ArrayList<>();
+        visited = new ArrayList<>();
+        unvisited = new ArrayList<>();
+        processorMap = new HashMap<>();
+        startTimes = new HashMap<>();
         traversedProcessors = new HashSet<Integer>();
     }
     
     /**
-     * Create a NodeList from a list of nodes (with no nodes scheduled yet)
+     * Create a PartialSchedule from a list of nodes (with no nodes scheduled yet)
      */
-    public NodeList(List<Node> nodes) {
-        this.nodes = new HashMap<String, Node>();
-        for (Node node: nodes) {
-            this.nodes.put(node.getName(), node);
-        }
-
-        visited = new HashSet<String>();
-        unvisited = new HashSet<String>(this.nodes.keySet());
-        traversedProcessors = new HashSet<Integer>();
-    }
-    
-    public NodeList(Map<String, Node> nodes) {
-        this.nodes = nodes;
-
-        visited = new HashSet<String>();
-        unvisited = new HashSet<String>(this.nodes.keySet());
+    public PartialSchedule(List<Node> nodes) {
+        this.nodes = new ArrayList<>(nodes);
+        visited = new ArrayList<>();
+        unvisited = new ArrayList<>(nodes);
+        processorMap = new HashMap<>();
+        startTimes = new HashMap<>();
         traversedProcessors = new HashSet<Integer>();
     }
     
     /**
-     * Returns a deep copy of the supplied NodeList and its contents
+     * Returns a deep copy of the supplied PartialSchedule and its contents
      */
-    public NodeList(NodeList nodeList) {
-        Map<String, Node> oldNodes = nodeList.getNodes();
-        nodes = new HashMap<String, Node>();
-        
-        for (Map.Entry<String, Node> entry: oldNodes.entrySet()) {
-            Node newNode = new Node(entry.getValue());
-            nodes.put(entry.getKey(), newNode);
-        }
-
-        this.visited = new HashSet<String>(nodeList.getVisited());
-        this.unvisited = new HashSet<String>(nodeList.getUnvisited());
-        this.traversedProcessors = new HashSet<Integer>(nodeList.getTraversedProcessors());
+    public PartialSchedule(PartialSchedule paritalSchedule) {
+        nodes = new ArrayList<>(paritalSchedule.getNodes());
+        processorMap = new HashMap<>(paritalSchedule.getProcessorMap());
+        startTimes = new HashMap<>(paritalSchedule.getStartTimes());
+        this.visited = new ArrayList<>(paritalSchedule.getVisited());
+        this.unvisited = new ArrayList<>(paritalSchedule.getUnvisited());
+        this.traversedProcessors = new HashSet<Integer>(paritalSchedule.getTraversedProcessors());
     }
 
     /**
@@ -68,27 +53,39 @@ public class NodeList {
     public boolean allVisited() {
         return unvisited.isEmpty();
     }
-    
-    public Set<Node> getUnvisitedNodes() {
-        Set<Node> unvisitedNodes = new HashSet<Node>();
-        for (String nodeName: unvisited) {
-            unvisitedNodes.add(nodes.get(nodeName));
-        }
-        return unvisitedNodes;
+
+    public List<Node> getUnvisitedNodes() {
+        return new ArrayList<>(unvisited);
     }
 
     /**
      * Returns a set of all unvisited node names.
      */
-    private Set<String> getUnvisited() {
+    private List<Node> getUnvisited() {
         return unvisited;
     }
     
     /**
      * Returns a set of all visited node names.
      */
-    private Set<String> getVisited() {
+    private List<Node> getVisited() {
         return visited;
+    }
+
+    public HashMap<Node, Integer> getProcessorMap() {
+        return processorMap;
+    }
+
+    public HashMap<Node, Integer> getStartTimes() {
+        return startTimes;
+    }
+
+    public int getProcessor(Node node) {
+        return processorMap.get(node);
+    }
+
+    public int getStartTime(Node node) {
+        return startTimes.get(node);
     }
     
     /**
@@ -103,13 +100,12 @@ public class NodeList {
      * 
      * Returns true if the node is the first to be added on this processor, and false otherwise.
      */
-    public boolean scheduleTask(String nodeName, int processor, int startTime) {
-        Node node = nodes.get(nodeName);
-        node.setProcessor(processor);
-        node.setStartTime(startTime);
+    public boolean scheduleTask(Node node, int processor, int startTime) {
+        processorMap.put(node, processor);
+        startTimes.put(node,startTime);
         
-        visited.add(nodeName);
-        unvisited.remove(nodeName);
+        visited.add(node);
+        unvisited.remove(node);
         
         if (!traversedProcessors.contains(processor)) {
             traversedProcessors.add(processor);
@@ -122,8 +118,8 @@ public class NodeList {
      * Checks if all of a node's dependencies have already been assigned to processors.
      */
     public boolean dependenciesSatisfied(Node node) {
-        for (Node parentName: node.getParents().keySet()) {
-            if (unvisited.contains(parentName)) {
+        for (Node.IncomingEdge edge: node.getIncomingEdges()) {
+            if (unvisited.contains(edge.getParent())) {
                 return false;
             }
         }
@@ -135,9 +131,8 @@ public class NodeList {
      */
     public int getMakespan() {
         int makespan = 0;
-        for (String nodeName: visited) {
-            Node node = nodes.get(nodeName);
-            int finishTime = node.getFinishTime();
+        for (Node node: visited) {
+            int finishTime = startTimes.get(node) + node.getWeight();
             if (finishTime > makespan) {
                 makespan = finishTime;
             }
@@ -155,10 +150,9 @@ public class NodeList {
         int bestStartTime = 0;
         
         // a node cannot start until all previous nodes on that processor have finished
-        for (String nodeName: visited) {
-            Node node = nodes.get(nodeName);
-            if (node.getProcessor() == processor) {
-                int finishTime = node.getFinishTime();
+        for (Node node: visited) {
+            if (processorMap.get(node) == processor) {
+                int finishTime = startTimes.get(node) + node.getWeight();
                 if (finishTime > bestStartTime) {
                     bestStartTime = finishTime;
                 }
@@ -166,13 +160,13 @@ public class NodeList {
         }
         
         // account for dependency 'edge costs'
-        for (Map.Entry<Node, Integer> parentEntry: newNode.getParents().entrySet()) {
-            Node parent = parentEntry.getKey();
-            int edgeCost = parentEntry.getValue();
+        for (Node.IncomingEdge edge: newNode.getIncomingEdges()) {
+            Node parent = edge.getParent();
+            int edgeCost = edge.getWeight();
             // edge costs only are counted if the node is on a different processor to its parent
-            if (parent.getProcessor() != processor) {
+            if (processorMap.get(parent) != processor) {
                 // TODO: node should have weights stored with parents not with children
-                int newStartTime = parent.getFinishTime() + edgeCost;
+                int newStartTime = startTimes.get(parent) + parent.getWeight() + edgeCost;
                 if (newStartTime > bestStartTime) {
                     bestStartTime = newStartTime;
                 }
@@ -182,7 +176,7 @@ public class NodeList {
         return bestStartTime;
     }
     
-    public Map<String, Node> getNodes() {
+    public List<Node> getNodes() {
         return nodes;
     }
     
@@ -190,21 +184,25 @@ public class NodeList {
      * Returns the nodes using a list representation.
      */
     public List<Node> toList() {
-        return new ArrayList<Node>(nodes.values());
+        return new ArrayList<Node>(nodes);
     }
     
     /**
      * Returns the node with this name.
      */
     public Node getNode(String name) {
-        return nodes.get(name);
+        for (Node node: nodes) {
+            if (node.getName().equals(name)) {
+                return node;
+            }
+        }
+        return null;
     }
     
     @Override
     public String toString() {
         List<String> strings = new ArrayList<String>();
-        for (String nodeName: visited) {
-            Node node = nodes.get(nodeName);
+        for (Node node: visited) {
             strings.add(node.toString());
         }
         return String.join(", ", strings);

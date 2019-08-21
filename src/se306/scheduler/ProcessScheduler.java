@@ -10,12 +10,8 @@ import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 import se306.scheduler.exception.InvalidFileFormatException;
 import se306.scheduler.graph.Node;
-import se306.scheduler.logic.Algorithm;
-import se306.scheduler.logic.AlgorithmListener;
-import se306.scheduler.logic.DFSAlgorithm;
-import se306.scheduler.logic.ParallelBruteForceAlgorithm;
-import se306.scheduler.logic.Scheduler;
-import se306.scheduler.logic.SequentialAlgorithm;
+import se306.scheduler.graph.PartialSchedule;
+import se306.scheduler.logic.*;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -89,7 +85,7 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
 	public void schedule(String[] args) {
         //algorithm = new SequentialAlgorithm();
         //algorithm = new DFSAlgorithm(config.getInt("P"));
-	    algorithm = new ParallelBruteForceAlgorithm(config.getInt("P"));
+	    algorithm = new BNBAlgorithm(config.getInt("P"));
         scheduler = new Scheduler(algorithm);
         
         algorithm.addListener(this);
@@ -153,7 +149,7 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
 
     // once a schedule has been found, write the output to a file
     @Override
-    public void algorithmCompleted(List<Node> schedule) {
+    public void algorithmCompleted(PartialSchedule schedule) {
         try {
             dot.write(config.getString("OUTPUT"), schedule);
         } catch (IOException e) {
@@ -163,7 +159,7 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
     }
 
 	@Override
-	public void newOptimalFound(List<Node> schedule) {
+	public void newOptimalFound(PartialSchedule schedule) {
 
 	}
 

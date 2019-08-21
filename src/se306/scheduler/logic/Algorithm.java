@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import se306.scheduler.graph.Node;
+import se306.scheduler.graph.PartialSchedule;
 
 public abstract class Algorithm {
     protected List<AlgorithmListener> listeners;
@@ -28,13 +29,13 @@ public abstract class Algorithm {
     
     public abstract void schedule();
     
-    protected void completed(List<Node> answer) {
+    protected void completed(PartialSchedule answer) {
         for (AlgorithmListener listener: listeners) {
             listener.algorithmCompleted(answer);
         }
     }
 
-    protected void updateSchedule(List<Node> newOptimal){
+    protected void updateSchedule(PartialSchedule newOptimal){
         for (AlgorithmListener listener: listeners) {
             listener.newOptimalFound(newOptimal);
         }
@@ -51,6 +52,7 @@ public abstract class Algorithm {
         for (AlgorithmListener listener: listeners) {
             listener.updateSchedulesChecked(this.schedulesChecked);
         }
+        System.out.println(schedulesChecked);
     }
 
     /**

@@ -10,6 +10,7 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
 import org.graphstream.ui.fx_viewer.FxDefaultView;
@@ -32,6 +33,7 @@ import java.util.ResourceBundle;
 
 public class HomeController implements Initializable, AlgorithmListener {
 
+    @FXML AnchorPane anchorPane;
     @FXML Rectangle greyRectangle;
     @FXML Button startButton;
     @FXML Label timeDisplay, filenameLabel, numProcLabel;
@@ -72,7 +74,7 @@ public class HomeController implements Initializable, AlgorithmListener {
 
     private void start() {
         greyRectangle.setVisible(false);
-        startButton.setVisible(false);
+        anchorPane.getChildren().remove(startButton);
         filenameLabel.setText(ProcessScheduler.getFileName());
         numProcLabel.setText(String.valueOf(ProcessScheduler.getNumProcessors()));
 

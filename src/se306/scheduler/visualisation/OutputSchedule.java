@@ -21,26 +21,60 @@ public class OutputSchedule<X,Y> extends XYChart<X,Y>{
 
     /** a node which displays a value on hover, but is otherwise empty */
     class HoveredThresholdNode extends StackPane {
-        HoveredThresholdNode(Node node) {
+        HoveredThresholdNode(Node node, double boxLength) {
             setPrefSize(15, 15);
+
+            final int labelX = 120;
+            final int labelY = 80;
 
             //Add label with node description
             final Label label = new Label("Node: " + node.getName() +"\n" +
                     "Start Time: " + node.getStartTime() +"\n" +
                     "Finish Time: " + node.getFinishTime());
-            label.setMinSize(120,80);
+            label.setMinSize(labelX,labelY);
             label.setStyle("-fx-background-color:lightgrey;" +
-                    "-fx-background-radius: 10;");
+                    "-fx-background-radius: 10;" +
+                    "-fx-opacity: 0.9;");
             label.setAlignment(CENTER);
 
             setOnMouseEntered(mouseEvent -> {
-                label.setTranslateX(mouseEvent.getX());
-                label.setTranslateY(mouseEvent.getY());
+                //Make label visible when mouse hovers over block
                 getChildren().setAll(label);
                 toFront();
             });
             setOnMouseExited(mouseEvent -> {
+                //Remove label when mouse exits block
                 getChildren().clear();
+            });
+            setOnMouseMoved(mouseEvent -> {
+                //Set location of label depending where on the screen the mouse is
+                label.setTranslateX(mouseEvent.getX()-labelX/2);
+                label.setTranslateY(mouseEvent.getY()-labelY/2);
+
+                double mouseLocationInGraphX = mouseEvent.getSceneX() - OutputSchedule.this.getLayoutBounds().getMaxX() - 93;
+                double mouseLocationInGraphY = mouseEvent.getSceneY() - 20;
+
+//                System.out.println("block location: " + mouseEvent.getX());
+//                System.out.println("scene location: " + mouseEvent.getSceneX());
+//                System.out.println("graph location: " + mouseLocationInGraphX);
+//                System.out.println("threshold:      " + Integer.toString(93 + labelX));
+//                System.out.println(mouseEvent.getSceneY());
+//                System.out.println();
+//
+//                System.out.println("graph location: " + mouseLocationInGraphY);
+
+                //Change label location if it would be out of bounds
+                if (mouseLocationInGraphX < labelX){
+                    label.setTranslateX(labelX/2);
+                }
+                if (mouseLocationInGraphY < labelY){
+                    label.setTranslateY(labelY/2);
+                }
+
+                //Remove label if mouse leaves block
+                if (mouseEvent.getX() < 0 || mouseEvent.getX() > boxLength || mouseEvent.getY() < 0 || mouseEvent.getY() > blockHeight){
+                    getChildren().clear();
+                }
             });
         }
     }
@@ -79,7 +113,9 @@ public class OutputSchedule<X,Y> extends XYChart<X,Y>{
                 if (node.getProcessor()-1==processor){
                     //Add node data to graph
                     Data data = new Data<>(node.getStartTime(), labels[processor], new ExtraData(node.getWeight(), "status-"+node.getName()));
-                    data.setNode(new HoveredThresholdNode(node));
+                    double boxLength = getLength( data.getExtraValue()) * ((getXAxis() instanceof NumberAxis) ? Math.abs(((NumberAxis)getXAxis()).getScale()) : 1);
+                    HoveredThresholdNode hoverNode = new HoveredThresholdNode(node, boxLength);
+                    data.setNode(hoverNode);
                     series.getData().add(data);
                 }
             }
@@ -207,10 +243,10 @@ public class OutputSchedule<X,Y> extends XYChart<X,Y>{
 
         //Randomly pick a shade of blue for block
         Random random = new Random();
-        int red = random.nextInt(100);
-        int green = random.nextInt(150);
+        int red = random.nextInt(40);
+        int green = random.nextInt(100);
         int blue = 255;
-        String colour = "rgb(" + Integer.toString(red) + "," + Integer.toString(green) + "," + Integer.toString(blue) + ");";
+        String colour = "rgb(" + Integer.toString(red) + "," + Integer.toString(green) + "," + Integer.toString(blue) + ",0.7);";
         container.setStyle("-fx-background-color:" + colour + ";");
 
         return container;

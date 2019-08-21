@@ -54,14 +54,6 @@ public class HomeController implements Initializable, AlgorithmListener {
         scrollPane.setFitToWidth(true);
         scrollPane.setContent(outputSchedule);
 
-        //Display graph
-        org.graphstream.graph.Graph graph = GraphDisplay.getGraphDisplay().getGraph();
-        FxViewer fxViewer = new FxViewer(graph, FxViewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
-        GraphRenderer renderer = new FxGraphRenderer();
-        FxDefaultView view = (FxDefaultView) fxViewer.addView(FxViewer.DEFAULT_VIEW_ID, renderer);
-        view.setPrefSize(graphPane.getPrefWidth(), graphPane.getPrefHeight());
-        graphPane.getChildren().add(view);
-
         //Get same scheduler & algorithm objects from main class
         scheduler = ProcessScheduler.getScheduler();
         Algorithm algorithm = ProcessScheduler.getAlgorithm();
@@ -82,6 +74,14 @@ public class HomeController implements Initializable, AlgorithmListener {
         startButton.setVisible(false);
         filenameLabel.setText(ProcessScheduler.getFileName());
         numProcLabel.setText(String.valueOf(ProcessScheduler.getNumProcessors()));
+
+        //Display graph
+        org.graphstream.graph.Graph graph = GraphDisplay.getGraphDisplay().getGraph();
+        FxViewer fxViewer = new FxViewer(graph, FxViewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
+        GraphRenderer renderer = new FxGraphRenderer();
+        FxDefaultView view = (FxDefaultView) fxViewer.addView(FxViewer.DEFAULT_VIEW_ID, renderer);
+        view.setPrefSize(graphPane.getPrefWidth(), graphPane.getPrefHeight());
+        graphPane.getChildren().add(view);
 
         timer.startTimer(0);
         //Calculate optimal schedule in new thread

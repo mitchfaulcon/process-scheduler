@@ -51,7 +51,7 @@ public class GraphDisplay {
         node.setAttribute("ui.label", nodeName);
         node.setAttribute("ui.style", "shape:circle;fill-color: white;size: 50px;" +
                 "stroke-color: black;stroke-mode: plain;stroke-width: 1px;" +
-                "text-alignment: center;text-size: 30px;");
+                "text-alignment: left;text-size: 30px;");
 
         //Set node coordinate to a 'good enough' initial location (can be moved by user in pop-up window later)
         Random random = new Random();

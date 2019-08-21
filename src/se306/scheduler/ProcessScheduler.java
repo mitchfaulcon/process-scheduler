@@ -13,6 +13,7 @@ import se306.scheduler.graph.Node;
 import se306.scheduler.logic.Algorithm;
 import se306.scheduler.logic.AlgorithmListener;
 import se306.scheduler.logic.DFSAlgorithm;
+import se306.scheduler.logic.ParallelBruteForceAlgorithm;
 import se306.scheduler.logic.Scheduler;
 import se306.scheduler.logic.SequentialAlgorithm;
 
@@ -86,8 +87,9 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
 	}
 	
 	public void schedule(String[] args) {
-        //Algorithm algorithm = new SequentialAlgorithm();
-        algorithm = new DFSAlgorithm(config.getInt("P"));
+        //algorithm = new SequentialAlgorithm();
+        //algorithm = new DFSAlgorithm(config.getInt("P"));
+	    algorithm = new ParallelBruteForceAlgorithm(config.getInt("P"));
         scheduler = new Scheduler(algorithm);
         
         algorithm.addListener(this);
@@ -162,6 +164,11 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
 
 	@Override
 	public void newOptimalFound(List<Node> schedule) {
+
+	}
+
+	@Override
+	public void updateSchedulesChecked(long schedules) {
 
 	}
 

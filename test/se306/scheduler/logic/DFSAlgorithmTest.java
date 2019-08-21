@@ -46,6 +46,11 @@ public class DFSAlgorithmTest {
             }
 
             @Override
+            public void updateSchedulesChecked(long schedules) {
+
+            }
+
+            @Override
             public void newOptimalFound(List<Node> schedule) {
                 
             }

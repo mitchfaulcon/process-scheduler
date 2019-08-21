@@ -98,4 +98,9 @@ public class HomeController implements Initializable, AlgorithmListener {
         //Update output schedule in GUI thread
         Platform.runLater(() -> outputSchedule.update(schedule));
     }
+
+    @Override
+    public void updateSchedulesChecked(long schedules) {
+        //TODO: update progress bar
+    }
 }

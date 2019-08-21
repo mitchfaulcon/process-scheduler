@@ -25,7 +25,8 @@ public class Scheduler {
     }
 
     public void addChild(String parent, String child, int edgeWeight) throws NullPointerException {
-        getNode(child).addParent(parent, edgeWeight);
+        Node parentNode = getNode(parent);
+        getNode(child).addParent(parentNode, edgeWeight);
     }
 
     private Node getNode(String name) {

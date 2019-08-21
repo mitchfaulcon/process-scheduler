@@ -48,8 +48,7 @@ public class SequentialAlgorithm extends Algorithm {
             for (j = 0; j < unreached.size(); j++) {
                 parentsFound = true;
                 // finding if all parents are reached (nodes can only run if all parents reached)
-                for (String parentName: unreached.get(j).getParents().keySet()) {
-                    Node parent = nodeMap.get(parentName);
+                for (Node parent: unreached.get(j).getParents().keySet()) {
                     if (unreached.contains(parent)) {
                         parentsFound = false;
                         break;

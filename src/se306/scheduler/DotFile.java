@@ -206,8 +206,8 @@ public class DotFile {
         
         // generate all dependency strings
         for (Node node: nodes) {
-            for (Map.Entry<String, Integer> entry: node.getParents().entrySet()) {
-                Node parent = nodeMap.get(entry.getKey());
+            for (Map.Entry<Node, Integer> entry: node.getParents().entrySet()) {
+                Node parent = entry.getKey();
                 String dependencyKey = parent.getName() + " " + node.getName();
                 dependencyStrings.put(dependencyKey, String.format("\t%s -> %s\t[Weight=%d];" + LS, parent.getName(), node.getName(),
                         entry.getValue()));

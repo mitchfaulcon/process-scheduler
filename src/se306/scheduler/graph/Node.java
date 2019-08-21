@@ -1,11 +1,15 @@
 package se306.scheduler.graph;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Node {
     private String name;
-    private Map<String, Integer> parents = new HashMap<>();
+    private Map<Node, Integer> parents = new HashMap<>();
+    private List<Node> children;
+    private int BLWeight;
     private int weight;
     private int startTime;
     private int processor;
@@ -15,6 +19,8 @@ public class Node {
         this.name = name;
         this.weight = weight;
         this.processor = -1;
+        this.children = new ArrayList<>();
+        this.BLWeight = -1;
     }
     
     /**
@@ -25,20 +31,23 @@ public class Node {
         this.weight = node.weight;
         this.processor = node.processor;
         this.startTime = node.startTime;
-        
-        this.parents = new HashMap<String, Integer>();
-        for (Map.Entry<String, Integer> entry: node.getParents().entrySet()) {
+        this.parents = new HashMap<Node, Integer>();
+        for (Map.Entry<Node, Integer> entry: node.getParents().entrySet()) {
             parents.put(entry.getKey(), entry.getValue());
         }
+        this.children = new ArrayList<>();
+        this.children.addAll(node.children);
+        this.BLWeight = node.BLWeight;
     }
 
     /**
      * Method to add another node as a parent of this one.
-     * @param parent The name of the parent node to be added
+     * @param parent The parent node to be added
      * @param edgeWeight the weight of the link between the parent node and this node
      */
-    public void addParent(String parent, int edgeWeight){
+    public void addParent(Node parent, int edgeWeight){
         parents.put(parent, edgeWeight);
+        parent.children.add(this);
     }
 
     public void setStartTime(int startTime) {
@@ -61,11 +70,11 @@ public class Node {
         return this.name;
     }
     
-    /*public Set<String> getChildren() {
+    public List<Node> getChildren() {
         return children;
-    }*/
+    }
 
-    public Map<String, Integer> getParents() {
+    public Map<Node, Integer> getParents() {
         return parents;
     }
 
@@ -79,6 +88,23 @@ public class Node {
     
     public int getProcessor() {
         return this.processor;
+    }
+
+    public int getBLWeight() {
+        return this.BLWeight;
+    }
+
+    public void setBLWeight(int BLWeight) {
+        this.BLWeight = BLWeight;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof Node) {
+            Node node = (Node) o;
+            return (node.name.equals(this.name) && node.weight == this.weight);
+        }
+        return false;
     }
     
     @Override

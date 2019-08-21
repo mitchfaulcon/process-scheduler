@@ -27,7 +27,7 @@ class NodeClassTest {
     void testNodeWithChild(){
         Node nodeA = new Node("a", 2);
         Node nodeB = new Node("b", 3);
-        nodeB.addParent("a", 1);
+        nodeB.addParent(nodeA, 1);
 
         assertEquals(0, nodeA.getParents().size(), "Node A should have 0 parents");
         assertEquals(1, nodeB.getParents().size(), "Node B should have 1 parent");

@@ -1,5 +1,7 @@
 package se306.scheduler.graph;
 
+import com.sun.javaws.exceptions.InvalidArgumentException;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -120,7 +122,7 @@ public class NodeList {
      * Checks if all of a node's dependencies have already been assigned to processors.
      */
     public boolean dependenciesSatisfied(Node node) {
-        for (String parentName: node.getParents().keySet()) {
+        for (Node parentName: node.getParents().keySet()) {
             if (unvisited.contains(parentName)) {
                 return false;
             }
@@ -164,8 +166,8 @@ public class NodeList {
         }
         
         // account for dependency 'edge costs'
-        for (Map.Entry<String, Integer> parentEntry: newNode.getParents().entrySet()) {
-            Node parent = nodes.get(parentEntry.getKey());
+        for (Map.Entry<Node, Integer> parentEntry: newNode.getParents().entrySet()) {
+            Node parent = parentEntry.getKey();
             int edgeCost = parentEntry.getValue();
             // edge costs only are counted if the node is on a different processor to its parent
             if (parent.getProcessor() != processor) {

@@ -39,9 +39,9 @@ public class BNBAlgorithm extends Algorithm {
 
                     //Update listener with new schedule
                     updateSchedule(bestSchedule);
-                } else {
-                    updateBranchCut(0);
                 }
+                // regardless of whether the schedule is best, one complete schedule will be removed
+                updateBranchCut(0);
                 continue;
             }
 
@@ -49,8 +49,10 @@ public class BNBAlgorithm extends Algorithm {
                 // check if the lower bound on scheduling this node is less than the best so far. If it is not, then
                 // there is no way this partial schedule is faster, so loop breaks.
                 if (state.lowerBoundEndTime(node) > bestMakespan) {
-                    updateBranchCut(state.getUnvisitedNodes().size() - 1);
-                    break;
+                    for (int i = 0; i < numProcessors; i++) {
+                        updateBranchCut(state.getUnvisitedNodes().size() - 1);
+                    }
+                    continue;
                 }
                 // check if the node's parents have all been scheduled
                 if (state.dependenciesSatisfied(node)) {
@@ -70,8 +72,8 @@ public class BNBAlgorithm extends Algorithm {
                             // if this task is placed as the first task on a processor then trying to place the
                             // task on any subsequent processor will create an effectively identical schedule
                             if (isFirstOnProcessor) {
-                                for (int i = 0; i < numProcessors - 1; i++) {
-                                    updateBranchCut(state.getUnvisitedNodes().size() - 1);
+                                for (int i = p; i < numProcessors; i++) {
+                                    updateBranchCut(newState.getUnvisitedNodes().size());
                                 }
                                 break;
                             }
@@ -80,7 +82,9 @@ public class BNBAlgorithm extends Algorithm {
                         }
                     }
                 } else {
-                    updateBranchCut(state.getUnvisitedNodes().size() - 1);
+                    for (int i = 0; i < numProcessors; i++) {
+                        updateBranchCut(state.getUnvisitedNodes().size() - 1);
+                    }
                 }
             }
         }

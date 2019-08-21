@@ -29,7 +29,7 @@ public class OutputSchedule<X,Y> extends XYChart<X,Y>{
             //Add label with node description
             final Label label = new Label("Node: " + node.getName() +"\n" +
                     "Start Time: " + startTime +"\n" +
-                    "Finish Time: " + startTime + node.getWeight());
+                    "Finish Time: " + Integer.toString(startTime + node.getWeight()));
             label.setMinSize(labelX,labelY);
             label.setStyle("-fx-background-color:lightgrey;" +
                     "-fx-background-radius: 10;" +

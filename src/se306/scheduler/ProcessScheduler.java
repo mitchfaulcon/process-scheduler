@@ -159,6 +159,11 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
 
 	}
 
+	@Override
+	public void updateSchedulesChecked(long schedules) {
+
+	}
+
     public static int getNumProcessors(){
 		return numProcessors;
 	}

@@ -175,6 +175,22 @@ public class PartialSchedule {
         
         return bestStartTime;
     }
+
+    /**
+     * This returns an underestimate on the end time of the schedule should this node be scheduled next.
+     */
+    public int lowerBoundEndTime(Node newNode) {
+        int startTime = 0;
+        for (Node.IncomingEdge edge : newNode.getIncomingEdges()) {
+            if (visited.contains(edge.getParent())) {
+                int time = startTimes.get(edge.getParent()) + edge.getParent().getWeight();
+                if (time > startTime) {
+                    startTime = time;
+                }
+            }
+        }
+        return startTime + newNode.getBLWeight();
+    }
     
     public List<Node> getNodes() {
         return nodes;

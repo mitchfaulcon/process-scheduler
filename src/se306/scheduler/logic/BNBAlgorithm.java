@@ -29,7 +29,6 @@ public class BNBAlgorithm extends Algorithm {
 
         while (!stack.isEmpty()) {
             PartialSchedule state = stack.pop();
-
             // all nodes have been assigned to a processor
             if (state.allVisited()) {
                 // check if the current solution is better than the best one found so far
@@ -47,12 +46,20 @@ public class BNBAlgorithm extends Algorithm {
             }
 
             for (Node node: state.getUnvisitedNodes()) {
+                // check if the lower bound on scheduling this node is less than the best so far. If it is not, then
+                // there is no way this partial schedule is faster, so loop breaks.
+                if (state.lowerBoundEndTime(node) > bestMakespan) {
+                    updateBranchCut(state.getUnvisitedNodes().size() - 1);
+                    break;
+                }
                 // check if the node's parents have all been scheduled
                 if (state.dependenciesSatisfied(node)) {
                     // create new states by adding the new node to every processor
                     for (int p = 1; p <= numProcessors; p++) {
                         // find the earliest time the new node can be added on this processor
                         int bestStart = state.findBestStartTime(node, p);
+                        // if the lower bound for scheduling this node here on this processor is worse than best so far
+                        // then partial schedule is not added to stack
                         if (bestStart + node.getBLWeight() < bestMakespan) {
                             // add the node at this time
                             PartialSchedule newState = new PartialSchedule(state);
@@ -69,8 +76,6 @@ public class BNBAlgorithm extends Algorithm {
                                 break;
                             }
                         } else {
-                            // indicating to listeners that all partial schedules based on this state and node combination
-                            // have been cut from tree
                             updateBranchCut(state.getUnvisitedNodes().size() - 1);
                         }
                     }

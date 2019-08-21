@@ -52,7 +52,6 @@ public abstract class Algorithm {
         for (AlgorithmListener listener: listeners) {
             listener.updateSchedulesChecked(this.schedulesChecked);
         }
-        System.out.println(schedulesChecked);
     }
 
     /**

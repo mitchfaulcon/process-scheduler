@@ -1,0 +1,50 @@
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.progress-bar > .track {
+    -fx-text-box-border: #004cff;
+    -fx-control-inner-background: #004cff;
+}
+
+.scroll-pane {
+    -fx-background-color: white;
+}
+
+.button {
+    -fx-font-family: "Arial Black";
+    -fx-font-size: 70px;
+    -fx-base: #004cff;
+}
+
+.consolas {
+    -fx-font-family: Consolas;
+    -fx-text-fill: #ecf0ff;
+}
+
+.timer {
+    -fx-font-weight: bold;
+    -fx-font-size: 55px;
+}
+
+.footer {
+    -fx-background-color: #004cff;
+}
+
+.information {
+    -fx-font-family: "Arial Rounded MT Bold";
+    -fx-font-size: 30px;
+    -fx-text-fill: #ecf0ff;
+}
+
+.information-title {
+    -fx-text-fill: #001f63;
+}
+
+.progress-bar {
+    -fx-accent: #0036af;
+}
+
+.progress-text {
+    -fx-font-size: 30px;
+}

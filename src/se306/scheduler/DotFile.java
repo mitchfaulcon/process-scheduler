@@ -234,4 +234,8 @@ public class DotFile {
         fos.close();
     }
 
+    public String getFileName() {
+        return fileName;
+    }
+
 }

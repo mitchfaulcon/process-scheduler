@@ -1,46 +1,90 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1420.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="se306.scheduler.controller.HomeController">
-   <children>
-      <GridPane prefHeight="800.0" prefWidth="1420.0">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1420.0" stylesheets="@home_style.css" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="se306.scheduler.controller.HomeController">
+    <GridPane prefHeight="800.0" prefWidth="1420.0">
+        <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints maxHeight="683.0" minHeight="10.0" prefHeight="631.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="705.9999908447265" minHeight="10.0" prefHeight="169.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+        <GridPane prefHeight="403.0" prefWidth="1420.0" stylesheets="@home_style.css">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="719.9999267578125" minWidth="10.0" prefWidth="709.8000244140625" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="883.2000488281249" minWidth="10.0" prefWidth="710.5999755859376" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            </rowConstraints>
+            <children>
+                <ScrollPane fx:id="scrollPane" prefHeight="627.0" prefWidth="710.0" styleClass="dark-grey" GridPane.columnIndex="1" />
+                <Pane fx:id="graphPane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="643.0" prefWidth="702.0" translateX="3.0" translateY="1.0" />
+            </children>
+        </GridPane>
+      <GridPane gridLinesVisible="true" styleClass="footer" stylesheets="@home_style.css" GridPane.rowIndex="1">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
         </columnConstraints>
         <rowConstraints>
-          <RowConstraints maxHeight="390.8000244140625" minHeight="10.0" prefHeight="145.400048828125" vgrow="SOMETIMES" />
-          <RowConstraints maxHeight="705.9999908447265" minHeight="10.0" prefHeight="654.199951171875" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="75.0" minHeight="3.0" prefHeight="49.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="166.0" minHeight="10.0" prefHeight="120.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <GridPane prefHeight="627.0" prefWidth="1420.0" GridPane.rowIndex="1">
-              <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="719.9999267578125" minWidth="10.0" prefWidth="709.8000244140625" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="883.2000488281249" minWidth="10.0" prefWidth="710.5999755859376" />
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-              </rowConstraints>
-               <children>
-                  <ScrollPane fx:id="scrollPane" prefHeight="627.0" prefWidth="710.0" GridPane.columnIndex="1" />
-                  <Pane fx:id="graphPane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="643.0" prefWidth="702.0" translateX="3.0" translateY="1.0" />
-               </children>
-            </GridPane>
-            <Label fx:id="timeDisplay" prefHeight="39.0" prefWidth="137.0" text="Label" translateX="-50.0" GridPane.halignment="RIGHT">
-               <font>
-                  <Font size="27.0" />
-               </font>
+              <Pane prefHeight="100.0" prefWidth="1426.0" styleClass="footer" stylesheets="@home_style.css" GridPane.rowIndex="1">
+                  <Label fx:id="timeDisplay" layoutX="1069.0" layoutY="32.0" stylesheets="@home_style.css" text="00:00.00">
+                      <font>
+                          <Font name="Arial" size="55.0" />
+                      </font>
+                  <styleClass>
+                     <String fx:value="timer" />
+                     <String fx:value="consolas" />
+                  </styleClass>
+                  </Label>
+               <Label layoutX="19.0" layoutY="45.0" stylesheets="@home_style.css" text="Filename:">
+                  <font>
+                     <Font name="Arial Rounded MT Bold" size="28.0" />
+                  </font>
+                  <styleClass>
+                     <String fx:value="information" />
+                     <String fx:value="information-title" />
+                  </styleClass>
+               </Label>
+               <Label layoutX="19.0" layoutY="76.0" stylesheets="@home_style.css" text="No. of Processors: ">
+                  <font>
+                     <Font name="Arial Rounded MT Bold" size="28.0" />
+                  </font>
+                  <styleClass>
+                     <String fx:value="information" />
+                     <String fx:value="information-title" />
+                  </styleClass>
+               </Label>
+               <Label fx:id="filenameLabel" layoutX="296.0" layoutY="46.0" styleClass="information" stylesheets="@home_style.css" />
+               <Label fx:id="numProcLabel" layoutX="296.0" layoutY="79.0" styleClass="information" stylesheets="@home_style.css" />
+              </Pane>
+            <ProgressBar prefHeight="85.0" prefWidth="1420.0" progress="0.0" style="-fx-border-width: 0;" stylesheets="@home_style.css" />
+            <Label stylesheets="@home_style.css" text="123/789" textAlignment="CENTER" GridPane.halignment="CENTER">
+               <styleClass>
+                  <String fx:value="progress-text" />
+                  <String fx:value="consolas" />
+               </styleClass>
             </Label>
-            <Button fx:id="stopTimer" mnemonicParsing="false" onAction="#onClick" text="STOP" GridPane.halignment="CENTER" />
          </children>
       </GridPane>
-   </children>
+    </GridPane>
+    <Rectangle fx:id="greyRectangle" arcHeight="5.0" arcWidth="5.0" height="800.0" opacity="0.45" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="1422.0" />
+    <Button fx:id="startButton" layoutX="404.0" layoutY="286.0" mnemonicParsing="false" prefHeight="229.0" prefWidth="612.0" stylesheets="@home_style.css" text="Start" />
 </AnchorPane>

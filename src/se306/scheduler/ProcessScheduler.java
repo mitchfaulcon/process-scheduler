@@ -27,6 +27,7 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
     private static Scheduler scheduler;
     private static Algorithm algorithm;
     private static int numProcessors;
+    private static String fileName;
     
 	public static void main(String[] args) {
 	    ProcessScheduler processScheduler = new ProcessScheduler();
@@ -38,6 +39,10 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
 	
 	public ProcessScheduler() {
 	    
+	}
+
+	public static String getFileName() {
+		return fileName;
 	}
 
 	@Override
@@ -89,7 +94,8 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
 
 		try {
 			// attempt to load the input file
-			dot = new DotFile(config.getString("INPUT"));
+			fileName = config.getString("INPUT");
+			dot = new DotFile(fileName);
 			dot.read(scheduler);
 
 			// set up graphs if -v flag specified

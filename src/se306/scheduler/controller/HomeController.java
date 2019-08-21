@@ -11,6 +11,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.shape.Rectangle;
 import org.graphstream.ui.fx_viewer.FxDefaultView;
 import org.graphstream.ui.fx_viewer.FxViewer;
 import org.graphstream.ui.javafx.FxGraphRenderer;
@@ -30,16 +31,19 @@ import java.util.ResourceBundle;
 
 public class HomeController implements Initializable, AlgorithmListener {
 
-    @FXML Label timeDisplay;
-    @FXML Button stopTimer;
+    @FXML Rectangle greyRectangle;
+    @FXML Button startButton;
+    @FXML Label timeDisplay, filenameLabel, numProcLabel;
     @FXML Pane graphPane;
     @FXML ScrollPane scrollPane;
 
     private OutputSchedule outputSchedule;
     private Timer timer = new Timer();
-
+    private Scheduler scheduler;
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        //Setup action events
+        startButton.setOnAction(event -> start());
 
         //Display output schedule
         NumberAxis xAxis = new NumberAxis();
@@ -59,7 +63,7 @@ public class HomeController implements Initializable, AlgorithmListener {
         graphPane.getChildren().add(view);
 
         //Get same scheduler & algorithm objects from main class
-        Scheduler scheduler = ProcessScheduler.getScheduler();
+        scheduler = ProcessScheduler.getScheduler();
         Algorithm algorithm = ProcessScheduler.getAlgorithm();
         algorithm.addListener(this);
 
@@ -71,18 +75,17 @@ public class HomeController implements Initializable, AlgorithmListener {
             //Update label in application thread
             Platform.runLater(() -> timeDisplay.setText(timer.getSspTime().get()));
         });
-        timer.startTimer(0);
-
-        //Calculate optimal schedule in new thread
-        new Thread(scheduler::start).start();
     }
 
+    private void start() {
+        greyRectangle.setVisible(false);
+        startButton.setVisible(false);
+        filenameLabel.setText(ProcessScheduler.getFileName());
+        numProcLabel.setText(String.valueOf(ProcessScheduler.getNumProcessors()));
 
-    @FXML
-    private void onClick(ActionEvent event){
-        if (event.getSource().equals(stopTimer)){
-            timer.stopTimer();
-        }
+        timer.startTimer(0);
+        //Calculate optimal schedule in new thread
+        new Thread(scheduler::start).start();
     }
 
     @Override

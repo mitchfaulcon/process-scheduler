@@ -5,7 +5,7 @@ import javafx.scene.chart.Axis;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
 import se306.scheduler.graph.Node;
@@ -13,70 +13,10 @@ import se306.scheduler.graph.PartialSchedule;
 
 import java.util.*;
 
-import static javafx.geometry.Pos.CENTER;
-
 /* Class to display output schedule in a graph
  * Adapted from code at https://stackoverflow.com/questions/27975898/gantt-chart-from-scratch
  */
 public class OutputSchedule<X,Y> extends XYChart<X,Y>{
-    /** a node which displays a value on hover, but is otherwise empty */
-    class HoveredThresholdNode extends StackPane {
-        HoveredThresholdNode(Node node, double boxLength, int startTime) {
-            setPrefSize(15, 15);
-            final int labelX = 120;
-            final int labelY = 80;
-
-            //Add label with node description
-            final Label label = new Label("Node: " + node.getName() +"\n" +
-                    "Start Time: " + startTime +"\n" +
-                    "Finish Time: " + Integer.toString(startTime + node.getWeight()));
-            label.setMinSize(labelX,labelY);
-            label.setStyle("-fx-background-color:lightgrey;" +
-                    "-fx-background-radius: 10;" +
-                    "-fx-opacity: 0.9;");
-            label.setAlignment(CENTER);
-
-            setOnMouseEntered(mouseEvent -> {
-                //Make label visible when mouse hovers over block
-                getChildren().setAll(label);
-                toFront();
-            });
-            setOnMouseExited(mouseEvent -> {
-                //Remove label when mouse exits block
-                getChildren().clear();
-            });
-            setOnMouseMoved(mouseEvent -> {
-                //Set location of label depending where on the screen the mouse is
-                label.setTranslateX(mouseEvent.getX()-labelX/2);
-                label.setTranslateY(mouseEvent.getY()-labelY/2);
-
-                double mouseLocationInGraphX = mouseEvent.getSceneX() - OutputSchedule.this.getLayoutBounds().getMaxX() - 93;
-                double mouseLocationInGraphY = mouseEvent.getSceneY() - 20;
-
-//                System.out.println("block location: " + mouseEvent.getX());
-//                System.out.println("scene location: " + mouseEvent.getSceneX());
-//                System.out.println("graph location: " + mouseLocationInGraphX);
-//                System.out.println("threshold:      " + Integer.toString(93 + labelX));
-//                System.out.println(mouseEvent.getSceneY());
-//                System.out.println();
-//
-//                System.out.println("graph location: " + mouseLocationInGraphY);
-
-                //Change label location if it would be out of bounds
-                if (mouseLocationInGraphX < labelX){
-                    label.setTranslateX(labelX/2);
-                }
-                if (mouseLocationInGraphY < labelY){
-                    label.setTranslateY(labelY/2);
-                }
-
-                //Remove label if mouse leaves block
-                if (mouseEvent.getX() < 0 || mouseEvent.getX() > boxLength || mouseEvent.getY() < 0 || mouseEvent.getY() > blockHeight){
-                    getChildren().clear();
-                }
-            });
-        }
-    }
 
     public static class ExtraData {
 
@@ -98,6 +38,7 @@ public class OutputSchedule<X,Y> extends XYChart<X,Y>{
 
     private double blockHeight;
     private String[] labels;
+    private int numProcessors;
 
     public void update(PartialSchedule newSchedule){
 
@@ -111,10 +52,11 @@ public class OutputSchedule<X,Y> extends XYChart<X,Y>{
             for (Node node: newSchedule.getNodes()){
                 if (newSchedule.getProcessor(node)-1==processor){
                     //Add node data to graph
-                    Data data = new Data<>(newSchedule.getStartTime(node), labels[processor], new ExtraData(node.getWeight(), "status-"+node.getName()));
-                    double boxLength = getLength( data.getExtraValue()) * ((getXAxis() instanceof NumberAxis) ? Math.abs(((NumberAxis)getXAxis()).getScale()) : 1);
-                    HoveredThresholdNode hoverNode = new HoveredThresholdNode(node, boxLength, newSchedule.getStartTime(node));
-                    data.setNode(hoverNode);
+                    Data data = new Data<>(node.getStartTime(), labels[numProcessors - processor - 1], new ExtraData(node.getWeight(), "status-"+node.getName()));
+                    data.setNode(new StackPane());
+                    Tooltip.install(data.getNode(),new Tooltip("Node: " + node.getName() +"\n" +
+                            "Start Time: " + node.getStartTime() +"\n" +
+                            "Finish Time: " + node.getFinishTime()));
                     series.getData().add(data);
                 }
             }
@@ -124,11 +66,13 @@ public class OutputSchedule<X,Y> extends XYChart<X,Y>{
 
     public OutputSchedule(Axis<X> xAxis, Axis<Y> yAxis, int numProcessors, double windowHeight) {
         super(xAxis,yAxis);
+        
+        this.numProcessors = numProcessors;
 
         //Create correct labels for Y-axis
         labels = new String[numProcessors];
-        for (int i=0; i<numProcessors; i++){
-            labels[i] = "Processor " + Integer.toString(i+1);
+        for (int i=numProcessors - 1; i>=0; i--){
+            labels[numProcessors - i - 1] = "Processor " + Integer.toString(i+1);
         }
 
         if (!(xAxis instanceof NumberAxis && yAxis instanceof CategoryAxis)){

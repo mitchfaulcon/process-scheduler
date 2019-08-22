@@ -11,7 +11,12 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import org.graphstream.ui.fx_viewer.FxDefaultView;
 import org.graphstream.ui.fx_viewer.FxViewer;
 import org.graphstream.ui.javafx.FxGraphRenderer;
@@ -38,8 +43,10 @@ public class HomeController implements Initializable, AlgorithmListener {
     @FXML Rectangle greyRectangle;
     @FXML Button startButton;
     @FXML Label timeDisplay, filenameLabel, numProcLabel, numThreadsLabel, bestTimeLabel, checkedLabel, timeTitleLabel;
-    @FXML Pane graphPane;
+    @FXML Pane graphPane, footerPane, timerPane;
     @FXML ScrollPane scrollPane;
+
+    private static double MAX_TEXT_WIDTH = 197;
 
     private GraphDisplay graphDisplay;
     private OutputSchedule outputSchedule;
@@ -53,6 +60,11 @@ public class HomeController implements Initializable, AlgorithmListener {
         startButton.setOnAction(event -> start());
         startButton.setOnMouseEntered(event -> startButton.getStyleClass().add("button-hover"));
         startButton.setOnMouseExited(event -> startButton.getStyleClass().remove("button-hover"));
+
+        setTextProperty(numProcLabel);
+        setTextProperty(numThreadsLabel);
+        setTextProperty(bestTimeLabel);
+        setTextProperty(checkedLabel);
 
         //Get same scheduler & algorithm objects from main class
         scheduler = ProcessScheduler.getScheduler();
@@ -138,8 +150,8 @@ public class HomeController implements Initializable, AlgorithmListener {
     @Override
     public void algorithmCompleted(PartialSchedule schedule) {
         timer.stopTimer();
-        timeDisplay.getStyleClass().add("timer-done");
-        timeTitleLabel.getStyleClass().addAll("timer-done", "timer-done-title");
+        footerPane.getStyleClass().add("timer-done-footer");
+        timerPane.getStyleClass().addAll("timer-done-box");
         Platform.runLater(() -> {
             timeTitleLabel.setText("Completion time");
             checkedLabel.setText("0");
@@ -153,6 +165,30 @@ public class HomeController implements Initializable, AlgorithmListener {
             bestTimeLabel.setText(String.valueOf(schedule.getMakespan()));
             outputSchedule.update(schedule);
         });
+    }
+
+    private void setTextProperty(Label label) {
+        double defaultSize = 50;
+        Font defaultFont = Font.font("Consolas", FontWeight.BOLD, defaultSize);
+        label.setFont(defaultFont);
+        label.setTextFill(Paint.valueOf("#1b274e"));
+
+        label.textProperty().addListener(((observable, oldValue, newValue) -> {
+            Text tmpText = new Text(newValue);
+            tmpText.setFont(defaultFont);
+
+            double textWidth = tmpText.getLayoutBounds().getWidth();
+
+            //check if text width is smaller than maximum width allowed
+            if (textWidth <= MAX_TEXT_WIDTH) {
+                label.setFont(defaultFont);
+            } else {
+                //and if it isn't, calculate new font size,
+                // so that label text width matches MAX_TEXT_WIDTH
+                double newFontSize = defaultSize * MAX_TEXT_WIDTH / textWidth;
+                label.setFont(Font.font(defaultFont.getFamily(), newFontSize));
+            }
+        }));
     }
 
 //    @Override

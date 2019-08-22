@@ -108,7 +108,7 @@ public class HomeController implements Initializable, AlgorithmListener {
         greyRectangle.setVisible(false);
         anchorPane.getChildren().remove(startButton);
         filenameLabel.setText(ProcessScheduler.getFileName());
-        numProcLabel.setText(String.valueOf(ProcessScheduler.getNumProcessors()));
+//        numProcLabel.setText(String.valueOf(ProcessScheduler.getNumProcessors()));
 
         //Display graph
         org.graphstream.graph.Graph graph = GraphDisplay.getGraphDisplay().getGraph();

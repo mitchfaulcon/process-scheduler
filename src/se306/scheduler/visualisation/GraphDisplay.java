@@ -49,15 +49,14 @@ public class GraphDisplay {
         Sprite sprite = spriteManager.addSprite(nodeName, Sprite.class);
         sprite.attachToNode(nodeName);
         sprite.setAttribute("ui.label", weight);
-        sprite.setAttribute("ui.style", "text-background-mode: plain;text-size: 15px;" +
-                "fill-color: white;");
+        sprite.setAttribute("ui.style", "text-size: 15px;fill-color: rgba(255,255,255,0);");
         sprite.setPosition(StyleConstants.Units.PX, 40,0,0);
         
         //Set Label & Style
         String colour = String.format(nodeColours.get(nodeName), "127");
         node.setAttribute("ui.label", nodeName);
         node.setAttribute("ui.style", "shape:circle;fill-color: " + colour + ";size: 50px;" +
-                "stroke-color: black;stroke-mode: plain;stroke-width: 1px;" +
+                "stroke-mode: none;" +
                 "text-alignment: left;text-size: 30px;");
 
         //Set node coordinate to a 'good enough' initial location (can be moved by user in pop-up window later)

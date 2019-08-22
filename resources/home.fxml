@@ -22,6 +22,7 @@
         </columnConstraints>
         <rowConstraints>
             <RowConstraints maxHeight="683.0" minHeight="10.0" prefHeight="659.0" vgrow="SOMETIMES" />
+         <RowConstraints />
         </rowConstraints>
         <GridPane prefHeight="403.0" prefWidth="1420.0" styleClass="scroll-pane" stylesheets="@home_style.css">
             <columnConstraints>
@@ -46,7 +47,7 @@
                      <String fx:value="white-box" />
                   </styleClass>
                   <children>
-                     <Label layoutX="14.0" layoutY="8.0" stylesheets="@home_style.css" text="Processors (To schedule)" textAlignment="CENTER">
+                     <Label layoutX="9.0" layoutY="8.0" stylesheets="@home_style.css" text="Processors To Schedule On" textAlignment="CENTER">
                         <font>
                            <Font name="Consolas" size="15.0" />
                         </font>

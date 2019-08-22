@@ -62,6 +62,10 @@ public class Timer {
         return sspTime;
     }
 
+    public String getSeconds(){
+        return Integer.toString((int)time/100) + "." + Integer.toString((int)time % 100);
+    }
+
     private String[] getMSMsTimeFormat(){
         String[] MSMs = new String[3];
 

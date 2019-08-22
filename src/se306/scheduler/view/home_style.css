@@ -35,8 +35,17 @@
     -fx-font-size: 55px;
 }
 
+.timer .text {
+    -fx-stroke: black;
+    -fx-stroke-width: 1px;
+}
+
 .footer {
     -fx-background-color:  linear-gradient(from 0% 0% to 0% 100%, #6ea1ff, #2a4386);
+}
+
+.footer-done {
+    -fx-background-color:  linear-gradient(from 0% 0% to 0% 100%, #50ff70, #34a849);
 }
 
 .filename {
@@ -66,6 +75,10 @@
 
 .timer-box {
     -fx-background-color: linear-gradient(from 0% 0% to 100% 0%, #5df2ff, rgba(93, 242, 255, 0));
+}
+
+.timer-box-done {
+    -fx-background-color: linear-gradient(from 0% 0% to 100% 0%, #5dffd4, rgba(93, 255, 212, 0));
 }
 
 .timer-done .text {

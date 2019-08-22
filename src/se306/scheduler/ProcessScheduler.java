@@ -33,7 +33,7 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
     private static int numProcessors;
     private static String fileName;
     private Map<String, String> nodeColours;
-    private Timer timer = new Timer();
+    private Timer timer = Timer.getInstance();
     
 	public static void main(String[] args) {
 	    ProcessScheduler processScheduler = new ProcessScheduler();
@@ -105,13 +105,14 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
 			dot = new DotFile(fileName);
 			dot.read(scheduler);
 
+			System.out.println("Starting schedule calculation...");
+
 			// set up graphs if -v flag specified
 			if(config.getBoolean("V")) {
 				launch(args);
 			}
 
 			//Calculate the schedule
-			System.out.println("Starting schedule calculation...");
 			timer.startTimer(0);
 			scheduler.start();
         } catch (FileNotFoundException e) {
@@ -161,9 +162,11 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
     // once a schedule has been found, write the output to a file
     @Override
     public void algorithmCompleted(PartialSchedule schedule) {
-		timer.stopTimer();
+		if(!config.getBoolean("V")) {
+			timer.stopTimer();
+		}
 		System.out.println("Optimal schedule of " + schedule.getMakespan() + " found in " + timer.getSeconds() + " seconds");
-        try {
+		try {
             dot.write(config.getString("OUTPUT"), schedule);
         } catch (IOException e) {
             e.printStackTrace();

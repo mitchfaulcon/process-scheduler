@@ -46,7 +46,7 @@ public class HomeController implements Initializable, AlgorithmListener {
 
     private GraphDisplay graphDisplay;
     private OutputSchedule outputSchedule;
-    private Timer timer = new Timer();
+    private Timer timer = Timer.getInstance();
     private Scheduler scheduler;
     private Map<String, String> nodeColours;
     private long max;

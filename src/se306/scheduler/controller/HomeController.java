@@ -115,6 +115,7 @@ public class HomeController implements Initializable, AlgorithmListener {
         greyRectangle.setVisible(false);
         anchorPane.getChildren().remove(startButton);
         filenameLabel.setText(ProcessScheduler.getFileName());
+        numThreadsLabel.setText(String.valueOf(ProcessScheduler.getNumThreads()));
         numProcLabel.setText(String.valueOf(ProcessScheduler.getNumProcessors()));
 
         //Display graph
@@ -148,7 +149,10 @@ public class HomeController implements Initializable, AlgorithmListener {
     @Override
     public void newOptimalFound(PartialSchedule schedule) {
         //Update output schedule in GUI thread
-        Platform.runLater(() -> outputSchedule.update(schedule));
+        Platform.runLater(() -> {
+            bestTimeLabel.setText(String.valueOf(schedule.getMakespan()));
+            outputSchedule.update(schedule);
+        });
     }
 
 //    @Override

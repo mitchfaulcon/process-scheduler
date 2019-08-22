@@ -31,6 +31,7 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
     private static Scheduler scheduler;
     private static Algorithm algorithm;
     private static int numProcessors;
+    private static int numThreads;
     private static String fileName;
     private Map<String, String> nodeColours;
     private Timer timer = Timer.getInstance();
@@ -82,6 +83,7 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
         }
 
         numProcessors = config.getInt("P");
+        numThreads = config.getInt("N");
         
         // Call methods with these values
 //      System.out.println("Input file: " + config.getString("INPUT"));
@@ -186,6 +188,10 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
 
     public static int getNumProcessors(){
 		return numProcessors;
+	}
+
+	public static int getNumThreads(){
+		return numThreads;
 	}
 
 	private void shutdown(){

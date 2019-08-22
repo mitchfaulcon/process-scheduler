@@ -9,6 +9,7 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -62,6 +63,11 @@ public class HomeController implements Initializable, AlgorithmListener {
         startButton.setOnAction(event -> start());
         startButton.setOnMouseEntered(event -> startButton.getStyleClass().add("button-hover"));
         startButton.setOnMouseExited(event -> startButton.getStyleClass().remove("button-hover"));
+        anchorPane.setOnKeyPressed(event -> {
+            if(event.getCode().equals(KeyCode.ENTER)){
+                startButton.fire();
+            }
+        });
 
         setTextProperty(numProcLabel);
         setTextProperty(numThreadsLabel);

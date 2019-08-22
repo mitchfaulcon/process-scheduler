@@ -101,7 +101,7 @@
                      <String fx:value="green-box" />
                   </styleClass>
                   <children>
-                     <Label alignment="CENTER" contentDisplay="CENTER" layoutX="43.0" layoutY="8.0" stylesheets="@home_style.css" text="Schedules Checked" textAlignment="CENTER">
+                     <Label alignment="CENTER" contentDisplay="CENTER" layoutX="35.0" layoutY="8.0" stylesheets="@home_style.css" text="Schedules Remaining" textAlignment="CENTER">
                         <font>
                            <Font name="Consolas" size="15.0" />
                         </font>
@@ -117,7 +117,7 @@
          </AnchorPane>
          <Pane prefHeight="148.0" prefWidth="404.0" styleClass="timer-box" stylesheets="@home_style.css">
             <children>
-               <Label alignment="CENTER" contentDisplay="CENTER" layoutX="76.0" layoutY="32.0" styleClass="timer-title" stylesheets="@home_style.css" text="Time Elapsed" />
+               <Label fx:id="timeTitleLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="39.0" layoutY="32.0" prefHeight="30.0" prefWidth="248.0" styleClass="timer-title" stylesheets="@home_style.css" text="Time Elapsed" />
                   <Label fx:id="timeDisplay" layoutX="38.0" layoutY="56.0" stylesheets="@home_style.css" text="00:00.00">
                       <font>
                           <Font name="Arial" size="55.0" />

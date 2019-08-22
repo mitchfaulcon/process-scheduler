@@ -2,7 +2,6 @@ package se306.scheduler.controller;
 
 
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.chart.CategoryAxis;
@@ -28,11 +27,9 @@ import se306.scheduler.visualisation.OutputSchedule;
 import se306.scheduler.visualisation.Timer;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.ResourceBundle;
 
 public class HomeController implements Initializable, AlgorithmListener {
@@ -40,7 +37,7 @@ public class HomeController implements Initializable, AlgorithmListener {
     @FXML AnchorPane anchorPane;
     @FXML Rectangle greyRectangle;
     @FXML Button startButton;
-    @FXML Label timeDisplay, filenameLabel, numProcLabel, numThreadsLabel, bestTimeLabel, checkedLabel;
+    @FXML Label timeDisplay, filenameLabel, numProcLabel, numThreadsLabel, bestTimeLabel, checkedLabel, timeTitleLabel;
     @FXML Pane graphPane;
     @FXML ScrollPane scrollPane;
 
@@ -140,6 +137,12 @@ public class HomeController implements Initializable, AlgorithmListener {
     @Override
     public void algorithmCompleted(PartialSchedule schedule) {
         timer.stopTimer();
+        timeDisplay.getStyleClass().add("timer-done");
+        timeTitleLabel.getStyleClass().addAll("timer-done", "timer-done-title");
+        Platform.runLater(() -> {
+            timeTitleLabel.setText("Completion time");
+            checkedLabel.setText("0");
+        });
     }
 
     @Override

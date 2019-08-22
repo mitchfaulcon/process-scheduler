@@ -23,16 +23,26 @@ public class BNBAlgorithm extends Algorithm {
         // add initial state
         stack.push(new PartialSchedule(graph));
 
-        int bestMakespan = Integer.MAX_VALUE;
-        PartialSchedule bestSchedule = null;
-        setBLWeights();
+        PartialSchedule bestSchedule = GreedySchedule();
+        int bestMakespan = bestSchedule.getMakespan();
+        updateSchedule(bestSchedule);
+        setLowerBounds();
+        System.out.println(graph.get(0).getLBWeight());
 
+        outerLoop:
         while (!stack.isEmpty()) {
             PartialSchedule state = stack.pop();
             // all nodes have been assigned to a processor
             if (state.allVisited()) {
-                // check if the current solution is better than the best one found so far
                 int makespan = state.getMakespan();
+                // if the makespan is the critical path from the first node to the last then it is an optimal solution
+                // so break while loop
+                if (makespan == state.getVisited().get(0).getLBWeight()) {
+                    //Update listener with new schedule
+                    updateSchedule(state);
+                    break;
+                }
+                // check if the current solution is better than the best one found so far
                 if (makespan < bestMakespan) {
                     bestMakespan = makespan;
                     bestSchedule = state;
@@ -44,16 +54,18 @@ public class BNBAlgorithm extends Algorithm {
                 updateBranchCut(0);
                 continue;
             }
-
+            // check if the lower bound on scheduling any node is less than the best so far. If it is not, then
+            // there is no way this partial schedule is faster, so loop goes to next parital schedule.
             for (Node node: state.getUnvisitedNodes()) {
-                // check if the lower bound on scheduling this node is less than the best so far. If it is not, then
-                // there is no way this partial schedule is faster, so loop breaks.
                 if (state.lowerBoundEndTime(node) > bestMakespan) {
-                    for (int i = 0; i < numProcessors; i++) {
-                        updateBranchCut(state.getUnvisitedNodes().size() - 1);
-                    }
-                    continue;
+                    updateBranchCut(state.getUnvisitedNodes().size());
+                    continue outerLoop;
                 }
+            }
+
+            for (int n = 0; n < state.getUnvisitedNodes().size(); n++) {
+                Node node = state.getUnvisitedNodes().get(n);
+
                 // check if the node's parents have all been scheduled
                 if (state.dependenciesSatisfied(node)) {
                     // create new states by adding the new node to every processor
@@ -62,7 +74,7 @@ public class BNBAlgorithm extends Algorithm {
                         int bestStart = state.findBestStartTime(node, p);
                         // if the lower bound for scheduling this node here on this processor is worse than best so far
                         // then partial schedule is not added to stack
-                        if (bestStart + node.getBLWeight() < bestMakespan) {
+                        if (bestStart + node.getLBWeight() < bestMakespan) {
                             // add the node at this time
                             PartialSchedule newState = new PartialSchedule(state);
                             boolean isFirstOnProcessor = newState.scheduleTask(node, p, bestStart);
@@ -94,40 +106,92 @@ public class BNBAlgorithm extends Algorithm {
     }
 
     /**
-     * This method sets the Bottom Level Weights for all the nodes in the graph to be scheduled.
-     * Bottom level weight is the highest cost direct path to an exit node on this graph, it allows us to calculate
-     * a lower bound for schedules where some node is to be scheduled next - the lower bound is the nodes start time +
-     * BLW.
+     * This method sets the lower bound weights for all the nodes in the graph to be scheduled.
+     * The lower bound weight for any node is found by comparing each way to schedule its children, given their lower
+     * bounds.
+     * e.g. If node a has children b and c, then the lower bound will be found by
+     * min(max(b.LBWeight, c.edgecost(a) + c.LBWeight), max(c.LBWeight, b.edgecost(a) + b.LBWeight))
      */
-    private void setBLWeights() {
+    private void setLowerBounds() {
         List<Node> unvisited = new ArrayList<>(graph);
         for (Node node : graph) {
             if (node.getChildren().isEmpty()) {
                 // nodes with no children are the only node on their critical path
-                node.setBLWeight(node.getWeight());
+                node.setLBWeight(node.getWeight());
                 unvisited.remove(node);
             }
         }
         while (unvisited.size() > 0) {
             for (int i = 0; i < unvisited.size(); i++) {
-                int maxWeight = 0;
-                for (Node child: unvisited.get(i).getChildren()) {
-                    if (child.getBLWeight() < 0) {
-                        // this indicates that a child has not had its BLW calculated, so loop breaks.
-                        maxWeight = -1;
+                int minWeight = Integer.MAX_VALUE;
+                Node node = unvisited.get(i);
+                List<Node> otherChildren = new ArrayList<>(node.getChildren());
+                for (Node child: node.getChildren()) {
+                    if (child.getLBWeight() < 0) {
+                        minWeight = -1;
                         break;
-                    } else if (child.getBLWeight() > maxWeight) {
-                        maxWeight = child.getBLWeight();
+                    }
+                    otherChildren.remove(child);
+                    int max = 0;
+                    for (Node otherChild: otherChildren) {
+                        int newMax = otherChild.getIncomingEdges().get(node) + otherChild.getLBWeight();
+                        if (newMax > max) {
+                            max = newMax;
+                        }
+                    }
+                    otherChildren.add(child);
+                    if (child.getLBWeight() > max) {
+                        max = child.getLBWeight();
+                    }
+                    if (max < minWeight) {
+                        minWeight = max;
                     }
                 }
-                if (maxWeight > 0) {
-                    unvisited.get(i).setBLWeight(unvisited.get(i).getWeight() + maxWeight);
+                if (minWeight > 0) {
+                    unvisited.get(i).setLBWeight(unvisited.get(i).getWeight() + minWeight);
                     unvisited.remove(i);
                     break;
                 }
             }
         }
-
     }
 
+    /**
+     * This creates a greedy schedule which is made by assigning nodes whose dependencies are met to whichever
+     * processor can run them first.
+     * @return A greedy schedule to be used for setting the initial best.
+     */
+    private PartialSchedule GreedySchedule() {
+        List<Node> unreached = new ArrayList<>(graph);
+        PartialSchedule schedule = new PartialSchedule(graph);
+        int i = 0;
+        // finding some node with no parents to set as root
+        while (!schedule.getNodes().get(i).getIncomingEdges().isEmpty()) {
+            i++;
+        }
+        unreached.remove(schedule.getNodes().get(i));
+        schedule.scheduleTask(schedule.getNodes().get(i), 0, 0);
+        // iterates until all nodes reached
+        while (!unreached.isEmpty()) {
+            int j;
+            for (j = 0; j < unreached.size(); j++) {
+                if (schedule.dependenciesSatisfied(unreached.get(j))) {
+                    // schedules node at the processor/time that is immediately best (greedy)
+                    int bestStart = Integer.MAX_VALUE;
+                    int bestProcessor = 0;
+                    for (int k = 1; k <= numProcessors; k++) {
+                        int start = schedule.findBestStartTime(unreached.get(j), k);
+                        if (start < bestStart) {
+                            bestStart = start;
+                            bestProcessor = k;
+                        }
+                    }
+                    schedule.scheduleTask(unreached.get(j), bestProcessor, bestStart);
+                    break;
+                }
+            }
+            unreached.remove(j);
+        }
+        return schedule;
+    }
 }

@@ -3,20 +3,19 @@ package se306.scheduler.graph;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class Node {
     private String name;
-    private List<IncomingEdge> incomingEdges = new ArrayList<>();
+    private HashMap<Node, Integer> incomingEdges = new HashMap<>();
     private List<Node> children = new ArrayList<>();
-    private int BLWeight;
+    private int LBWeight;
     private int weight;
 
     public Node(String name, int weight) {
         // set processor to -1 by default, meaning the node has not been assigned a processor.
         this.name = name;
         this.weight = weight;
-        this.BLWeight = -1;
+        this.LBWeight = -1;
     }
     
     /**
@@ -25,11 +24,11 @@ public class Node {
     public Node(Node node) {
         this.name = node.name;
         this.weight = node.weight;
-        this.incomingEdges = new ArrayList<>();
-        this.incomingEdges.addAll(node.getIncomingEdges());
+        this.incomingEdges = new HashMap<>();
+        this.incomingEdges.putAll(node.getIncomingEdges());
         this.children = new ArrayList<>();
         this.children.addAll(node.children);
-        this.BLWeight = node.BLWeight;
+        this.LBWeight = node.LBWeight;
     }
 
     /**
@@ -38,7 +37,7 @@ public class Node {
      * @param edgeWeight the weight of the link between the parent node and this node
      */
     public void addParent(Node parent, int edgeWeight){
-        this.incomingEdges.add(new IncomingEdge(parent, edgeWeight));
+        this.incomingEdges.put(parent, edgeWeight);
         parent.children.add(this);
     }
 
@@ -54,16 +53,16 @@ public class Node {
         return this.children;
     }
 
-    public List<IncomingEdge> getIncomingEdges() {
+    public HashMap<Node, Integer> getIncomingEdges() {
         return this.incomingEdges;
     }
 
-    public int getBLWeight() {
-        return this.BLWeight;
+    public int getLBWeight() {
+        return this.LBWeight;
     }
 
-    public void setBLWeight(int BLWeight) {
-        this.BLWeight = BLWeight;
+    public void setLBWeight(int LBWeight) {
+        this.LBWeight = LBWeight;
     }
 
     @Override
@@ -80,18 +79,4 @@ public class Node {
         return "Name: " + name + ", Weight: " + weight;
     }
 
-    public class IncomingEdge {
-        private Node parent;
-        private int weight;
-        private IncomingEdge(Node parent, int weight) {
-            this.parent = parent;
-            this.weight = weight;
-        }
-        public int getWeight() {
-            return this.weight;
-        }
-        public Node getParent() {
-            return this.parent;
-        }
-    }
 }

@@ -199,11 +199,10 @@ public class DotFile {
         
         // generate all dependency strings
         for (Node node: schedule.getNodes()) {
-            for (Node.IncomingEdge edge: node.getIncomingEdges()) {
-                Node parent = edge.getParent();
+            for (Node parent: node.getIncomingEdges().keySet()) {
                 String dependencyKey = parent.getName() + " " + node.getName();
                 dependencyStrings.put(dependencyKey, String.format("\t%s -> %s\t[Weight=%d];" + LS, parent.getName(), node.getName(),
-                        edge.getWeight()));
+                        node.getIncomingEdges().get(parent)));
             }
         }
         

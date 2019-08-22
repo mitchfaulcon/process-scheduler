@@ -68,7 +68,7 @@ public class PartialSchedule {
     /**
      * Returns a set of all visited node names.
      */
-    private List<Node> getVisited() {
+    public List<Node> getVisited() {
         return visited;
     }
 
@@ -118,8 +118,8 @@ public class PartialSchedule {
      * Checks if all of a node's dependencies have already been assigned to processors.
      */
     public boolean dependenciesSatisfied(Node node) {
-        for (Node.IncomingEdge edge: node.getIncomingEdges()) {
-            if (unvisited.contains(edge.getParent())) {
+        for (Node parent: node.getIncomingEdges().keySet()) {
+            if (unvisited.contains(parent)) {
                 return false;
             }
         }
@@ -160,9 +160,8 @@ public class PartialSchedule {
         }
         
         // account for dependency 'edge costs'
-        for (Node.IncomingEdge edge: newNode.getIncomingEdges()) {
-            Node parent = edge.getParent();
-            int edgeCost = edge.getWeight();
+        for (Node parent: newNode.getIncomingEdges().keySet()) {
+            int edgeCost = newNode.getIncomingEdges().get(parent);
             // edge costs only are counted if the node is on a different processor to its parent
             if (processorMap.get(parent) != processor) {
                 // TODO: node should have weights stored with parents not with children
@@ -181,15 +180,15 @@ public class PartialSchedule {
      */
     public int lowerBoundEndTime(Node newNode) {
         int startTime = 0;
-        for (Node.IncomingEdge edge : newNode.getIncomingEdges()) {
-            if (visited.contains(edge.getParent())) {
-                int time = startTimes.get(edge.getParent()) + edge.getParent().getWeight();
+        for (Node parent: newNode.getIncomingEdges().keySet()) {
+            if (visited.contains(parent)) {
+                int time = startTimes.get(parent) + parent.getWeight();
                 if (time > startTime) {
                     startTime = time;
                 }
             }
         }
-        return startTime + newNode.getBLWeight();
+        return startTime + newNode.getLBWeight();
     }
     
     public List<Node> getNodes() {

@@ -80,8 +80,8 @@ public class HomeController implements Initializable, AlgorithmListener {
         for (Node node: nodes) {
             graphDisplay.addNode(node.getName(), node.getWeight());
             
-            for (Node.IncomingEdge edge: node.getIncomingEdges()) {
-                graphDisplay.addEdge(edge.getParent().getName(), node.getName(), edge.getWeight());
+            for (Node parent: node.getIncomingEdges().keySet()) {
+                graphDisplay.addEdge(parent.getName(), node.getName(), node.getIncomingEdges().get(parent));
             }
         }
 

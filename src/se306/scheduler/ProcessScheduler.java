@@ -62,10 +62,7 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
 		});
 
 		//Change to home screen
-		FXMLLoader loader = new FXMLLoader(getClass().getResource("view/Home.fxml"));
-		Parent root = loader.load();
-		homeController = loader.getController();
-		
+		Parent root = FXMLLoader.load(getClass().getResource("view/home.fxml"));
 		primaryStage.setTitle("Process Scheduler");
 		primaryStage.setScene(new Scene(root, 1420, 800));
 		primaryStage.show();

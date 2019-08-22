@@ -86,7 +86,7 @@
       </GridPane>
     </GridPane>
     <Rectangle fx:id="greyRectangle" arcHeight="5.0" arcWidth="5.0" height="800.0" opacity="0.45" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="1422.0" />
-   <AnchorPane layoutX="470.0" layoutY="270.0">
+   <AnchorPane fx:id="anchorPane" layoutX="470.0" layoutY="270.0">
       <children>
           <Button fx:id="startButton" layoutX="28.0" layoutY="-1.0" mnemonicParsing="false" prefHeight="180.0" prefWidth="418.0" stylesheets="@home_style.css" text="Begin&#10;Scheduling" textAlignment="CENTER" />
       </children>

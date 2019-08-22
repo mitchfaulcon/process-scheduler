@@ -12,10 +12,17 @@
 }
 
 .button {
-    -fx-font-family: "Arial Black";
+    -fx-font-family: Consolas;
     -fx-font-size: 50px;
-    -fx-base: #004cff;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
     -fx-background-radius: 30px;
+    -fx-background-color:  linear-gradient(from 0% 0% to 0% 100%, #507fff, #3454a8);
+}
+
+.button-hover {
+    -fx-background-color:  linear-gradient(from 0% 0% to 0% 100%, #355ea6, #383889);
+    -fx-text-fill: #c0c0c0;
 }
 
 .consolas {
@@ -37,8 +44,20 @@
     -fx-font-size: 30px;
     -fx-text-fill: black;
 }
+.info {
+    -fx-font-family: Consolas;
+    -fx-text-fill: #1b274e;
+    -fx-font-size: 50px;
+    -fx-font-weight: bold;
+}
 
 .info-title {
+    -fx-font-size: 15px;
+    -fx-font-none: none;
+}
+
+
+.timer-title {
     -fx-font-family: Consolas;
     -fx-font-size: 25px;
     -fx-text-fill: white;

@@ -40,7 +40,7 @@ public class HomeController implements Initializable, AlgorithmListener {
     @FXML AnchorPane anchorPane;
     @FXML Rectangle greyRectangle;
     @FXML Button startButton;
-    @FXML Label timeDisplay, filenameLabel, numProcLabel;
+    @FXML Label timeDisplay, filenameLabel, numProcLabel, numThreadsLabel, bestTimeLabel, checkedLabel;
     @FXML Pane graphPane;
     @FXML ScrollPane scrollPane;
 
@@ -49,10 +49,14 @@ public class HomeController implements Initializable, AlgorithmListener {
     private Timer timer = new Timer();
     private Scheduler scheduler;
     private Map<String, String> nodeColours;
+    private long max;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         //Setup action events
         startButton.setOnAction(event -> start());
+        startButton.setOnMouseEntered(event -> startButton.getStyleClass().add("button-hover"));
+        startButton.setOnMouseExited(event -> startButton.getStyleClass().remove("button-hover"));
 
         //Get same scheduler & algorithm objects from main class
         scheduler = ProcessScheduler.getScheduler();
@@ -84,7 +88,7 @@ public class HomeController implements Initializable, AlgorithmListener {
                 graphDisplay.addEdge(edge.getParent().getName(), node.getName(), edge.getWeight());
             }
         }
-        
+
         //Display output schedule
         NumberAxis xAxis = new NumberAxis();
         CategoryAxis yAxis = new CategoryAxis();
@@ -93,6 +97,10 @@ public class HomeController implements Initializable, AlgorithmListener {
         scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(true);
         scrollPane.setContent(outputSchedule);
+
+        int numNodes = scheduler.getNodes().size();
+
+        max = (long)Math.pow(numProcessors, numNodes)*Algorithm.factorial(numNodes);
 
         //Set initial timer label
         timeDisplay.setText(timer.getSspTime().get());
@@ -108,7 +116,7 @@ public class HomeController implements Initializable, AlgorithmListener {
         greyRectangle.setVisible(false);
         anchorPane.getChildren().remove(startButton);
         filenameLabel.setText(ProcessScheduler.getFileName());
-//        numProcLabel.setText(String.valueOf(ProcessScheduler.getNumProcessors()));
+        numProcLabel.setText(String.valueOf(ProcessScheduler.getNumProcessors()));
 
         //Display graph
         org.graphstream.graph.Graph graph = GraphDisplay.getGraphDisplay().getGraph();
@@ -141,5 +149,10 @@ public class HomeController implements Initializable, AlgorithmListener {
     @Override
     public void updateSchedulesChecked(long schedules) {
         //TODO: update progress bar
+//        new Thread(() -> {
+//
+//            checkedLabel.setText(String.valueOf(max - schedules));
+//        }).start();
+//        Platform.runLater(() -> checkedLabel.setText());
     }
 }

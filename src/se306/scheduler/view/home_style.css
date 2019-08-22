@@ -4,7 +4,7 @@
 
 .progress-bar > .track {
     -fx-text-box-border: #004cff;
-    -fx-control-inner-background: #004cff;
+    -fx-control-inner-background: white;
 }
 
 .scroll-pane {
@@ -29,17 +29,19 @@
 }
 
 .footer {
-    -fx-background-color: #004cff;
+    -fx-background-color:  linear-gradient(from 0% 0% to 0% 100%, #507fff, #3454a8);
 }
 
-.information {
-    -fx-font-family: "Arial Rounded MT Bold";
+.filename {
+    -fx-font-family: Consolas;
     -fx-font-size: 30px;
-    -fx-text-fill: #ecf0ff;
+    -fx-text-fill: black;
 }
 
-.information-title {
-    -fx-text-fill: #001f63;
+.info-title {
+    -fx-font-family: Consolas;
+    -fx-font-size: 25px;
+    -fx-text-fill: white;
 }
 
 .progress-bar {
@@ -48,4 +50,16 @@
 
 .progress-text {
     -fx-font-size: 30px;
+}
+
+.timer-box {
+    -fx-background-color: linear-gradient(from 0% 0% to 100% 0%, #5df2ff, rgba(93, 242, 255, 0));
+}
+
+.box {
+    -fx-background-radius: 10;
+}
+
+.green-box {
+    -fx-background-color: linear-gradient(from 0% 0% to 0% 100%, #ffffff, rgba(77, 162, 178, 0));
 }

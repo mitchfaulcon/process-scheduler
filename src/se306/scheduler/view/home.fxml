@@ -3,7 +3,6 @@
 <?import java.lang.String?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -19,8 +18,8 @@
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
         </columnConstraints>
         <rowConstraints>
-            <RowConstraints maxHeight="683.0" minHeight="10.0" prefHeight="631.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="705.9999908447265" minHeight="10.0" prefHeight="169.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="683.0" minHeight="10.0" prefHeight="659.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="705.9999908447265" minHeight="10.0" prefHeight="141.0" vgrow="SOMETIMES" />
         </rowConstraints>
         <GridPane prefHeight="403.0" prefWidth="1420.0" stylesheets="@home_style.css">
             <columnConstraints>
@@ -32,20 +31,58 @@
             </rowConstraints>
             <children>
                 <ScrollPane fx:id="scrollPane" prefHeight="627.0" prefWidth="710.0" styleClass="dark-grey" GridPane.columnIndex="1" />
-                <Pane fx:id="graphPane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="629.0" prefWidth="710.0" />
+                <Pane fx:id="graphPane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="629.0" prefWidth="710.0">
+               <children>
+                  <Label fx:id="filenameLabel" layoutX="9.0" layoutY="7.0" styleClass="filename" stylesheets="@home_style.css" text="test.dot" />
+               </children></Pane>
             </children>
         </GridPane>
-      <GridPane gridLinesVisible="true" prefHeight="146.0" prefWidth="1420.0" styleClass="footer" stylesheets="@home_style.css" GridPane.rowIndex="1">
-        <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-        </columnConstraints>
-        <rowConstraints>
-          <RowConstraints maxHeight="75.0" minHeight="3.0" prefHeight="49.0" vgrow="SOMETIMES" />
-          <RowConstraints maxHeight="166.0" minHeight="10.0" prefHeight="120.0" vgrow="SOMETIMES" />
-        </rowConstraints>
-         <children>
-              <Pane prefHeight="100.0" prefWidth="1426.0" styleClass="footer" stylesheets="@home_style.css" GridPane.rowIndex="1">
-                  <Label fx:id="timeDisplay" layoutX="1069.0" layoutY="32.0" stylesheets="@home_style.css" text="00:00.00">
+        <Pane prefHeight="153.0" prefWidth="1420.0" styleClass="footer" stylesheets="@home_style.css" GridPane.rowIndex="1">
+         <ScrollPane layoutX="212.0" layoutY="1.0" prefHeight="141.0" prefWidth="1351.0" styleClass="footer" stylesheets="@home_style.css">
+           <content>
+             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="125.0" prefWidth="1353.0">
+                  <children>
+                     <AnchorPane layoutX="359.0" layoutY="15.0" prefHeight="99.0" prefWidth="226.0" stylesheets="@home_style.css">
+                        <styleClass>
+                           <String fx:value="box" />
+                           <String fx:value="green-box" />
+                        </styleClass>
+                     </AnchorPane>
+                     <AnchorPane layoutX="1097.0" layoutY="15.0" prefHeight="99.0" prefWidth="226.0" stylesheets="@home_style.css">
+                        <styleClass>
+                           <String fx:value="box" />
+                           <String fx:value="green-box" />
+                        </styleClass>
+                     </AnchorPane>
+                     <AnchorPane layoutX="851.0" layoutY="15.0" prefHeight="99.0" prefWidth="226.0" stylesheets="@home_style.css">
+                        <styleClass>
+                           <String fx:value="box" />
+                           <String fx:value="green-box" />
+                        </styleClass>
+                     </AnchorPane>
+                     <AnchorPane layoutX="605.0" layoutY="15.0" prefHeight="99.0" prefWidth="226.0" stylesheets="@home_style.css">
+                        <styleClass>
+                           <String fx:value="box" />
+                           <String fx:value="green-box" />
+                        </styleClass>
+                     </AnchorPane>
+                     <AnchorPane layoutX="113.0" layoutY="15.0" prefHeight="99.0" prefWidth="226.0" stylesheets="@home_style.css">
+                        <styleClass>
+                           <String fx:value="box" />
+                           <String fx:value="green-box" />
+                        </styleClass>
+                        <children>
+                           <Label layoutX="54.0" layoutY="14.0" stylesheets="@home_style.css" text="Number of Processors" textAlignment="CENTER" />
+                        </children>
+                     </AnchorPane>
+                  </children>
+               </AnchorPane>
+           </content>
+         </ScrollPane>
+         <Pane prefHeight="148.0" prefWidth="404.0" styleClass="timer-box" stylesheets="@home_style.css">
+            <children>
+               <Label alignment="CENTER" contentDisplay="CENTER" layoutX="76.0" layoutY="32.0" styleClass="info-title" stylesheets="@home_style.css" text="Time Elapsed" />
+                  <Label fx:id="timeDisplay" layoutX="38.0" layoutY="56.0" stylesheets="@home_style.css" text="00:00.00">
                       <font>
                           <Font name="Arial" size="55.0" />
                       </font>
@@ -54,39 +91,12 @@
                      <String fx:value="consolas" />
                   </styleClass>
                   </Label>
-               <Label layoutX="19.0" layoutY="45.0" stylesheets="@home_style.css" text="Filename:">
-                  <font>
-                     <Font name="Arial Rounded MT Bold" size="28.0" />
-                  </font>
-                  <styleClass>
-                     <String fx:value="information" />
-                     <String fx:value="information-title" />
-                  </styleClass>
-               </Label>
-               <Label layoutX="19.0" layoutY="76.0" stylesheets="@home_style.css" text="No. of Processors: ">
-                  <font>
-                     <Font name="Arial Rounded MT Bold" size="28.0" />
-                  </font>
-                  <styleClass>
-                     <String fx:value="information" />
-                     <String fx:value="information-title" />
-                  </styleClass>
-               </Label>
-               <Label fx:id="filenameLabel" layoutX="296.0" layoutY="46.0" styleClass="information" stylesheets="@home_style.css" />
-               <Label fx:id="numProcLabel" layoutX="296.0" layoutY="79.0" styleClass="information" stylesheets="@home_style.css" />
-              </Pane>
-            <ProgressBar prefHeight="85.0" prefWidth="1420.0" progress="0.0" style="-fx-border-width: 0;" stylesheets="@home_style.css" />
-            <Label stylesheets="@home_style.css" text="123/789" textAlignment="CENTER" GridPane.halignment="CENTER">
-               <styleClass>
-                  <String fx:value="progress-text" />
-                  <String fx:value="consolas" />
-               </styleClass>
-            </Label>
-         </children>
-      </GridPane>
+            </children>
+         </Pane>
+        </Pane>
     </GridPane>
-    <Rectangle fx:id="greyRectangle" arcHeight="5.0" arcWidth="5.0" height="800.0" opacity="0.45" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="1422.0" />
-   <AnchorPane fx:id="anchorPane" layoutX="470.0" layoutY="270.0">
+    <Rectangle fx:id="greyRectangle" arcHeight="5.0" arcWidth="5.0" height="800.0" opacity="0.45" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" visible="false" width="1422.0" />
+   <AnchorPane fx:id="anchorPane" layoutX="470.0" layoutY="270.0" visible="false">
       <children>
           <Button fx:id="startButton" layoutX="28.0" layoutY="-1.0" mnemonicParsing="false" prefHeight="180.0" prefWidth="418.0" stylesheets="@home_style.css" text="Begin&#10;Scheduling" textAlignment="CENTER" />
       </children>

@@ -61,7 +61,7 @@ public abstract class Algorithm {
      * Simple method to be used in updateBranchCut that finds the factorial of a given input
      * @return result of number!
      */
-    private long factorial(int number) {
+    public static long factorial(int number) {
         long output = 1;
         for (int n = 2; n <= number; n++) {
             output *= n;

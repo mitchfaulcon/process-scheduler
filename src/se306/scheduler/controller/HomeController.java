@@ -2,13 +2,16 @@ package se306.scheduler.controller;
 
 
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
@@ -33,16 +36,19 @@ import java.util.ResourceBundle;
 
 public class HomeController implements Initializable, AlgorithmListener {
 
+    @FXML ProgressBar progressBar;
     @FXML AnchorPane anchorPane;
     @FXML Rectangle greyRectangle;
     @FXML Button startButton;
-    @FXML Label timeDisplay, filenameLabel, numProcLabel;
+    @FXML Label timeDisplay, filenameLabel, numProcLabel, progressLabel;
     @FXML Pane graphPane;
     @FXML ScrollPane scrollPane;
 
     private OutputSchedule outputSchedule;
     private Timer timer = new Timer();
     private Scheduler scheduler;
+    private long max;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         //Setup action events
@@ -64,6 +70,11 @@ public class HomeController implements Initializable, AlgorithmListener {
 
         //Set initial timer label
         timeDisplay.setText(timer.getSspTime().get());
+
+        //Set max number of branches for progress bar
+        int numProc = ProcessScheduler.getNumProcessors();
+        int numNodes = scheduler.getNodes().size();
+        max = (long) Math.pow(numProc, numNodes)*Algorithm.factorial(numNodes);
 
         //Listener for when ssp time changes in timer
         timer.getSspTime().addListener(observable -> {
@@ -103,7 +114,7 @@ public class HomeController implements Initializable, AlgorithmListener {
     }
 
     @Override
-    public void updateSchedulesChecked(long schedules) {
+    public void updateSchedulesChecked(long checked) {
         //TODO: update progress bar
     }
 }

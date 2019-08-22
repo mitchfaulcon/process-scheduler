@@ -8,6 +8,7 @@ import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants;
 import org.graphstream.ui.spriteManager.Sprite;
 import org.graphstream.ui.spriteManager.SpriteManager;
 
+import java.util.Map;
 import java.util.Random;
 
 public class GraphDisplay {
@@ -16,6 +17,7 @@ public class GraphDisplay {
 
     private Graph graph = new SingleGraph("graphDisplay", false, true);
     private int yCoord = 0;
+    private Map<String, String> nodeColours;
 
     private GraphDisplay() {
 
@@ -23,6 +25,10 @@ public class GraphDisplay {
 
     public static GraphDisplay getGraphDisplay(){
         return graphDisplay;
+    }
+    
+    public void setNodeColours(Map<String, String> nodeColours) {
+        this.nodeColours = nodeColours;
     }
 
     public Graph getGraph() {
@@ -46,10 +52,11 @@ public class GraphDisplay {
         sprite.setAttribute("ui.style", "text-background-mode: plain;text-size: 15px;" +
                 "fill-color: white;");
         sprite.setPosition(StyleConstants.Units.PX, 40,0,0);
-
+        
         //Set Label & Style
+        String colour = String.format(nodeColours.get(nodeName), "127");
         node.setAttribute("ui.label", nodeName);
-        node.setAttribute("ui.style", "shape:circle;fill-color: white;size: 50px;" +
+        node.setAttribute("ui.style", "shape:circle;fill-color: " + colour + ";size: 50px;" +
                 "stroke-color: black;stroke-mode: plain;stroke-width: 1px;" +
                 "text-alignment: left;text-size: 30px;");
 

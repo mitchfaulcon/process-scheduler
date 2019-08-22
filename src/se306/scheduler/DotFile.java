@@ -97,7 +97,6 @@ public class DotFile {
 
         if (name != null) {
             scheduler.addNode(new Node(name, weight));
-            graphDisplay.addNode(name, weight);
             lineRecords.add(new LineRecord(false, name));
         }
     }
@@ -115,7 +114,6 @@ public class DotFile {
 
         if (parent != null && child != null) {
             scheduler.addChild(parent, child, weight);
-            graphDisplay.addEdge(parent, child, weight);
             lineRecords.add(new LineRecord(true, parent, child));
         }
     }

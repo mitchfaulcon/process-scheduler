@@ -113,6 +113,47 @@ public class BNBAlgorithm extends Algorithm {
      * min(max(b.LBWeight, c.edgecost(a) + c.LBWeight), max(c.LBWeight, b.edgecost(a) + b.LBWeight))
      */
     private void setLowerBounds() {
+//        List<Node> unvisited = new ArrayList<>(graph);
+//        for (Node node : graph) {
+//            if (node.getChildren().isEmpty()) {
+//                // nodes with no children are the only node on their critical path
+//                node.setLBWeight(node.getWeight());
+//                unvisited.remove(node);
+//            }
+//        }
+//        while (unvisited.size() > 0) {
+//            for (int i = 0; i < unvisited.size(); i++) {
+//                int minWeight = Integer.MAX_VALUE;
+//                Node node = unvisited.get(i);
+//                List<Node> otherChildren = new ArrayList<>(node.getChildren());
+//                for (Node child: node.getChildren()) {
+//                    if (child.getLBWeight() < 0) {
+//                        minWeight = -1;
+//                        break;
+//                    }
+//                    otherChildren.remove(child);
+//                    int max = 0;
+//                    for (Node otherChild: otherChildren) {
+//                        int newMax = otherChild.getIncomingEdges().get(node) + otherChild.getLBWeight();
+//                        if (newMax > max) {
+//                            max = newMax;
+//                        }
+//                    }
+//                    otherChildren.add(child);
+//                    if (child.getLBWeight() > max) {
+//                        max = child.getLBWeight();
+//                    }
+//                    if (max < minWeight) {
+//                        minWeight = max;
+//                    }
+//                }
+//                if (minWeight > 0) {
+//                    unvisited.get(i).setLBWeight(unvisited.get(i).getWeight() + minWeight);
+//                    unvisited.remove(i);
+//                    break;
+//                }
+//            }
+//        }
         List<Node> unvisited = new ArrayList<>(graph);
         for (Node node : graph) {
             if (node.getChildren().isEmpty()) {
@@ -123,32 +164,18 @@ public class BNBAlgorithm extends Algorithm {
         }
         while (unvisited.size() > 0) {
             for (int i = 0; i < unvisited.size(); i++) {
-                int minWeight = Integer.MAX_VALUE;
-                Node node = unvisited.get(i);
-                List<Node> otherChildren = new ArrayList<>(node.getChildren());
-                for (Node child: node.getChildren()) {
+                int maxWeight = 0;
+                for (Node child: unvisited.get(i).getChildren()) {
                     if (child.getLBWeight() < 0) {
-                        minWeight = -1;
+                        // this indicates that a child has not had its BLW calculated, so loop breaks.
+                        maxWeight = -1;
                         break;
-                    }
-                    otherChildren.remove(child);
-                    int max = 0;
-                    for (Node otherChild: otherChildren) {
-                        int newMax = otherChild.getIncomingEdges().get(node) + otherChild.getLBWeight();
-                        if (newMax > max) {
-                            max = newMax;
-                        }
-                    }
-                    otherChildren.add(child);
-                    if (child.getLBWeight() > max) {
-                        max = child.getLBWeight();
-                    }
-                    if (max < minWeight) {
-                        minWeight = max;
+                    } else if (child.getLBWeight() > maxWeight) {
+                        maxWeight = child.getLBWeight();
                     }
                 }
-                if (minWeight > 0) {
-                    unvisited.get(i).setLBWeight(unvisited.get(i).getWeight() + minWeight);
+                if (maxWeight > 0) {
+                    unvisited.get(i).setLBWeight(unvisited.get(i).getWeight() + maxWeight);
                     unvisited.remove(i);
                     break;
                 }

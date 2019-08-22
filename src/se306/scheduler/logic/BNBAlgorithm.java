@@ -123,32 +123,19 @@ public class BNBAlgorithm extends Algorithm {
         }
         while (unvisited.size() > 0) {
             for (int i = 0; i < unvisited.size(); i++) {
-                int minWeight = Integer.MAX_VALUE;
+                int maxWeight = 0;
                 Node node = unvisited.get(i);
-                List<Node> otherChildren = new ArrayList<>(node.getChildren());
                 for (Node child: node.getChildren()) {
                     if (child.getLBWeight() < 0) {
-                        minWeight = -1;
+                        maxWeight = -1;
                         break;
                     }
-                    otherChildren.remove(child);
-                    int max = 0;
-                    for (Node otherChild: otherChildren) {
-                        int newMax = otherChild.getIncomingEdges().get(node) + otherChild.getLBWeight();
-                        if (newMax > max) {
-                            max = newMax;
-                        }
-                    }
-                    otherChildren.add(child);
-                    if (child.getLBWeight() > max) {
-                        max = child.getLBWeight();
-                    }
-                    if (max < minWeight) {
-                        minWeight = max;
+                    if (child.getLBWeight() > maxWeight) {
+                        maxWeight = child.getLBWeight();
                     }
                 }
-                if (minWeight > 0) {
-                    unvisited.get(i).setLBWeight(unvisited.get(i).getWeight() + minWeight);
+                if (maxWeight > 0) {
+                    unvisited.get(i).setLBWeight(unvisited.get(i).getWeight() + maxWeight);
                     unvisited.remove(i);
                     break;
                 }

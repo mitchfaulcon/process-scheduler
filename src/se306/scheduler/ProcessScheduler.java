@@ -14,6 +14,7 @@ import se306.scheduler.graph.Node;
 import se306.scheduler.graph.PartialSchedule;
 import se306.scheduler.logic.*;
 import se306.scheduler.visualisation.GraphDisplay;
+import se306.scheduler.visualisation.Timer;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -32,6 +33,7 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
     private static int numProcessors;
     private static String fileName;
     private Map<String, String> nodeColours;
+    private Timer timer = new Timer();
     
 	public static void main(String[] args) {
 	    ProcessScheduler processScheduler = new ProcessScheduler();
@@ -96,10 +98,6 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
         scheduler = new Scheduler(algorithm);
         
         algorithm.addListener(this);
-        
-        if (config.getBoolean("V")) {
-            
-        }
 
 		try {
 			// attempt to load the input file
@@ -113,6 +111,8 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
 			}
 
 			//Calculate the schedule
+			System.out.println("Starting schedule calculation...");
+			timer.startTimer(0);
 			scheduler.start();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -161,6 +161,8 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
     // once a schedule has been found, write the output to a file
     @Override
     public void algorithmCompleted(PartialSchedule schedule) {
+		timer.stopTimer();
+		System.out.println("Optimal schedule of " + schedule.getMakespan() + " found in " + timer.getSeconds() + " seconds");
         try {
             dot.write(config.getString("OUTPUT"), schedule);
         } catch (IOException e) {

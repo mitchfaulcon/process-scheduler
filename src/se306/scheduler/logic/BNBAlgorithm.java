@@ -89,7 +89,7 @@ public class BNBAlgorithm extends Algorithm {
             }
         }
 
-        System.out.println(bestSchedule);
+//        System.out.println(bestSchedule);
         completed(bestSchedule);
     }
 

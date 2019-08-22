@@ -33,7 +33,7 @@ public abstract class Algorithm {
         for (AlgorithmListener listener: listeners) {
             listener.algorithmCompleted(answer);
         }
-        System.out.println(schedulesChecked);
+//        System.out.println(schedulesChecked);
     }
 
     protected void updateSchedule(PartialSchedule newOptimal){

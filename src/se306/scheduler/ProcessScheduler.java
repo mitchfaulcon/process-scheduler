@@ -8,23 +8,30 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
+import se306.scheduler.controller.HomeController;
 import se306.scheduler.exception.InvalidFileFormatException;
 import se306.scheduler.graph.Node;
 import se306.scheduler.graph.PartialSchedule;
 import se306.scheduler.logic.*;
+import se306.scheduler.visualisation.GraphDisplay;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 public class ProcessScheduler extends Application implements AlgorithmListener {
 
+    private HomeController homeController;
     private JSAPResult config;
     private DotFile dot;
     private static Scheduler scheduler;
     private static Algorithm algorithm;
     private static int numProcessors;
     private static String fileName;
+    private Map<String, String> nodeColours;
     
 	public static void main(String[] args) {
 	    ProcessScheduler processScheduler = new ProcessScheduler();
@@ -55,7 +62,10 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
 		});
 
 		//Change to home screen
-		Parent root = FXMLLoader.load(getClass().getResource("view/Home.fxml"));
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("view/Home.fxml"));
+		Parent root = loader.load();
+		homeController = loader.getController();
+		
 		primaryStage.setTitle("Process Scheduler");
 		primaryStage.setScene(new Scene(root, 1420, 800));
 		primaryStage.show();
@@ -89,6 +99,10 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
         scheduler = new Scheduler(algorithm);
         
         algorithm.addListener(this);
+        
+        if (config.getBoolean("V")) {
+            
+        }
 
 		try {
 			// attempt to load the input file

@@ -1,7 +1,9 @@
 package se306.scheduler.visualisation;
 
 import javafx.beans.property.SimpleStringProperty;
+import se306.scheduler.logic.Algorithm;
 
+import java.lang.management.ManagementFactory;
 import java.util.TimerTask;
 
 public class Timer {
@@ -17,11 +19,22 @@ public class Timer {
     private TimerTask tt;
     private boolean timing = false;
 
+    private long maxSchedules;
+    private long schedulesRemaining;
+
     public static Timer getInstance(){
         return instance;
     }
 
     private Timer() {
+    }
+
+    public void setMaxSchedules(long maxSchedules){
+        this.maxSchedules = maxSchedules;
+    }
+
+    public long getSchedulesRemaining() {
+        return schedulesRemaining;
     }
 
     public void startTimer(final long time) {
@@ -39,6 +52,7 @@ public class Timer {
                     }
                 } else {
                     updateTime();
+                    schedulesRemaining = maxSchedules - Algorithm.getSchedulesChecked();
                 }
             }
         };

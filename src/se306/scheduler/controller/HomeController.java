@@ -49,7 +49,6 @@ public class HomeController implements Initializable, AlgorithmListener {
     private Timer timer = Timer.getInstance();
     private Scheduler scheduler;
     private Map<String, String> nodeColours;
-    private long max;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -100,7 +99,7 @@ public class HomeController implements Initializable, AlgorithmListener {
 
         int numNodes = scheduler.getNodes().size();
 
-        max = (long)Math.pow(numProcessors, numNodes)*Algorithm.factorial(numNodes);
+        timer.setMaxSchedules((long)Math.pow(numProcessors, numNodes)*Algorithm.factorial(numNodes));
 
         //Set initial timer label
         timeDisplay.setText(timer.getSspTime().get());
@@ -108,7 +107,10 @@ public class HomeController implements Initializable, AlgorithmListener {
         //Listener for when ssp time changes in timer
         timer.getSspTime().addListener(observable -> {
             //Update label in application thread
-            Platform.runLater(() -> timeDisplay.setText(timer.getSspTime().get()));
+            Platform.runLater(() -> {
+                timeDisplay.setText(timer.getSspTime().get());
+                checkedLabel.setText(String.valueOf(timer.getSchedulesRemaining()));
+            });
         });
     }
 
@@ -146,13 +148,12 @@ public class HomeController implements Initializable, AlgorithmListener {
         Platform.runLater(() -> outputSchedule.update(schedule));
     }
 
-    @Override
-    public void updateSchedulesChecked(long schedules) {
-        //TODO: update progress bar
-//        new Thread(() -> {
-//
-//            checkedLabel.setText(String.valueOf(max - schedules));
-//        }).start();
-//        Platform.runLater(() -> checkedLabel.setText());
-    }
+//    @Override
+//    public void updateSchedulesChecked(long schedules) {
+////        new Thread(() -> {
+////
+////            checkedLabel.setText(String.valueOf(max - schedules));
+////        }).start();
+////        Platform.runLater(() -> checkedLabel.setText());
+//    }
 }

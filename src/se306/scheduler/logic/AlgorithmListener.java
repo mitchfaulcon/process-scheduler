@@ -10,5 +10,5 @@ public interface AlgorithmListener {
 
     void newOptimalFound(PartialSchedule schedule);
 
-    void updateSchedulesChecked(long schedules);
+//    void updateSchedulesChecked(long schedules);
 }

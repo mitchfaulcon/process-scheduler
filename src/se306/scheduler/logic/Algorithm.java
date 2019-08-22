@@ -9,7 +9,7 @@ import se306.scheduler.graph.PartialSchedule;
 public abstract class Algorithm {
     protected List<AlgorithmListener> listeners;
     protected List<Node> graph;
-    protected long schedulesChecked;
+    protected static long schedulesChecked;
     protected int numProcessors;
     
     public Algorithm(int numProcessors) {
@@ -50,11 +50,15 @@ public abstract class Algorithm {
      **/
     protected void updateBranchCut(int nodesRemaining) {
         this.schedulesChecked += Math.pow(this.numProcessors, nodesRemaining)*factorial(nodesRemaining);
-        for (AlgorithmListener listener: listeners) {
-            listener.updateSchedulesChecked(this.schedulesChecked);
-        }
+//        for (AlgorithmListener listener: listeners) {
+//            listener.updateSchedulesChecked(this.schedulesChecked);
+//        }
         //System.out.println(schedulesChecked);
 
+    }
+
+    public static long getSchedulesChecked(){
+        return schedulesChecked;
     }
 
     /**

@@ -38,7 +38,7 @@
                 <Pane fx:id="graphPane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="610.0" prefWidth="709.0" GridPane.valignment="BOTTOM" />
             </children>
         </GridPane>
-        <Pane prefHeight="153.0" prefWidth="1420.0" styleClass="footer" stylesheets="@home_style.css" GridPane.rowIndex="1">
+        <Pane fx:id="bottomPane" prefHeight="153.0" prefWidth="1420.0" styleClass="footer" stylesheets="@home_style.css" GridPane.rowIndex="1">
          <AnchorPane layoutX="210.0" prefHeight="146.0" prefWidth="1212.0">
             <children>
                <AnchorPane layoutX="185.0" layoutY="24.0" prefHeight="108.0" prefWidth="226.0" stylesheets="@home_style.css">
@@ -115,7 +115,7 @@
                </AnchorPane>
             </children>
          </AnchorPane>
-         <Pane prefHeight="148.0" prefWidth="404.0" styleClass="timer-box" stylesheets="@home_style.css">
+         <Pane fx:id="timerboxPane" prefHeight="148.0" prefWidth="404.0" styleClass="timer-box" stylesheets="@home_style.css">
             <children>
                <Label fx:id="timeTitleLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="39.0" layoutY="32.0" prefHeight="30.0" prefWidth="248.0" styleClass="timer-title" stylesheets="@home_style.css" text="Time Elapsed" />
                   <Label fx:id="timeDisplay" layoutX="38.0" layoutY="56.0" stylesheets="@home_style.css" text="00:00.00">

@@ -40,6 +40,8 @@ public class HomeController implements Initializable, AlgorithmListener {
     @FXML Label timeDisplay, filenameLabel, numProcLabel, numThreadsLabel, bestTimeLabel, checkedLabel, timeTitleLabel;
     @FXML Pane graphPane;
     @FXML ScrollPane scrollPane;
+    @FXML Pane bottomPane;
+    @FXML Pane timerboxPane;
 
     private GraphDisplay graphDisplay;
     private OutputSchedule outputSchedule;
@@ -139,8 +141,10 @@ public class HomeController implements Initializable, AlgorithmListener {
     public void algorithmCompleted(PartialSchedule schedule) {
         timer.stopTimer();
         Platform.runLater(() -> {
-            timeDisplay.getStyleClass().add("timer-done");
-            timeTitleLabel.getStyleClass().addAll("timer-done", "timer-done-title");
+//            timeDisplay.getStyleClass().add("timer-done");
+//            timeTitleLabel.getStyleClass().addAll("timer-done", "timer-done-title");
+            bottomPane.getStyleClass().add("footer-done");
+            timerboxPane.getStyleClass().add("timer-box-done");
             timeTitleLabel.setText("Completion time");
             checkedLabel.setText("0");
         });

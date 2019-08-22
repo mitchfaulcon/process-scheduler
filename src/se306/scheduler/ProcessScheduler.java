@@ -164,9 +164,7 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
     // once a schedule has been found, write the output to a file
     @Override
     public void algorithmCompleted(PartialSchedule schedule) {
-		if(!config.getBoolean("V")) {
-			timer.stopTimer();
-		}
+		timer.stopTimer();
 		System.out.println("Optimal schedule of " + schedule.getMakespan() + " found in " + timer.getSeconds() + " seconds");
 		try {
             dot.write(config.getString("OUTPUT"), schedule);

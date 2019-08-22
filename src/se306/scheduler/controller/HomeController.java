@@ -138,9 +138,9 @@ public class HomeController implements Initializable, AlgorithmListener {
     @Override
     public void algorithmCompleted(PartialSchedule schedule) {
         timer.stopTimer();
-        timeDisplay.getStyleClass().add("timer-done");
-        timeTitleLabel.getStyleClass().addAll("timer-done", "timer-done-title");
         Platform.runLater(() -> {
+            timeDisplay.getStyleClass().add("timer-done");
+            timeTitleLabel.getStyleClass().addAll("timer-done", "timer-done-title");
             timeTitleLabel.setText("Completion time");
             checkedLabel.setText("0");
         });

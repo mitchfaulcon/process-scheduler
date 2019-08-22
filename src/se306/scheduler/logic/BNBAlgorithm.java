@@ -27,7 +27,7 @@ public class BNBAlgorithm extends Algorithm {
         int bestMakespan = bestSchedule.getMakespan();
         updateSchedule(bestSchedule);
         setLowerBounds();
-        System.out.println(graph.get(0).getLBWeight());
+//        System.out.println(graph.get(0).getLBWeight());
 
         outerLoop:
         while (!stack.isEmpty()) {
@@ -55,7 +55,7 @@ public class BNBAlgorithm extends Algorithm {
                 continue;
             }
             // check if the lower bound on scheduling any node is less than the best so far. If it is not, then
-            // there is no way this partial schedule is faster, so loop goes to next parital schedule.
+            // there is no way this partial schedule is faster, so loop goes to next partial schedule.
             for (Node node: state.getUnvisitedNodes()) {
                 if (state.lowerBoundEndTime(node) > bestMakespan) {
                     updateBranchCut(state.getUnvisitedNodes().size());

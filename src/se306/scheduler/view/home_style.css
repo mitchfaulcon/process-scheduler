@@ -1,3 +1,14 @@
+@font-face {
+    font-family: Conolas;
+    src: url('consola.ttf');
+}
+
+@font-face {
+    font-family: Consolas;
+    src: url('consolab.ttf');
+    font-weight: bold;
+}
+
 .scroll-pane > .viewport {
     -fx-background-color: transparent;
 }
@@ -46,12 +57,6 @@
 
 .footer-done {
     -fx-background-color:  linear-gradient(from 0% 0% to 0% 100%, #50ff70, #34a849);
-}
-
-.filename {
-    -fx-font-family: Consolas;
-    -fx-font-size: 25px;
-    -fx-text-fill: black;
 }
 
 .info {

@@ -49,7 +49,10 @@ public class HomeController implements Initializable, AlgorithmListener {
     @FXML Pane bottomPane;
     @FXML Pane timerboxPane;
 
-    private static double MAX_TEXT_WIDTH = 197;
+    private final static double MAX_TEXT_WIDTH = 197;
+    private final static double DEFAULT_FONT_SIZE = 50;
+    private final static Font DEFAULT_FONT = Font.font("Consolas", FontWeight.BOLD, DEFAULT_FONT_SIZE);
+    private final static Paint DEFAULT_COLOR = Paint.valueOf("#1b274e");
 
     private GraphDisplay graphDisplay;
     private OutputSchedule outputSchedule;
@@ -73,6 +76,9 @@ public class HomeController implements Initializable, AlgorithmListener {
         setTextProperty(numThreadsLabel);
         setTextProperty(bestTimeLabel);
         setTextProperty(checkedLabel);
+
+        final double fileLabelSize = 25;
+        setTextProperty(Font.font("Consolas", fileLabelSize), fileLabelSize, 673, Paint.valueOf("#000000"), filenameLabel);
 
         //Get same scheduler & algorithm objects from main class
         scheduler = ProcessScheduler.getScheduler();
@@ -177,28 +183,30 @@ public class HomeController implements Initializable, AlgorithmListener {
         });
     }
 
-    private void setTextProperty(Label label) {
-        double defaultSize = 50;
-        Font defaultFont = Font.font("Consolas", FontWeight.BOLD, defaultSize);
-        label.setFont(defaultFont);
-        label.setTextFill(Paint.valueOf("#1b274e"));
+    private void setTextProperty(Font font, double size, double maxWidth, Paint paint, Label label) {
+        label.setFont(font);
+        label.setTextFill(paint);
 
         label.textProperty().addListener(((observable, oldValue, newValue) -> {
             Text tmpText = new Text(newValue);
-            tmpText.setFont(defaultFont);
+            tmpText.setFont(font);
 
             double textWidth = tmpText.getLayoutBounds().getWidth();
 
             //check if text width is smaller than maximum width allowed
-            if (textWidth <= MAX_TEXT_WIDTH) {
-                label.setFont(defaultFont);
+            if (textWidth <= maxWidth) {
+                label.setFont(font);
             } else {
                 //and if it isn't, calculate new font size,
                 // so that label text width matches MAX_TEXT_WIDTH
-                double newFontSize = defaultSize * MAX_TEXT_WIDTH / textWidth;
-                label.setFont(Font.font(defaultFont.getFamily(), newFontSize));
+                double newFontSize = size * maxWidth / textWidth;
+                label.setFont(Font.font(font.getFamily(), newFontSize));
             }
         }));
+    }
+
+    private void setTextProperty(Label label) {
+        setTextProperty(DEFAULT_FONT, DEFAULT_FONT_SIZE, MAX_TEXT_WIDTH, DEFAULT_COLOR, label);
     }
 
 //    @Override

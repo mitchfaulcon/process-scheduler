@@ -9,7 +9,7 @@ import se306.scheduler.graph.PartialSchedule;
 public abstract class Algorithm {
     protected List<AlgorithmListener> listeners;
     protected List<Node> graph;
-    protected static long schedulesChecked;
+    protected static volatile long schedulesChecked;
     protected int numProcessors;
     
     public Algorithm(int numProcessors) {
@@ -48,8 +48,8 @@ public abstract class Algorithm {
      * nodesRemaining nodes.
      * @param nodesRemaining the total nodes to schedule - number of nodes in partial schedule
      **/
-    protected void updateBranchCut(int nodesRemaining) {
-        this.schedulesChecked += Math.pow(this.numProcessors, nodesRemaining)*factorial(nodesRemaining);
+    protected synchronized void updateBranchCut(int nodesRemaining) {
+        schedulesChecked += Math.pow(this.numProcessors, nodesRemaining)*factorial(nodesRemaining);
 //        for (AlgorithmListener listener: listeners) {
 //            listener.updateSchedulesChecked(this.schedulesChecked);
 //        }

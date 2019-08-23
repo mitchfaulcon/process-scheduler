@@ -33,18 +33,18 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             </rowConstraints>
             <children>
-                <ScrollPane fx:id="scrollPane" prefHeight="627.0" prefWidth="710.0" styleClass="dark-grey" GridPane.columnIndex="1" />
+                <ScrollPane fx:id="scrollPane" prefHeight="627.0" prefWidth="710.0" GridPane.columnIndex="1" />
             <Label fx:id="filenameLabel" alignment="TOP_LEFT" contentDisplay="TOP" styleClass="filename" stylesheets="@home_style.css" translateX="10.0" translateY="10.0" GridPane.halignment="LEFT" GridPane.valignment="TOP" />
                 <Pane fx:id="graphPane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="610.0" prefWidth="709.0" GridPane.valignment="BOTTOM" />
             </children>
         </GridPane>
-        <Pane prefHeight="153.0" prefWidth="1420.0" styleClass="footer" stylesheets="@home_style.css" GridPane.rowIndex="1">
+        <Pane fx:id="bottomPane" prefHeight="153.0" prefWidth="1420.0" styleClass="footer" stylesheets="@home_style.css" GridPane.rowIndex="1">
          <AnchorPane layoutX="210.0" prefHeight="146.0" prefWidth="1212.0">
             <children>
                <AnchorPane layoutX="185.0" layoutY="24.0" prefHeight="108.0" prefWidth="226.0" stylesheets="@home_style.css">
                   <styleClass>
                      <String fx:value="box" />
-                     <String fx:value="green-box" />
+                     <String fx:value="white-box" />
                   </styleClass>
                   <children>
                      <Label layoutX="14.0" layoutY="8.0" stylesheets="@home_style.css" text="Processors (To schedule)" textAlignment="CENTER">
@@ -56,13 +56,13 @@
                            <String fx:value="info" />
                         </styleClass>
                      </Label>
-                     <Label fx:id="numProcLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="15.0" layoutY="21.0" prefHeight="58.0" prefWidth="197.0" styleClass="info" stylesheets="@home_style.css" text="--" textAlignment="CENTER" />
+                     <Label fx:id="numProcLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="15.0" layoutY="25.0" prefHeight="58.0" prefWidth="197.0" styleClass="box" stylesheets="@home_style.css" text="--" textAlignment="CENTER" />
                   </children>
                </AnchorPane>
                <AnchorPane layoutX="441.0" layoutY="24.0" prefHeight="108.0" prefWidth="226.0" stylesheets="@home_style.css">
                   <styleClass>
                      <String fx:value="box" />
-                     <String fx:value="green-box" />
+                     <String fx:value="white-box" />
                   </styleClass>
                   <children>
                      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="64.0" layoutY="8.0" stylesheets="@home_style.css" text="Threads Used" textAlignment="CENTER">
@@ -74,13 +74,13 @@
                            <String fx:value="info" />
                         </styleClass>
                      </Label>
-                     <Label fx:id="numThreadsLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="15.0" layoutY="21.0" prefHeight="58.0" prefWidth="197.0" styleClass="info" stylesheets="@home_style.css" text="--" textAlignment="CENTER" />
+                     <Label fx:id="numThreadsLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="15.0" layoutY="25.0" prefHeight="58.0" prefWidth="197.0" styleClass="box" stylesheets="@home_style.css" text="--" textAlignment="CENTER" />
                   </children>
                </AnchorPane>
                <AnchorPane layoutX="697.0" layoutY="24.0" prefHeight="108.0" prefWidth="226.0" stylesheets="@home_style.css">
                   <styleClass>
                      <String fx:value="box" />
-                     <String fx:value="green-box" />
+                     <String fx:value="white-box" />
                   </styleClass>
                   <children>
                      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="43.0" layoutY="8.0" stylesheets="@home_style.css" text="Current Best Time" textAlignment="CENTER">
@@ -92,13 +92,13 @@
                            <String fx:value="info" />
                         </styleClass>
                      </Label>
-                     <Label fx:id="bestTimeLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="15.0" layoutY="21.0" prefHeight="58.0" prefWidth="197.0" styleClass="info" stylesheets="@home_style.css" text="--" textAlignment="CENTER" />
+                     <Label fx:id="bestTimeLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="15.0" layoutY="25.0" prefHeight="58.0" prefWidth="197.0" styleClass="box" stylesheets="@home_style.css" text="--" textAlignment="CENTER" />
                   </children>
                </AnchorPane>
                <AnchorPane layoutX="953.0" layoutY="24.0" prefHeight="108.0" prefWidth="226.0" stylesheets="@home_style.css">
                   <styleClass>
                      <String fx:value="box" />
-                     <String fx:value="green-box" />
+                     <String fx:value="white-box" />
                   </styleClass>
                   <children>
                      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="35.0" layoutY="8.0" stylesheets="@home_style.css" text="Schedules Remaining" textAlignment="CENTER">
@@ -110,12 +110,12 @@
                            <String fx:value="info" />
                         </styleClass>
                      </Label>
-                     <Label fx:id="checkedLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="15.0" layoutY="21.0" prefHeight="58.0" prefWidth="197.0" styleClass="info" stylesheets="@home_style.css" text="--" textAlignment="CENTER" />
+                     <Label fx:id="checkedLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="15.0" layoutY="25.0" prefHeight="58.0" prefWidth="197.0" styleClass="box" stylesheets="@home_style.css" text="--" textAlignment="CENTER" />
                   </children>
                </AnchorPane>
             </children>
          </AnchorPane>
-         <Pane prefHeight="148.0" prefWidth="404.0" styleClass="timer-box" stylesheets="@home_style.css">
+         <Pane fx:id="timerboxPane" prefHeight="148.0" prefWidth="404.0" styleClass="timer-box" stylesheets="@home_style.css">
             <children>
                <Label fx:id="timeTitleLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="39.0" layoutY="32.0" prefHeight="30.0" prefWidth="248.0" styleClass="timer-title" stylesheets="@home_style.css" text="Time Elapsed" />
                   <Label fx:id="timeDisplay" layoutX="38.0" layoutY="56.0" stylesheets="@home_style.css" text="00:00.00">

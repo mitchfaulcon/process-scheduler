@@ -134,7 +134,7 @@ public class HomeController implements Initializable, AlgorithmListener {
     private void start() {
         greyRectangle.setVisible(false);
         anchorPane.getChildren().remove(startButton);
-        filenameLabel.setText(ProcessScheduler.getFileName());
+        filenameLabel.setText("Input file: " + ProcessScheduler.getFileName());
         numThreadsLabel.setText(String.valueOf(ProcessScheduler.getNumThreads()));
         numProcLabel.setText(String.valueOf(ProcessScheduler.getNumProcessors()));
 

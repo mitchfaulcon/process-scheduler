@@ -6,7 +6,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 import se306.scheduler.controller.HomeController;
 import se306.scheduler.exception.InvalidFileFormatException;
@@ -94,9 +97,15 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
 	}
 	
 	public void schedule(String[] args) {
-        //algorithm = new SequentialAlgorithm();
+//        algorithm = new SequentialAlgorithm();
         //algorithm = new DFSAlgorithm(config.getInt("P"));
-	    algorithm = new BNBAlgorithm(config.getInt("P"));
+        if (config.getInt("N") == 1) {
+            //Sequential algorithm
+            algorithm = new BNBAlgorithm(config.getInt("P"));
+        } else {
+            //TODO Change this to parallelised algorithm
+            algorithm = new BNBAlgorithm(config.getInt("P"));
+        }
         scheduler = new Scheduler(algorithm);
         
         algorithm.addListener(this);
@@ -193,8 +202,11 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
 	}
 
 	private void shutdown(){
-		Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to exit?", ButtonType.YES, ButtonType.NO);
-		if (alert.showAndWait().orElse(ButtonType.NO) == ButtonType.YES) {
+		Alert alert = new Alert(Alert.AlertType.CONFIRMATION, null, ButtonType.YES, ButtonType.CANCEL);
+        alert.setHeaderText("Are you sure you want to exit Process Scheduler?");
+        alert.getDialogPane().getStylesheets().add(getClass().getResource("dialog_style.css").toExternalForm());
+        ((Button)alert.getDialogPane().lookupButton(ButtonType.YES)).setText("Quit");
+        if (alert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.YES) {
 			//Quit
 			System.exit(1);
 		}

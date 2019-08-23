@@ -5,8 +5,8 @@
 
 @font-face {
     font-family: Consolas;
+    font-weight: Bold;
     src: url('consolab.ttf');
-    font-weight: bold;
 }
 
 .scroll-pane > .viewport {

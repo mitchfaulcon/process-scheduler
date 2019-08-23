@@ -22,7 +22,6 @@
         </columnConstraints>
         <rowConstraints>
             <RowConstraints maxHeight="683.0" minHeight="10.0" prefHeight="659.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="705.9999908447265" minHeight="10.0" prefHeight="141.0" vgrow="SOMETIMES" />
         </rowConstraints>
         <GridPane prefHeight="403.0" prefWidth="1420.0" styleClass="scroll-pane" stylesheets="@home_style.css">
             <columnConstraints>
@@ -34,7 +33,7 @@
             </rowConstraints>
             <children>
                 <ScrollPane fx:id="scrollPane" prefHeight="627.0" prefWidth="710.0" GridPane.columnIndex="1" />
-            <Label fx:id="filenameLabel" alignment="TOP_LEFT" contentDisplay="TOP" styleClass="filename" stylesheets="@home_style.css" translateX="10.0" translateY="10.0" GridPane.halignment="LEFT" GridPane.valignment="TOP" />
+            <Label fx:id="filenameLabel" alignment="TOP_LEFT" contentDisplay="TOP" prefHeight="30.0" prefWidth="673.0" stylesheets="@home_style.css" translateX="10.0" translateY="10.0" GridPane.halignment="LEFT" GridPane.valignment="TOP" />
                 <Pane fx:id="graphPane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="610.0" prefWidth="709.0" GridPane.valignment="BOTTOM" />
             </children>
         </GridPane>

@@ -57,27 +57,49 @@ public class BNBAlgorithm extends Algorithm {
             // check if the lower bound on scheduling any node is less than the best so far. If it is not, then
             // there is no way this partial schedule is faster, so loop goes to next partial schedule.
             for (Node node: state.getUnvisitedNodes()) {
-                if (state.lowerBoundEndTime(node) > bestMakespan) {
+                if (state.lowerBoundEndTime(node) >= bestMakespan) {
                     updateBranchCut(state.getUnvisitedNodes().size());
                     continue outerLoop;
                 }
             }
 
-            for (int n = 0; n < state.getUnvisitedNodes().size(); n++) {
-                Node node = state.getUnvisitedNodes().get(n);
-
+            for (Node node: state.getUnvisitedNodes()) {
                 // check if the node's parents have all been scheduled
                 if (state.dependenciesSatisfied(node)) {
                     // create new states by adding the new node to every processor
+                    processorLoop:
                     for (int p = 1; p <= numProcessors; p++) {
                         // find the earliest time the new node can be added on this processor
                         int bestStart = state.findBestStartTime(node, p);
+                        List<Node> otherNodes = new ArrayList<>(state.getUnvisitedNodes());
+                        otherNodes.remove(node);
+                        // this loop finds the lower bound on all the other dependency-met nodes after the node is scheduled
+                        // to see if any of lower bounds are higher than the current max
+                        for (Node node2: otherNodes) {
+                            if (state.dependenciesSatisfied(node2) && bestStart + node.getWeight() + node2.getLBWeight() > bestMakespan) {
+                                int bestEndTime = Integer.MAX_VALUE;
+                                for (int processor = 1; processor <= numProcessors; processor++) {
+                                    if (processor != p) {
+                                        int endTime = state.findBestStartTime(node2, processor) + node2.getLBWeight();
+                                        if (endTime < bestEndTime) {
+                                            bestEndTime = endTime;
+                                        }
+                                    }
+                                }
+                                if (bestEndTime >= bestMakespan) {
+                                    // if the lower bound is too high, then the new state is not made and we move to
+                                    // the next processor
+                                    updateBranchCut(state.getUnvisitedNodes().size() - 1);
+                                    continue processorLoop;
+                                }
+                            }
+                        }
+                        PartialSchedule newState = new PartialSchedule(state);
+                        boolean isFirstOnProcessor = newState.scheduleTask(node, p, bestStart);
                         // if the lower bound for scheduling this node here on this processor is worse than best so far
                         // then partial schedule is not added to stack
                         if (bestStart + node.getLBWeight() < bestMakespan) {
                             // add the node at this time
-                            PartialSchedule newState = new PartialSchedule(state);
-                            boolean isFirstOnProcessor = newState.scheduleTask(node, p, bestStart);
 
                             stack.push(newState);
 
@@ -90,7 +112,7 @@ public class BNBAlgorithm extends Algorithm {
                                 break;
                             }
                         } else {
-                            updateBranchCut(state.getUnvisitedNodes().size() - 1);
+                            updateBranchCut(newState.getUnvisitedNodes().size());
                         }
                     }
                 } else {

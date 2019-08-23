@@ -14,14 +14,14 @@ A Process Scheduler application for Team 12's SOFTENG 306 Project 1
 Process Scheduler takes in a graph file in DOT format (.dot) and outputs an optimal schedule in another DOT file based on how many processors the user wants the tasks to be scheduled on.
 
 ## Run Instructions
-1. Download the <>.jar file  
+1. Download the [(UPDTATE LINK) scheduler-final-T12.jar]() file  
 2. Navigate to the directory containing the jar file and run it using:  
-`java -jar <>.jar INPUT.dot P [OPTIONAL]`  
+`java -jar scheduler-final-T12.jar INPUT.dot P [OPTIONAL]`  
 Where INPUT.dot is the graph input file, P is the number of processors to calculate the optimal schedule on, and \[OPTIONAL] is any optional arguments.  
 These optional arguments are:  
-* `-p N` How many cores to use use for parallel execution (default is 1)  
+* `-p N` Where N is the number of cores to use use for parallel execution (default is 1)  
 * `-v` Enables a GUI visualisation of the schedule search with graphs and statistics  
-* `-o Output` The output DOT file will be named OUTPUT.dot (default is INPUT-output.dot)
+* `-o OUTPUT` The output DOT file will be named OUTPUT.dot (default is INPUT-output.dot)
 
 ## Other Info
 * Our team meeting minutes can be found on the meetings [wiki page](https://github.com/mitchfaulcon/process-scheduler/wiki/Meetings).  

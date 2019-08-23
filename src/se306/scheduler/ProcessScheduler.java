@@ -6,22 +6,19 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import se306.scheduler.controller.HomeController;
 import se306.scheduler.exception.InvalidFileFormatException;
-import se306.scheduler.graph.Node;
 import se306.scheduler.graph.PartialSchedule;
 import se306.scheduler.logic.*;
-import se306.scheduler.visualisation.GraphDisplay;
 import se306.scheduler.visualisation.Timer;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 public class ProcessScheduler extends Application implements AlgorithmListener {
 
@@ -59,13 +56,14 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
 		primaryStage.setOnCloseRequest(evt -> {
 			// prevent window from closing
 			evt.consume();
+            System.exit(1);
+        });
 
-			// execute own shutdown procedure
-			shutdown();
-		});
+		Font.loadFont(getClass().getResourceAsStream("/consola.ttf"), 30);
+		Font.loadFont(getClass().getResourceAsStream("/consolab.ttf"), 30);
 
 		//Change to home screen
-		Parent root = FXMLLoader.load(getClass().getResource("view/home.fxml"));
+		Parent root = FXMLLoader.load(getClass().getResource("/home.fxml"));
 		primaryStage.setTitle("Process Scheduler");
 		primaryStage.setScene(new Scene(root, 1420, 800));
 		primaryStage.show();
@@ -94,9 +92,15 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
 	}
 	
 	public void schedule(String[] args) {
-        //algorithm = new SequentialAlgorithm();
+//        algorithm = new SequentialAlgorithm();
         //algorithm = new DFSAlgorithm(config.getInt("P"));
-	    algorithm = new BNBAlgorithm(config.getInt("P"));
+        if (config.getInt("N") == 1) {
+            //Sequential algorithm
+            algorithm = new BNBAlgorithm(config.getInt("P"));
+        } else {
+            //TODO Change this to parallelised algorithm
+            algorithm = new BNBAlgorithm(config.getInt("P"));
+        }
         scheduler = new Scheduler(algorithm);
         
         algorithm.addListener(this);
@@ -190,13 +194,5 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
 
 	public static int getNumThreads(){
 		return numThreads;
-	}
-
-	private void shutdown(){
-		Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to exit?", ButtonType.YES, ButtonType.NO);
-		if (alert.showAndWait().orElse(ButtonType.NO) == ButtonType.YES) {
-			//Quit
-			System.exit(1);
-		}
 	}
 }

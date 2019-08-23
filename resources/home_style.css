@@ -48,12 +48,6 @@
     -fx-background-color:  linear-gradient(from 0% 0% to 0% 100%, #50ff70, #34a849);
 }
 
-.filename {
-    -fx-font-family: Consolas;
-    -fx-font-size: 30px;
-    -fx-text-fill: black;
-}
-
 .info {
     -fx-font-family: Consolas;
     -fx-text-fill: #1b274e;

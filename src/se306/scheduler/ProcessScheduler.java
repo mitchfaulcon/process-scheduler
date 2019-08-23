@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import se306.scheduler.controller.HomeController;
 import se306.scheduler.exception.InvalidFileFormatException;
@@ -57,6 +58,9 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
 			evt.consume();
             System.exit(1);
         });
+
+		Font.loadFont(getClass().getResourceAsStream("/consola.ttf"), 30);
+		Font.loadFont(getClass().getResourceAsStream("/consolab.ttf"), 30);
 
 		//Change to home screen
 		Parent root = FXMLLoader.load(getClass().getResource("/home.fxml"));

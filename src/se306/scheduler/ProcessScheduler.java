@@ -55,10 +55,8 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
 		primaryStage.setOnCloseRequest(evt -> {
 			// prevent window from closing
 			evt.consume();
-
-			// execute own shutdown procedure
-			shutdown();
-		});
+            System.exit(1);
+        });
 
 		//Change to home screen
 		Parent root = FXMLLoader.load(getClass().getResource("/home.fxml"));
@@ -192,16 +190,5 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
 
 	public static int getNumThreads(){
 		return numThreads;
-	}
-
-	private void shutdown(){
-		Alert alert = new Alert(Alert.AlertType.CONFIRMATION, null, ButtonType.YES, ButtonType.CANCEL);
-        alert.setHeaderText("Are you sure you want to exit Process Scheduler?");
-        alert.getDialogPane().getStylesheets().add(getClass().getResource("dialog_style.css").toExternalForm());
-        ((Button)alert.getDialogPane().lookupButton(ButtonType.YES)).setText("Quit");
-        if (alert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.YES) {
-			//Quit
-			System.exit(1);
-		}
 	}
 }

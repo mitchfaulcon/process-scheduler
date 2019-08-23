@@ -174,44 +174,6 @@ public class PartialSchedule {
         
         return bestStartTime;
     }
-
-    /**
-     * This returns an underestimate on the end time of the schedule should this node be scheduled next.
-     */
-    public int lowerBoundEndTime(Node newNode) {
-        int startTime = 0;
-        for (Node parent: newNode.getIncomingEdges().keySet()) {
-            if (visited.contains(parent)) {
-                int time = startTimes.get(parent) + parent.getWeight();
-                if (time > startTime) {
-                    startTime = time;
-                }
-            }
-        }
-        return startTime + newNode.getLBWeight();
-    }
-
-    public int totalLowerBoundEndTime() {
-        int maxEndTime = 0;
-        for (Node node: unvisited) {
-            int bestNodeEnd = Integer.MAX_VALUE;
-            if (dependenciesSatisfied(node)) {
-                for (int processor = 1; processor <= processorMap.values().size(); processor++) {
-                    int endTime = findBestStartTime(node, processor) + node.getLBWeight();
-                    if (endTime < bestNodeEnd) {
-                        bestNodeEnd = endTime;
-                    }
-                }
-            } else {
-                bestNodeEnd = node.getLBWeight();
-            }
-
-            if (bestNodeEnd > maxEndTime) {
-                maxEndTime = bestNodeEnd;
-            }
-        }
-        return maxEndTime;
-    }
     
     public List<Node> getNodes() {
         return nodes;

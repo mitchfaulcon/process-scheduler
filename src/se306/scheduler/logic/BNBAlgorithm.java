@@ -23,13 +23,13 @@ public class BNBAlgorithm extends Algorithm {
         // add initial state
         stack.push(new PartialSchedule(graph));
 
-        PartialSchedule bestSchedule = GreedySchedule();
+        /*PartialSchedule bestSchedule =  GreedySchedule();
         int bestMakespan = bestSchedule.getMakespan();
-        updateSchedule(bestSchedule);
-        setLowerBounds();
-//        System.out.println(graph.get(0).getLBWeight());
+        updateSchedule(bestSchedule);*/
+        PartialSchedule bestSchedule = null;
+        int bestMakespan = Integer.MAX_VALUE;
 
-        outerLoop:
+        setLowerBounds();
         while (!stack.isEmpty()) {
             PartialSchedule state = stack.pop();
             // all nodes have been assigned to a processor
@@ -54,14 +54,6 @@ public class BNBAlgorithm extends Algorithm {
                 updateBranchCut(0);
                 continue;
             }
-            // check if the lower bound on scheduling any node is less than the best so far. If it is not, then
-            // there is no way this partial schedule is faster, so loop goes to next partial schedule.
-            for (Node node: state.getUnvisitedNodes()) {
-                if (state.lowerBoundEndTime(node) >= bestMakespan) {
-                    updateBranchCut(state.getUnvisitedNodes().size());
-                    continue outerLoop;
-                }
-            }
 
             for (Node node: state.getUnvisitedNodes()) {
                 // check if the node's parents have all been scheduled
@@ -76,9 +68,11 @@ public class BNBAlgorithm extends Algorithm {
                         // this loop finds the lower bound on all the other dependency-met nodes after the node is scheduled
                         // to see if any of lower bounds are higher than the current max
                         for (Node node2: otherNodes) {
+                            // tests if scheduling on this processor would be too slow
                             if (state.dependenciesSatisfied(node2) && bestStart + node.getWeight() + node2.getLBWeight() > bestMakespan) {
                                 int bestEndTime = Integer.MAX_VALUE;
                                 for (int processor = 1; processor <= numProcessors; processor++) {
+                                    // tests for all the other processors
                                     if (processor != p) {
                                         int endTime = state.findBestStartTime(node2, processor) + node2.getLBWeight();
                                         if (endTime < bestEndTime) {
@@ -122,8 +116,6 @@ public class BNBAlgorithm extends Algorithm {
                 }
             }
         }
-
-//        System.out.println(bestSchedule);
         completed(bestSchedule);
     }
 

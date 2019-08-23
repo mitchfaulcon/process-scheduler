@@ -1,13 +1,26 @@
 # process-scheduler
-Process Scheduler for SOFTENG 306 Project 1
+A Process Scheduler application for Team 12's SOFTENG 306 Project 1
 
-
-### Usernames
+## Usernames
 | Name | GitHub Username  | UoA Username | UoA ID |
 | ---- | ---------------- | ------------ | ------ |
-| Max | veratrum | mben346 | 655363680 |
-| Dhruv | mini | dpha900 | 902553757 |
-| Brad | bradleycoleman | bcol085 | 223284129 |
-| Eric | EricPedrido | eped596 | 467829287 |
-| Mitchell | mitchfaulcon | mfau584 | 250334267 |
+| Max Benson | veratrum | mben346 | 655363680 |
+| Dhruv Phadnis | mini | dpha900 | 902553757 |
+| Brad Coleman | bradleycoleman | bcol085 | 223284129 |
+| Eric Pedrido | EricPedrido | eped596 | 467829287 |
+| Mitchell Faulconbridge | mitchfaulcon | mfau584 | 250334267 |
 
+## Project Overview
+Process Scheduler takes in a graph file in DOT format (.dot) and outputs an optimal schedule in another DOT file based on how many processors the user wants the tasks to be scheduled on.
+
+## Run Instructions
+1. Download the <>.jar file  
+2. Navigate to the directory containing the jar file and run it using:  
+`java -jar <>.jar INPUT.dot P [OPTIONAL]`  
+Where INPUT.dot is the graph input file, P is the number of processors to calculate the optimal schedule on, and \[OPTIONAL] is any optional arguments.  
+These optional arguments are:  
+* `-p N` How many cores to use use for parallel execution (default is 1)  
+* `-v` Enables a GUI visualisation of the schedule search with graphs and statistics  
+* `-o Output` The output DOT file will be named OUTPUT.dot (default is INPUT-output.dot)
+
+## Other Info

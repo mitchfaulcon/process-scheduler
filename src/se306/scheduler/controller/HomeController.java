@@ -103,13 +103,8 @@ public class HomeController implements Initializable, AlgorithmListener {
         
         // Display input graph
         graphDisplay = GraphDisplay.getGraphDisplay();
-        for (Node node: nodes) {
-            graphDisplay.addNode(node.getName(), node.getWeight());
-            
-            for (Node parent: node.getIncomingEdges().keySet()) {
-                graphDisplay.addEdge(parent.getName(), node.getName(), node.getIncomingEdges().get(parent));
-            }
-        }
+        graphDisplay.addNodes(new PartialSchedule(nodes));
+
 
         //Display output schedule
         NumberAxis xAxis = new NumberAxis();

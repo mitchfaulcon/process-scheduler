@@ -76,8 +76,9 @@ public class BNBAlgorithmPara extends Algorithm {
 		setLowerBounds();
 
 		ArrayDeque<PartialSchedule> temp = new ArrayDeque<>();
+		temp.add(new PartialSchedule(graph));
 		while (temp.size() < nThreads) {
-			bnb(new PartialSchedule(graph), temp);
+			bnb(temp.pollFirst(), temp);
 		}
 
 		ArrayList<ConcurrentLinkedDeque<PartialSchedule>> stacks = new ArrayList<>();

@@ -31,7 +31,7 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
     private static int numThreads;
     private static String fileName;
     private Map<String, String> nodeColours;
-    private Timer timer = Timer.getInstance();
+    private Timer timer = Timer.getInstance(false);
     
 	public static void main(String[] args) {
 	    ProcessScheduler processScheduler = new ProcessScheduler();

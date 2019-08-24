@@ -21,11 +21,13 @@ public class Timer {
     private java.util.Timer t = new java.util.Timer();
     private TimerTask tt;
     private boolean timing = false;
+    private static boolean iVisualised;
 
     private BigInteger maxSchedules;
     private BigInteger schedulesRemaining;
 
-    public static Timer getInstance(){
+    public static Timer getInstance(boolean visualise){
+        iVisualised = visualise;
         return instance;
     }
 
@@ -83,7 +85,9 @@ public class Timer {
                     }
                 } else {
                     updateTime();
-                    schedulesRemaining = maxSchedules.subtract(Algorithm.getBigSchedulesChecked());
+                    if(iVisualised) {
+                        schedulesRemaining = maxSchedules.subtract(Algorithm.getBigSchedulesChecked());
+                    }
                 }
             }
         };

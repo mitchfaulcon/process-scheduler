@@ -1,8 +1,7 @@
 package se306.scheduler.controller;
 
 
-import javafx.animation.Animation;
-import javafx.animation.TranslateTransition;
+import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -41,10 +40,7 @@ import se306.scheduler.visualisation.Timer;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class HomeController implements Initializable, AlgorithmListener {
 
@@ -185,6 +181,7 @@ public class HomeController implements Initializable, AlgorithmListener {
     @Override
     public void algorithmCompleted(PartialSchedule schedule) {
         timer.stopTimer();
+
         Platform.runLater(() -> {
 //            timeDisplay.getStyleClass().add("timer-done");
 //            timeTitleLabel.getStyleClass().addAll("timer-done", "timer-done-title");
@@ -195,6 +192,7 @@ public class HomeController implements Initializable, AlgorithmListener {
             headerLabel.setText("Best Output Schedule");
             timeTitleLabel.setText("Completion time");
             checkedLabel.setText("0");
+            endAnimation();
         });
     }
 
@@ -233,19 +231,55 @@ public class HomeController implements Initializable, AlgorithmListener {
         setTextProperty(DEFAULT_FONT, DEFAULT_FONT_SIZE, MAX_TEXT_WIDTH, DEFAULT_COLOR, label);
     }
 
+    private TranslateTransition animation(javafx.scene.Node node, double x, double y, Duration duration) {
+        TranslateTransition transition = new TranslateTransition(duration, node);
+        transition.setToX(x);
+        transition.setToY(y);
+        transition.setAutoReverse(true);
+
+        return transition;
+    }
+
+    private TranslateTransition paneUpAnimation(AnchorPane pane, Duration duration) {
+        TranslateTransition transition = animation(pane, 0, -50, duration);
+        transition.play();
+
+        return transition;
+    }
+
+    private TranslateTransition paneDownAnimation(AnchorPane pane, Duration duration) {
+        TranslateTransition transition = animation(pane, 0, 0, duration);
+        transition.play();
+
+        return transition;
+    }
+
     private void setStatsAnimation(AnchorPane pane) {
-        pane.setOnMouseEntered(e -> {
-            TranslateTransition transition = new TranslateTransition(Duration.millis(250), pane);
-            transition.setToY(-50);
-            transition.setAutoReverse(true);
-            transition.play();
-        });
-        pane.setOnMouseExited(e -> {
-            TranslateTransition transition = new TranslateTransition(Duration.millis(250), pane);
-            transition.setToY(0);
-            transition.setAutoReverse(true);
-            transition.play();
-        });
+        final Duration DURATION = Duration.millis(250);
+
+        pane.setOnMouseEntered(e -> paneUpAnimation(pane, DURATION));
+        pane.setOnMouseExited(e -> paneDownAnimation(pane, DURATION));
+    }
+
+    private void endAnimation() {
+        final Duration DURATION = Duration.millis(50);
+
+        TranslateTransition up1 = paneUpAnimation(numProcPane, DURATION);
+        TranslateTransition up2 = paneUpAnimation(numThreadsPane, DURATION);
+        TranslateTransition up3 = paneUpAnimation(bestTimePane, DURATION);
+        TranslateTransition up4 = paneUpAnimation(checkedPane, DURATION);
+        TranslateTransition down1 = paneDownAnimation(numProcPane, DURATION);
+        TranslateTransition down2 = paneDownAnimation(numThreadsPane, DURATION);
+        TranslateTransition down3 = paneDownAnimation(bestTimePane, DURATION);
+        TranslateTransition down4 = paneDownAnimation(checkedPane, DURATION);
+        PauseTransition pt = new PauseTransition(Duration.millis(100));
+
+        SequentialTransition upSequence = new SequentialTransition(up1, up2, up3, up4);
+        SequentialTransition downSequence = new SequentialTransition(pt, down1, down2, down3, down4);
+        ParallelTransition animation = new ParallelTransition(upSequence, downSequence);
+        animation.play();
+
+
     }
 
 //    @Override

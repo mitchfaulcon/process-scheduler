@@ -5,6 +5,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import se306.scheduler.exception.InvalidFileFormatException;
 import se306.scheduler.graph.Node;
+import se306.scheduler.graph.PartialSchedule;
+import se306.scheduler.logic.Algorithm;
+import se306.scheduler.logic.AlgorithmListener;
 import se306.scheduler.logic.Scheduler;
 import se306.scheduler.logic.SequentialAlgorithm;
 
@@ -13,6 +16,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -57,15 +62,15 @@ public class DotFileTest {
         Node nodeC = nodes.get(2);
         Node nodeD = nodes.get(3);
 
-        /*assertEquals(0, nodeA.getIncomingEdges().size(), "Node A should have 0 parents");
+        assertEquals(0, nodeA.getIncomingEdges().size(), "Node A should have 0 parents");
         assertEquals(1, nodeB.getIncomingEdges().size(), "Node B should have 1 parent");
-        assertTrue(nodeB.getIncomingEdges().get(nodeA).equals(), "Node B should have Node A as its parent");
+        assertTrue(nodeB.getIncomingEdges().containsKey(nodeA), "Node B should have Node A as its parent");
         assertEquals(1, nodeC.getIncomingEdges().size(), "Node C should have 1 parent");
-        assertTrue(nodeC.getIncomingEdges().get(0).getParent().equals(nodeA), "Node C should have Node A as its parent");
+        assertTrue(nodeC.getIncomingEdges().containsKey(nodeA), "Node C should have Node A as its parent");
         assertEquals(2, nodeD.getIncomingEdges().size(), "Node D should have 2 parents");
-        assertTrue(nodeD.getIncomingEdges().get(0).getParent().equals(nodeB) &&
-                nodeD.getIncomingEdges().get(1).getParent().equals(nodeC),
-                "Node D should have Nodes B & C as its parents");*/
+        assertTrue(nodeD.getIncomingEdges().containsKey(nodeB) &&
+                nodeD.getIncomingEdges().containsKey(nodeC),
+                "Node D should have Nodes B & C as its parents");
     }
     
     /**
@@ -75,8 +80,11 @@ public class DotFileTest {
      */
     @Test
     void testWriteGraph() {
+    	Algorithm algorithm = new SequentialAlgorithm();
+        scheduler = new Scheduler(algorithm);
+        
         // load a graph
-       /* try {
+        try {
             dot = new DotFile("test_data/test1.dot");
             dot.read(scheduler);
         } catch (FileNotFoundException e) {
@@ -86,7 +94,22 @@ public class DotFileTest {
             e.printStackTrace();
             fail("Invalid file format");
         }
+        CompletableFuture<PartialSchedule> outputSchedule = new CompletableFuture<>();
+        
+        algorithm.addListener(new AlgorithmListener() {
 
+			@Override
+			public void algorithmCompleted(PartialSchedule schedule) {
+				outputSchedule.complete(schedule);
+			}
+
+			@Override
+			public void newOptimalFound(PartialSchedule schedule) {
+				
+			}
+        	
+        });
+        
         // find a valid schedule (which is saved in the nodes)
         scheduler.start();
         
@@ -94,11 +117,17 @@ public class DotFileTest {
         String outFile = "test_data/test1_out.dot";
         String outFileValid = "test_data/test1_out_valid.dot";
         try {
-            dot.write(outFile, scheduler.getNodes());
+            dot.write(outFile, outputSchedule.get());
         } catch (IOException e) {
             e.printStackTrace();
             fail("Could not save to test_data/test1_out.dot");
-        }
+        } catch (InterruptedException e) {
+        	fail(":'(");
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+        	fail(":(");
+			e.printStackTrace();
+		}
 
         // check that the output we produced is the same as the known correct output (test1_out_valid.dot)
         // https://stackoverflow.com/a/3403112
@@ -115,7 +144,7 @@ public class DotFileTest {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             fail("Shouldn't happen");
-        }*/
+        }
     }
 
     @Test

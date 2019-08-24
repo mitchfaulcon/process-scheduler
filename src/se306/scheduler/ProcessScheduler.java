@@ -98,8 +98,7 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
             //Sequential algorithm
             algorithm = new BNBAlgorithm(config.getInt("P"));
         } else {
-            //TODO Change this to parallelised algorithm
-            algorithm = new BNBAlgorithm(config.getInt("P"));
+            algorithm = new BNBAlgorithmPara(config.getInt("P"), config.getInt("N"));
         }
         scheduler = new Scheduler(algorithm);
         

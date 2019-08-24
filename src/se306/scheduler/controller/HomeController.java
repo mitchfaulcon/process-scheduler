@@ -138,7 +138,7 @@ public class HomeController implements Initializable, AlgorithmListener {
             //Update label in application thread
             Platform.runLater(() -> {
                 timeDisplay.setText(timer.getSspTime().get());
-                checkedLabel.setText(String.valueOf(timer.getSchedulesRemaining()));
+                checkedLabel.setText(timer.getSchedulesRemaining());
             });
         });
     }

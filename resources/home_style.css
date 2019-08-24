@@ -23,6 +23,7 @@
 .button-hover {
     -fx-background-color:  linear-gradient(from 0% 0% to 0% 100%, #355ea6, #383889);
     -fx-text-fill: #c0c0c0;
+    -fx-cursor: hand;
 }
 
 .consolas {

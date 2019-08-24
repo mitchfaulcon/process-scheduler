@@ -32,9 +32,34 @@ public class Timer {
     public void setMaxSchedules(long maxSchedules){
         this.maxSchedules = maxSchedules;
     }
-
-    public long getSchedulesRemaining() {
-        return schedulesRemaining;
+    
+    /**
+     * Returns a human-readable representation of the number of remaining schedules, which could be a large number.
+     * Sadly long only holds values less than 9.22*10^18.
+     */
+    public String getSchedulesRemaining() {
+        String schedulesString = "";
+        
+        if (schedulesRemaining >= 1000000) { // million
+            if (schedulesRemaining >= 1000000000) { // billion
+                if (schedulesRemaining >= 1000000000000L) { // trillion
+                    if (schedulesRemaining >= 1000000000000000L) {
+                        String value = String.valueOf(schedulesRemaining);
+                        schedulesString = String.format("%s.%sE%d", value.substring(0, 1), value.substring(1, 3), value.length() - 1);
+                    } else {
+                        schedulesString = String.format("%.2f trillion", (double) schedulesRemaining / 1000000000000.0);
+                    }
+                } else {
+                    schedulesString = String.format("%.2f billion", (double) schedulesRemaining / 1000000000.0);
+                }
+            } else {
+                schedulesString = String.format("%.2f million", (double) schedulesRemaining / 1000000.0);
+            }
+        } else {
+            schedulesString = String.valueOf(schedulesRemaining);
+        }
+        
+        return schedulesString;
     }
 
     public void startTimer(final long time) {

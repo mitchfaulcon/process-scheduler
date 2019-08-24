@@ -15,6 +15,7 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import se306.scheduler.graph.Node;
 import se306.scheduler.graph.PartialSchedule;
@@ -157,6 +158,7 @@ public class OutputSchedule<X,Y> extends XYChart<X,Y>{
                         block.setLayoutY(y);
                         
                         Text text = new Text(((ExtraData) item.getExtraValue()).getName());
+                        text.setFont(new Font("Consolas", 16));
                         region.getChildren().addAll(text);
                         text.setTranslateX(rectangle.getWidth() / 2);
                         text.setTranslateY(rectangle.getHeight() / 2);

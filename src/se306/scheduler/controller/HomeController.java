@@ -1,10 +1,29 @@
 package se306.scheduler.controller;
 
 
-import javafx.animation.*;
+import java.math.BigInteger;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
+
+import org.graphstream.ui.fx_viewer.FxDefaultView;
+import org.graphstream.ui.fx_viewer.FxViewer;
+import org.graphstream.ui.fx_viewer.util.FxMouseManager;
+import org.graphstream.ui.graphicGraph.GraphicElement;
+import org.graphstream.ui.graphicGraph.stylesheet.Selector;
+import org.graphstream.ui.javafx.FxGraphRenderer;
+import org.graphstream.ui.view.GraphRenderer;
+
+import javafx.animation.ParallelTransition;
+import javafx.animation.PauseTransition;
+import javafx.animation.SequentialTransition;
+import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.Button;
@@ -20,13 +39,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-import org.graphstream.ui.fx_viewer.FxDefaultView;
-import org.graphstream.ui.fx_viewer.FxViewer;
-import org.graphstream.ui.fx_viewer.util.FxMouseManager;
-import org.graphstream.ui.graphicGraph.GraphicElement;
-import org.graphstream.ui.graphicGraph.stylesheet.Selector;
-import org.graphstream.ui.javafx.FxGraphRenderer;
-import org.graphstream.ui.view.GraphRenderer;
 import se306.scheduler.ProcessScheduler;
 import se306.scheduler.graph.Node;
 import se306.scheduler.graph.PartialSchedule;
@@ -36,12 +48,6 @@ import se306.scheduler.logic.Scheduler;
 import se306.scheduler.visualisation.GraphDisplay;
 import se306.scheduler.visualisation.OutputSchedule;
 import se306.scheduler.visualisation.Timer;
-
-import java.awt.event.MouseMotionAdapter;
-import java.awt.event.MouseMotionListener;
-import java.math.BigInteger;
-import java.net.URL;
-import java.util.*;
 
 public class HomeController implements Initializable, AlgorithmListener {
 
@@ -63,7 +69,7 @@ public class HomeController implements Initializable, AlgorithmListener {
     private final static Paint DEFAULT_COLOR = Paint.valueOf("#1b274e");
 
     private GraphDisplay graphDisplay;
-    private OutputSchedule outputSchedule;
+    private OutputSchedule<Number, String> outputSchedule;
     private Timer timer = Timer.getInstance(true);
     private Scheduler scheduler;
     private Map<String, String> nodeColours;
@@ -122,7 +128,7 @@ public class HomeController implements Initializable, AlgorithmListener {
         NumberAxis xAxis = new NumberAxis();
         CategoryAxis yAxis = new CategoryAxis();
         int numProcessors = ProcessScheduler.getNumProcessors();
-        outputSchedule = new OutputSchedule<>(xAxis,yAxis, numProcessors, scrollPane.getPrefHeight(), nodeColours);
+        outputSchedule = new OutputSchedule<Number, String>(xAxis,yAxis, numProcessors, scrollPane.getPrefHeight(), nodeColours);
         scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(true);
         scrollPane.setContent(outputSchedule);
@@ -154,7 +160,7 @@ public class HomeController implements Initializable, AlgorithmListener {
         //Display graph
         org.graphstream.graph.Graph graph = graphDisplay.getGraph();
         FxViewer fxViewer = new FxViewer(graph, FxViewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
-        GraphRenderer renderer = new FxGraphRenderer();
+        GraphRenderer<Pane, GraphicsContext> renderer = new FxGraphRenderer();
         FxDefaultView view = (FxDefaultView) fxViewer.addView(FxViewer.DEFAULT_VIEW_ID, renderer);
         view.setPrefSize(graphPane.getPrefWidth(), graphPane.getPrefHeight());
 

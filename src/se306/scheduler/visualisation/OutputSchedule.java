@@ -1,7 +1,6 @@
 package se306.scheduler.visualisation;
 
 import javafx.collections.FXCollections;
-import javafx.geometry.Pos;
 import javafx.scene.chart.Axis;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
@@ -59,13 +58,13 @@ public class OutputSchedule<X,Y> extends XYChart<X,Y>{
     private int numProcessors;
     private Map<String, String> nodeColours;
 
-    public void update(PartialSchedule newSchedule){
+	public void update(PartialSchedule newSchedule){
 
         this.getData().clear();
 
         //Run through each processor
         for (int processor=0; processor<labels.length; processor++){
-            Series series = new Series();
+            Series<X, Y> series = new Series<>();
 
             //Check if any node is scheduled in that processor
             for (Node node: newSchedule.getNodes()){
@@ -73,7 +72,7 @@ public class OutputSchedule<X,Y> extends XYChart<X,Y>{
                     //Add node data to graph
                     String colour = String.format(nodeColours.get(node.getName()), "0.5");
                     ExtraData extraData = new ExtraData(node.getWeight(), "status-"+node.getName(), colour, node.getName());
-                    Data data = new Data<>(newSchedule.getStartTime(node), labels[numProcessors - processor - 1], extraData);
+					Data<X, Y> data = (Data<X, Y>) new Data<Integer, String>(newSchedule.getStartTime(node), labels[numProcessors - processor - 1], extraData);
                     data.setNode(new StackPane());
                     Tooltip.install(data.getNode(),new Tooltip("Node: " + node.getName() +"\n" +
                             "Start Time: " + newSchedule.getStartTime(node) +"\n" +

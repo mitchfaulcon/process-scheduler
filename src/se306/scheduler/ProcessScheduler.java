@@ -5,12 +5,8 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import se306.scheduler.controller.HomeController;
 import se306.scheduler.exception.InvalidFileFormatException;
 import se306.scheduler.graph.PartialSchedule;
 import se306.scheduler.logic.*;
@@ -18,11 +14,9 @@ import se306.scheduler.visualisation.Timer;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Map;
 
 public class ProcessScheduler extends Application implements AlgorithmListener {
 
-    private HomeController homeController;
     private JSAPResult config;
     private DotFile dot;
     private static Scheduler scheduler;
@@ -30,7 +24,6 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
     private static int numProcessors;
     private static int numThreads;
     private static String fileName;
-    private Map<String, String> nodeColours;
     private Timer timer = Timer.getInstance(false);
     
 	public static void main(String[] args) {

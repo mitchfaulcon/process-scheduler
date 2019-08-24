@@ -273,7 +273,7 @@ public class HomeController implements Initializable, AlgorithmListener {
         TranslateTransition down2 = paneDownAnimation(numThreadsPane, DURATION);
         TranslateTransition down3 = paneDownAnimation(bestTimePane, DURATION);
         TranslateTransition down4 = paneDownAnimation(checkedPane, DURATION);
-        PauseTransition pt = new PauseTransition(Duration.millis(100));
+        PauseTransition pt = new PauseTransition(Duration.millis(200));
 
         SequentialTransition upSequence = new SequentialTransition(up1, up2, up3, up4);
         SequentialTransition downSequence = new SequentialTransition(pt, down1, down2, down3, down4);

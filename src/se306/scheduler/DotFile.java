@@ -20,7 +20,6 @@ public class DotFile {
     private List<LineRecord> lineRecords = new ArrayList<>();
     
     private Scheduler scheduler;
-    private GraphDisplay graphDisplay = GraphDisplay.getGraphDisplay();
 
     private static String NAME_REGEX = "\t\\w+\t";
     private static String WEIGHT_REGEX = "=\\d+\\]";
@@ -174,7 +173,6 @@ public class DotFile {
      */
     public void write(String fileName, PartialSchedule schedule) throws IOException {
         //Create correct name for top of dot file
-        // TODO use graph name read from file instead of filename
         String dotFileName = file.getName();
         String extensionRemoved;
         String capitalised = dotFileName;

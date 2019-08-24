@@ -3,7 +3,6 @@ package se306.scheduler.visualisation;
 import javafx.beans.property.SimpleStringProperty;
 import se306.scheduler.logic.Algorithm;
 
-import java.lang.management.ManagementFactory;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;

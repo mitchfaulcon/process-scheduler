@@ -51,7 +51,7 @@ public class BNBAlgorithm extends Algorithm {
                     updateSchedule(bestSchedule);
                 }
                 // regardless of whether the schedule is best, one complete schedule will be removed
-                updateBranchCut(0);
+                updateBranchCut(0, 1);
                 continue;
             }
 
@@ -83,7 +83,7 @@ public class BNBAlgorithm extends Algorithm {
                                 if (bestEndTime >= bestMakespan) {
                                     // if the lower bound is too high, then the new state is not made and we move to
                                     // the next processor
-                                    updateBranchCut(state.getUnvisitedNodes().size() - 1);
+                                    updateBranchCut(state.getUnvisitedNodes().size() - 1, 1);
                                     continue processorLoop;
                                 }
                             }
@@ -100,19 +100,15 @@ public class BNBAlgorithm extends Algorithm {
                             // if this task is placed as the first task on a processor then trying to place the
                             // task on any subsequent processor will create an effectively identical schedule
                             if (isFirstOnProcessor) {
-                                for (int i = p; i < numProcessors; i++) {
-                                    updateBranchCut(newState.getUnvisitedNodes().size());
-                                }
+                                    updateBranchCut(newState.getUnvisitedNodes().size(), numProcessors - p);
                                 break;
                             }
                         } else {
-                            updateBranchCut(newState.getUnvisitedNodes().size());
+                            updateBranchCut(newState.getUnvisitedNodes().size(), 1);
                         }
                     }
                 } else {
-                    for (int i = 0; i < numProcessors; i++) {
-                        updateBranchCut(state.getUnvisitedNodes().size() - 1);
-                    }
+                        updateBranchCut(state.getUnvisitedNodes().size() - 1, numProcessors);
                 }
             }
         }

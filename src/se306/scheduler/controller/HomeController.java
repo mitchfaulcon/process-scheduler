@@ -10,9 +10,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -20,6 +20,9 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import org.graphstream.ui.fx_viewer.FxDefaultView;
 import org.graphstream.ui.fx_viewer.FxViewer;
+import org.graphstream.ui.fx_viewer.util.FxMouseManager;
+import org.graphstream.ui.graphicGraph.GraphicElement;
+import org.graphstream.ui.graphicGraph.stylesheet.Selector;
 import org.graphstream.ui.javafx.FxGraphRenderer;
 import org.graphstream.ui.view.GraphRenderer;
 import se306.scheduler.ProcessScheduler;
@@ -99,10 +102,10 @@ public class HomeController implements Initializable, AlgorithmListener {
             // the colour format required for the two views is different, one requires 0-1 and one requires 0-255
             nodeColours.put(node.getName(), String.format("rgba(%s,%s,%s,%%s)", Integer.toString(red), Integer.toString(green), Integer.toString(blue)));
         }
-        GraphDisplay.getGraphDisplay().setNodeColours(nodeColours);
-        
+
         // Display input graph
         graphDisplay = GraphDisplay.getGraphDisplay();
+        graphDisplay.setNodeColours(nodeColours);
         graphDisplay.addNodes(new PartialSchedule(nodes));
 
 
@@ -140,11 +143,22 @@ public class HomeController implements Initializable, AlgorithmListener {
         numProcLabel.setText(String.valueOf(ProcessScheduler.getNumProcessors()));
 
         //Display graph
-        org.graphstream.graph.Graph graph = GraphDisplay.getGraphDisplay().getGraph();
+        org.graphstream.graph.Graph graph = graphDisplay.getGraph();
         FxViewer fxViewer = new FxViewer(graph, FxViewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
         GraphRenderer renderer = new FxGraphRenderer();
         FxDefaultView view = (FxDefaultView) fxViewer.addView(FxViewer.DEFAULT_VIEW_ID, renderer);
         view.setPrefSize(graphPane.getPrefWidth(), graphPane.getPrefHeight());
+
+        view.setMouseManager(new FxMouseManager(){
+            @Override
+            protected void elementMoving(GraphicElement element, MouseEvent event) {
+                //Only move if the weight labels aren't clicked (i.e. only the nodes can be moved)
+                if(!element.getSelectorType().equals(Selector.Type.SPRITE)){
+                    view.moveElementAtPx(element, event.getX(), event.getY());
+                }
+            }
+        });
+
         graphPane.getChildren().add(view);
 
         timer.startTimer(0);

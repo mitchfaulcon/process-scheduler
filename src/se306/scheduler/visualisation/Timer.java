@@ -4,6 +4,9 @@ import javafx.beans.property.SimpleStringProperty;
 import se306.scheduler.logic.Algorithm;
 
 import java.lang.management.ManagementFactory;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.util.TimerTask;
 
 public class Timer {
@@ -19,8 +22,8 @@ public class Timer {
     private TimerTask tt;
     private boolean timing = false;
 
-    private long maxSchedules;
-    private long schedulesRemaining;
+    private BigInteger maxSchedules;
+    private BigInteger schedulesRemaining;
 
     public static Timer getInstance(){
         return instance;
@@ -29,36 +32,39 @@ public class Timer {
     private Timer() {
     }
 
-    public void setMaxSchedules(long maxSchedules){
+    public void setMaxSchedules(BigInteger maxSchedules){
         this.maxSchedules = maxSchedules;
     }
-    
+
     /**
      * Returns a human-readable representation of the number of remaining schedules, which could be a large number.
-     * Sadly long only holds values less than 9.22*10^18.
      */
     public String getSchedulesRemaining() {
         String schedulesString = "";
-        
-        if (schedulesRemaining >= 1000000) { // million
-            if (schedulesRemaining >= 1000000000) { // billion
-                if (schedulesRemaining >= 1000000000000L) { // trillion
-                    if (schedulesRemaining >= 1000000000000000L) {
+        BigDecimal bigDecimal = new BigDecimal(schedulesRemaining);
+
+        if (schedulesRemaining.compareTo(BigInteger.valueOf(1000000)) >= 0) { // million
+            if (schedulesRemaining.compareTo(BigInteger.valueOf(1000000000)) >= 0) { // billion
+                if (schedulesRemaining.compareTo(BigInteger.valueOf(1000000000000L)) >= 0) { // trillion
+                    if (schedulesRemaining.compareTo(BigInteger.valueOf(1000000000000000L)) >= 0) {
                         String value = String.valueOf(schedulesRemaining);
                         schedulesString = String.format("%s.%sE%d", value.substring(0, 1), value.substring(1, 3), value.length() - 1);
                     } else {
-                        schedulesString = String.format("%.2f trillion", (double) schedulesRemaining / 1000000000000.0);
+                        schedulesString = String.format("%.2f trillion",
+                                bigDecimal.divide(BigDecimal.valueOf(1000000000000.0), 2, RoundingMode.HALF_DOWN));
                     }
                 } else {
-                    schedulesString = String.format("%.2f billion", (double) schedulesRemaining / 1000000000.0);
+                    schedulesString = String.format("%.2f billion",
+                            bigDecimal.divide(BigDecimal.valueOf(1000000000.0), 2, RoundingMode.HALF_DOWN));
                 }
             } else {
-                schedulesString = String.format("%.2f million", (double) schedulesRemaining / 1000000.0);
+                schedulesString = String.format("%.2f million",
+                        bigDecimal.divide(BigDecimal.valueOf(1000000.0), 2, RoundingMode.HALF_DOWN));
             }
         } else {
             schedulesString = String.valueOf(schedulesRemaining);
         }
-        
+
         return schedulesString;
     }
 
@@ -77,7 +83,7 @@ public class Timer {
                     }
                 } else {
                     updateTime();
-                    schedulesRemaining = maxSchedules - Algorithm.getSchedulesChecked();
+                    schedulesRemaining = maxSchedules.subtract(Algorithm.getBigSchedulesChecked());
                 }
             }
         };

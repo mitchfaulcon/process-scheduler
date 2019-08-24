@@ -39,6 +39,7 @@ import se306.scheduler.visualisation.Timer;
 
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
+import java.math.BigInteger;
 import java.net.URL;
 import java.util.*;
 
@@ -128,7 +129,7 @@ public class HomeController implements Initializable, AlgorithmListener {
 
         int numNodes = scheduler.getNodes().size();
 
-        timer.setMaxSchedules((long)Math.pow(numProcessors, numNodes)*Algorithm.factorial(numNodes));
+        timer.setMaxSchedules(BigInteger.valueOf(numProcessors).pow(numNodes).multiply(Algorithm.factorial(numNodes)));
 
         //Set initial timer label
         timeDisplay.setText(timer.getSspTime().get());
@@ -241,7 +242,7 @@ public class HomeController implements Initializable, AlgorithmListener {
     }
 
     private TranslateTransition paneUpAnimation(AnchorPane pane, Duration duration) {
-        TranslateTransition transition = animation(pane, 0, -50, duration);
+        TranslateTransition transition = animation(pane, 0, -20, duration);
         transition.play();
 
         return transition;
@@ -255,14 +256,14 @@ public class HomeController implements Initializable, AlgorithmListener {
     }
 
     private void setStatsAnimation(AnchorPane pane) {
-        final Duration DURATION = Duration.millis(250);
+        final Duration DURATION = Duration.millis(100);
 
         pane.setOnMouseEntered(e -> paneUpAnimation(pane, DURATION));
         pane.setOnMouseExited(e -> paneDownAnimation(pane, DURATION));
     }
 
     private void endAnimation() {
-        final Duration DURATION = Duration.millis(50);
+        final Duration DURATION = Duration.millis(100);
 
         TranslateTransition up1 = paneUpAnimation(numProcPane, DURATION);
         TranslateTransition up2 = paneUpAnimation(numThreadsPane, DURATION);
@@ -282,12 +283,4 @@ public class HomeController implements Initializable, AlgorithmListener {
 
     }
 
-//    @Override
-//    public void updateSchedulesChecked(long schedules) {
-////        new Thread(() -> {
-////
-////            checkedLabel.setText(String.valueOf(max - schedules));
-////        }).start();
-////        Platform.runLater(() -> checkedLabel.setText());
-//    }
 }

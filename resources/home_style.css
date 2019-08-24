@@ -23,6 +23,7 @@
 .button-hover {
     -fx-background-color:  linear-gradient(from 0% 0% to 0% 100%, #355ea6, #383889);
     -fx-text-fill: #c0c0c0;
+    -fx-cursor: hand;
 }
 
 .consolas {
@@ -60,11 +61,16 @@
     -fx-font-none: none;
 }
 
-
-.timer-title {
+.title-text {
     -fx-font-family: Consolas;
     -fx-font-size: 25px;
     -fx-text-fill: white;
+}
+
+.header-text {
+    -fx-font-size: 30px;
+    -fx-font-weight: bold;
+    -fx-text-alignment: center;
 }
 
 .timer-box {
@@ -86,10 +92,6 @@
     -fx-fill: #004700;
 }
 
-.timer-done-footer {
-    -fx-background-color:  linear-gradient(from 0% 0% to 0% 100%, #30ff00, #167000);
-}
-
 .timer-done-box {
     -fx-background-color: linear-gradient(from 0% 0% to 100% 0%, #8cff76, rgba(93, 242, 255, 0));
 }
@@ -100,4 +102,11 @@
 
 .white-box {
     -fx-background-color: linear-gradient(from 0% 0% to 0% 100%, #ffffff, rgba(77, 162, 178, 0));
+}
+
+.header-box {
+    -fx-background-color: linear-gradient(from 0% 0% to 0% 100%, #2a4386, #6ea1ff);
+}
+.header-done {
+    -fx-background-color:  linear-gradient(from 0% 0% to 0% 100%, #34a849, #50ff70);
 }

@@ -1,5 +1,6 @@
 package se306.scheduler.logic;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,13 +10,13 @@ import se306.scheduler.graph.PartialSchedule;
 public abstract class Algorithm {
     protected List<AlgorithmListener> listeners;
     protected List<Node> graph;
-    protected static volatile long schedulesChecked;
+    protected static volatile BigInteger schedulesChecked;
     protected int numProcessors;
     
     public Algorithm(int numProcessors) {
         listeners = new ArrayList<AlgorithmListener>();
         graph = new ArrayList<Node>();
-        schedulesChecked = 0;
+        schedulesChecked = BigInteger.valueOf(0);
         this.numProcessors = numProcessors;
     }
     
@@ -33,7 +34,6 @@ public abstract class Algorithm {
         for (AlgorithmListener listener: listeners) {
             listener.algorithmCompleted(answer);
         }
-//        System.out.println(schedulesChecked);
     }
 
     protected void updateSchedule(PartialSchedule newOptimal){
@@ -49,26 +49,21 @@ public abstract class Algorithm {
      * @param nodesRemaining the total nodes to schedule - number of nodes in partial schedule
      **/
     protected synchronized void updateBranchCut(int nodesRemaining) {
-        schedulesChecked += Math.pow(this.numProcessors, nodesRemaining)*factorial(nodesRemaining);
-//        for (AlgorithmListener listener: listeners) {
-//            listener.updateSchedulesChecked(this.schedulesChecked);
-//        }
-        //System.out.println(schedulesChecked);
-
+        schedulesChecked = schedulesChecked.add(BigInteger.valueOf(this.numProcessors).pow(nodesRemaining).multiply(factorial(nodesRemaining)));
     }
 
-    public static long getSchedulesChecked(){
+    public static BigInteger getBigSchedulesChecked(){
         return schedulesChecked;
     }
 
     /**
      * Simple method to be used in updateBranchCut that finds the factorial of a given input
-     * @return result of number!
+     * @return result of number
      */
-    public static long factorial(int number) {
-        long output = 1;
+    public static BigInteger factorial(int number) {
+        BigInteger output = BigInteger.valueOf(1);
         for (int n = 2; n <= number; n++) {
-            output *= n;
+            output = output.multiply(BigInteger.valueOf(n));
         }
         return output;
     }

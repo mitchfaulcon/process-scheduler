@@ -19,11 +19,11 @@ import se306.scheduler.exception.InvalidFileFormatException;
 import se306.scheduler.graph.Node;
 import se306.scheduler.graph.PartialSchedule;
 
-public class DFSAlgorithmTest {
-    
-    @Test
-    void testDFSAlgorithm() {
-        List<Node> graph = new ArrayList<Node>();
+public class BNBAlgorithmTest {
+
+	@Test
+	void testBNBAlgorithm() {
+		List<Node> graph = new ArrayList<Node>();
 
         Node a = new Node("a", 2);
         Node b = new Node("b", 3);
@@ -35,7 +35,7 @@ public class DFSAlgorithmTest {
         d.addParent(c, 1);
         graph.addAll(Arrays.asList(a, b, c, d));
         
-        Algorithm algorithm = new DFSAlgorithm(2);
+        Algorithm algorithm = new BNBAlgorithm(2);
         algorithm.setGraph(graph);
         
         // this is necessary to test the callback
@@ -85,5 +85,5 @@ public class DFSAlgorithmTest {
             e.printStackTrace();
             fail("Could not generate schedule.");
         }
-    }
+	}
 }

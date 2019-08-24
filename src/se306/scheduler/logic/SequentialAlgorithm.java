@@ -57,7 +57,7 @@ public class SequentialAlgorithm extends Algorithm {
                 if (parentsFound) {
                     // if all parents met then node can start at current time and processor will be occupied for
                     // however long the node's weight is.
-                    schedule.scheduleTask(schedule.getNodes().get(j), 1, currentTime);
+                    schedule.scheduleTask(unreached.get(j), 1, currentTime);
 
                     currentTime += unreached.get(j).getWeight();
                     break;

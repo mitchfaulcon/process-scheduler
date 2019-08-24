@@ -2,7 +2,7 @@ package se306.scheduler.visualisation;
 
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
-import org.graphstream.graph.Node;
+import se306.scheduler.graph.Node;
 import org.graphstream.graph.implementations.SingleGraph;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants;
 import org.graphstream.ui.spriteManager.Sprite;
@@ -36,14 +36,14 @@ public class GraphDisplay {
 
     /**
      * Method to add a node and its weight to the graph display
-     * @param inputNode The se306.scheduler.graph.Node representation of the node
+     * @param inputNode The Node representation of the node
      * @param yCoOrd The y co-ordinate for this node to be drawn at
      * @param xCoOrd The x co-ordinate for this node to be drawn at
      */
-    private void addNode(se306.scheduler.graph.Node inputNode, int xCoOrd, int yCoOrd){
+    private void addNode(Node inputNode, int xCoOrd, int yCoOrd){
         String nodeName = inputNode.getName();
         graph.addNode(nodeName);
-        Node node = graph.getNode(nodeName);
+        org.graphstream.graph.Node node = graph.getNode(nodeName);
 
         //Add extra label for node weight
         SpriteManager spriteManager = new SpriteManager(graph);
@@ -68,7 +68,7 @@ public class GraphDisplay {
      * @param node2 The child node
      * @param edgeWeight The weight of the edge to be added
      */
-    private void addEdge(se306.scheduler.graph.Node node1, se306.scheduler.graph.Node node2, int edgeWeight){
+    private void addEdge(Node node1, Node node2, int edgeWeight){
         String edgeID = node1.getName() + node2.getName();
         graph.addEdge(edgeID, node1.getName(), node2.getName(), true);
         Edge edge = graph.getEdge(edgeID);
@@ -86,11 +86,11 @@ public class GraphDisplay {
      */
     public void addNodes(PartialSchedule schedule) {
         // this represents each "layer" - a node is added to the layer one lower than the lowest of its parents
-        List<List<se306.scheduler.graph.Node>> layers = new ArrayList<>();
-        List<se306.scheduler.graph.Node> added = new ArrayList<>();
+        List<List<Node>> layers = new ArrayList<>();
+        List<Node> added = new ArrayList<>();
         layers.add(new ArrayList<>());
         // adding all the entry nodes to the first layer
-        for (se306.scheduler.graph.Node node : schedule.getNodes()) {
+        for (Node node : schedule.getNodes()) {
             if (node.getIncomingEdges().size() == 0) {
                 layers.get(0).add(node);
                 added.add(node);
@@ -101,7 +101,7 @@ public class GraphDisplay {
         // set to values that make adds all the entry nodes evenly spaced at y = 0
         int xCoOrd = scale - scale * layers.get(0).size();
         int yCoOrd = 0;
-        for (se306.scheduler.graph.Node node : layers.get(0)) {
+        for (Node node : layers.get(0)) {
             addNode(node, xCoOrd, yCoOrd);
             xCoOrd += 2 * scale;
         }
@@ -109,15 +109,15 @@ public class GraphDisplay {
         while (added.size() < schedule.getNodes().size()) {
             layers.add(new ArrayList<>());
             int maxChildren = 0;
-            for (se306.scheduler.graph.Node node : layers.get(layers.size() - 2)) {
+            for (Node node : layers.get(layers.size() - 2)) {
                 // each node has a certain number (possibly 0) of children on the next layer. The next layer will be
                 // spaced as though each node has the same number of children as the node with the most children
                 int childrenOnNextLayer = 0;
-                for (se306.scheduler.graph.Node child : node.getChildren()) {
-                    // if this child has not been added yet, and all its parents have been, it is added to the next layer
+                for (Node child : node.getChildren()) {
+                    // if this child has not been added yet, but all its parents have, it is added to the next layer
                     if (!added.contains(child)) {
                         boolean parentsAdded = true;
-                        for (se306.scheduler.graph.Node parent : child.getIncomingEdges().keySet()) {
+                        for (Node parent : child.getIncomingEdges().keySet()) {
                             // if one of the child's parents is on this layer then don't add to this, add to next
                             if (!added.contains(parent) || layers.get(layers.size() - 1).contains(parent)) {
                                 parentsAdded = false;
@@ -138,9 +138,9 @@ public class GraphDisplay {
             xCoOrd = scale - scale*layers.get(layers.size() - 2).size()*maxChildren;
             yCoOrd = 0 - 2*scale*(layers.size() - 1);
             // painting all the children and their incoming edges.
-            for (se306.scheduler.graph.Node node : layers.get(layers.size() - 1)) {
+            for (Node node : layers.get(layers.size() - 1)) {
                 addNode(node, xCoOrd, yCoOrd);
-                for (se306.scheduler.graph.Node parent : node.getIncomingEdges().keySet()) {
+                for (Node parent : node.getIncomingEdges().keySet()) {
                     addEdge(parent, node, node.getIncomingEdges().get(parent));
                 }
                 xCoOrd += scale * 2;

@@ -50,7 +50,7 @@ public class GraphDisplay {
         Sprite sprite = spriteManager.addSprite(nodeName, Sprite.class);
         sprite.attachToNode(nodeName);
         sprite.setAttribute("ui.label", inputNode.getWeight());
-        sprite.setAttribute("ui.style", "text-size: 15px;fill-color: rgba(255,255,255,0);");
+        sprite.setAttribute("ui.style", "text-size: 15px;fill-color: rgba(255,255,255,0);text-font: Consolas;");
         sprite.setPosition(StyleConstants.Units.PX, 40,0,0);
         
         //Set Label, Style and Position
@@ -58,7 +58,7 @@ public class GraphDisplay {
         node.setAttribute("ui.label", nodeName);
         node.setAttribute("ui.style", "shape:circle;fill-color: " + colour + ";size: 50px;" +
                 "stroke-mode: none;" +
-                "text-alignment: left;text-size: 30px;");
+                "text-alignment: left;text-size: 30px;text-font: Consolas;");
         node.setAttribute("xy", xCoOrd, yCoOrd);
     }
 
@@ -77,7 +77,7 @@ public class GraphDisplay {
         edge.setAttribute("ui.label", edgeWeight);
         edge.setAttribute("ui.style", "fill-color: rgb(100,100,100);" +
                 "text-background-mode: plain;text-size: 20px;" +
-                "arrow-size: 10px;");
+                "arrow-size: 10px;text-font: Consolas;");
     }
 
     /**

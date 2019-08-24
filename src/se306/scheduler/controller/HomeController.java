@@ -1,6 +1,8 @@
 package se306.scheduler.controller;
 
 
+import javafx.animation.Animation;
+import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -18,6 +20,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 import org.graphstream.ui.fx_viewer.FxDefaultView;
 import org.graphstream.ui.fx_viewer.FxViewer;
 import org.graphstream.ui.fx_viewer.util.FxMouseManager;
@@ -35,6 +38,8 @@ import se306.scheduler.visualisation.GraphDisplay;
 import se306.scheduler.visualisation.OutputSchedule;
 import se306.scheduler.visualisation.Timer;
 
+import java.awt.event.MouseMotionAdapter;
+import java.awt.event.MouseMotionListener;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
@@ -43,17 +48,20 @@ import java.util.ResourceBundle;
 
 public class HomeController implements Initializable, AlgorithmListener {
 
-    @FXML AnchorPane anchorPane;
+    @FXML AnchorPane anchorPane, headerPane1, headerPane2, numProcPane, numThreadsPane, bestTimePane, checkedPane;
     @FXML Rectangle greyRectangle;
     @FXML Button startButton;
-    @FXML Label timeDisplay, filenameLabel, numProcLabel, numThreadsLabel, bestTimeLabel, checkedLabel, timeTitleLabel;
     @FXML Pane graphPane;
     @FXML ScrollPane scrollPane;
     @FXML Pane bottomPane;
     @FXML Pane timerboxPane;
+    @FXML Label timeDisplay, filenameLabel, numProcLabel, numThreadsLabel,
+                bestTimeLabel, checkedLabel, timeTitleLabel, headerLabel;
 
     private final static double MAX_TEXT_WIDTH = 197;
     private final static double DEFAULT_FONT_SIZE = 50;
+    final double FILE_LABEL_SIZE = 20;
+
     private final static Font DEFAULT_FONT = Font.font("Consolas", FontWeight.BOLD, DEFAULT_FONT_SIZE);
     private final static Paint DEFAULT_COLOR = Paint.valueOf("#1b274e");
 
@@ -80,8 +88,12 @@ public class HomeController implements Initializable, AlgorithmListener {
         setTextProperty(bestTimeLabel);
         setTextProperty(checkedLabel);
 
-        final double fileLabelSize = 25;
-        setTextProperty(Font.font("Consolas", fileLabelSize), fileLabelSize, 673, Paint.valueOf("#000000"), filenameLabel);
+        setStatsAnimation(numProcPane);
+        setStatsAnimation(numThreadsPane);
+        setStatsAnimation(bestTimePane);
+        setStatsAnimation(checkedPane);
+
+        setTextProperty(Font.font("Consolas", FILE_LABEL_SIZE), FILE_LABEL_SIZE, 673, Paint.valueOf("#000000"), filenameLabel);
 
         //Get same scheduler & algorithm objects from main class
         scheduler = ProcessScheduler.getScheduler();
@@ -178,6 +190,9 @@ public class HomeController implements Initializable, AlgorithmListener {
 //            timeTitleLabel.getStyleClass().addAll("timer-done", "timer-done-title");
             bottomPane.getStyleClass().add("footer-done");
             timerboxPane.getStyleClass().add("timer-box-done");
+            headerPane1.getStyleClass().add("header-done");
+            headerPane2.getStyleClass().add("header-done");
+            headerLabel.setText("Best Output Schedule");
             timeTitleLabel.setText("Completion time");
             checkedLabel.setText("0");
         });
@@ -216,6 +231,21 @@ public class HomeController implements Initializable, AlgorithmListener {
 
     private void setTextProperty(Label label) {
         setTextProperty(DEFAULT_FONT, DEFAULT_FONT_SIZE, MAX_TEXT_WIDTH, DEFAULT_COLOR, label);
+    }
+
+    private void setStatsAnimation(AnchorPane pane) {
+        pane.setOnMouseEntered(e -> {
+            TranslateTransition transition = new TranslateTransition(Duration.millis(250), pane);
+            transition.setToY(-50);
+            transition.setAutoReverse(true);
+            transition.play();
+        });
+        pane.setOnMouseExited(e -> {
+            TranslateTransition transition = new TranslateTransition(Duration.millis(250), pane);
+            transition.setToY(0);
+            transition.setAutoReverse(true);
+            transition.play();
+        });
     }
 
 //    @Override

@@ -155,8 +155,14 @@ public class GraphDisplay {
             yCoOrd = 0 - 2*scale*(i + 1);
             int maxChildSize = 0;
             for (se306.scheduler.graph.Node node: layer) {
-                if (node.getChildren().size() > maxChildSize) {
-                    maxChildSize = node.getChildren().size();
+                int childrenInNextLayer = 0;
+                for (se306.scheduler.graph.Node child: node.getChildren()) {
+                    if (layers.get(i + 1).contains(child)) {
+                        childrenInNextLayer++;
+                    }
+                }
+                if (childrenInNextLayer > maxChildSize) {
+                    maxChildSize = childrenInNextLayer;
                 }
             }
             // this means there is space under each node to have the same number of children - looks less cramped more
@@ -166,14 +172,16 @@ public class GraphDisplay {
             for (se306.scheduler.graph.Node node: layer) {
                 // child nodes are added together so siblings are next to each other
                 for (se306.scheduler.graph.Node child: node.getChildren()) {
-                    if (!addedChildren.contains(child)) {
+                    if (!addedChildren.contains(child) && layers.get(i+1).contains(child)) {
                         graph.getNode(child.getName()).setAttribute("xy", xCoOrd, yCoOrd);
                         // so that there is 2*scale distance between nodes on same layer
-                        xCoOrd += 2 * scale;
                         addedChildren.add(child);
                     }
+                    xCoOrd += 2 * scale;
                 }
             }
+            layers.get(i+1).clear();
+            layers.get(i+1).addAll(addedChildren);
         }
     }
 }

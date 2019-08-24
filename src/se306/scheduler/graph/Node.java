@@ -12,7 +12,6 @@ public class Node {
     private int weight;
 
     public Node(String name, int weight) {
-        // set processor to -1 by default, meaning the node has not been assigned a processor.
         this.name = name;
         this.weight = weight;
         this.LBWeight = -1;

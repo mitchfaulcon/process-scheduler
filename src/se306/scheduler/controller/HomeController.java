@@ -3,11 +3,9 @@ package se306.scheduler.controller;
 
 import java.math.BigInteger;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 
+import org.graphstream.graph.Element;
 import org.graphstream.ui.fx_viewer.FxDefaultView;
 import org.graphstream.ui.fx_viewer.FxViewer;
 import org.graphstream.ui.fx_viewer.util.FxMouseManager;
@@ -39,6 +37,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+import org.graphstream.ui.view.util.InteractiveElement;
 import se306.scheduler.ProcessScheduler;
 import se306.scheduler.graph.Node;
 import se306.scheduler.graph.PartialSchedule;
@@ -59,7 +58,7 @@ public class HomeController implements Initializable, AlgorithmListener {
     @FXML Pane bottomPane;
     @FXML Pane timerboxPane;
     @FXML Label timeDisplay, filenameLabel, numProcLabel, numThreadsLabel,
-                bestTimeLabel, checkedLabel, timeTitleLabel, headerLabel;
+            bestTimeLabel, checkedLabel, timeTitleLabel, headerLabel;
 
     private final static double MAX_TEXT_WIDTH = 197;
     private final static double DEFAULT_FONT_SIZE = 50;
@@ -102,7 +101,7 @@ public class HomeController implements Initializable, AlgorithmListener {
         scheduler = ProcessScheduler.getScheduler();
         Algorithm algorithm = ProcessScheduler.getAlgorithm();
         algorithm.addListener(this);
-        
+
         // Generate node colours
         List<Node> nodes = scheduler.getNodes();
         nodeColours = new HashMap<String, String>();
@@ -113,7 +112,7 @@ public class HomeController implements Initializable, AlgorithmListener {
             int red = 64 + (int) (p * 191.0);
             int green = 63;
             int blue = 127 + (int) ((1 - p) * 127.0);
-            
+
             // the colour format required for the two views is different, one requires 0-1 and one requires 0-255
             nodeColours.put(node.getName(), String.format("rgba(%s,%s,%s,%%s)", Integer.toString(red), Integer.toString(green), Integer.toString(blue)));
         }
@@ -168,8 +167,12 @@ public class HomeController implements Initializable, AlgorithmListener {
             @Override
             protected void elementMoving(GraphicElement element, MouseEvent event) {
                 //Only move if the weight labels aren't clicked (i.e. only the nodes can be moved)
-                if(!element.getSelectorType().equals(Selector.Type.SPRITE)){
+                //Also cannot move the invisible buddy nodes
+                if(!element.getSelectorType().equals(Selector.Type.SPRITE) && !element.getId().equals("invisible" + element.getId())){
                     view.moveElementAtPx(element, event.getX(), event.getY());
+                    //Move invisible buddy node with normal node
+                    GraphicElement graphicElement = (GraphicElement) graph.getNode("invisible" + element.getId());
+                    view.moveElementAtPx(graphicElement, event.getX()+50, event.getY());
                 }
             }
         });
@@ -180,7 +183,7 @@ public class HomeController implements Initializable, AlgorithmListener {
         //Calculate optimal schedule in new thread
         new Thread(scheduler::start).start();
     }
-    
+
     public void setNodeColours(Map<String, String> nodeColours) {
         this.nodeColours = nodeColours;
     }

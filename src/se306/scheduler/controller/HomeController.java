@@ -175,6 +175,8 @@ public class HomeController implements Initializable, AlgorithmListener {
         GraphRenderer<Pane, GraphicsContext> renderer = new FxGraphRenderer();
         FxDefaultView view = (FxDefaultView) fxViewer.addView(FxViewer.DEFAULT_VIEW_ID, renderer);
         view.setPrefSize(graphPane.getPrefWidth(), graphPane.getPrefHeight());
+
+        //Mouse event listener for graph
         view.setMouseManager(new FxMouseManager(){
             @Override
             protected void elementMoving(GraphicElement element, MouseEvent event) {
@@ -185,6 +187,15 @@ public class HomeController implements Initializable, AlgorithmListener {
                     //Move invisible buddy node with normal node
                     GraphicElement graphicElement = (GraphicElement) graph.getNode("invisible" + element.getId());
                     view.moveElementAtPx(graphicElement, event.getX()+50, event.getY());
+                }
+            }
+            @Override
+            protected void mouseButtonPressOnElement(GraphicElement element, MouseEvent event) {
+                //Detect when a normal node is clicked
+                if(element.getSelectorType().equals(Selector.Type.NODE) && !element.getId().contains("invisible")){
+                    //Reset all other edge colours & colour this node's in/out edges
+                    graphDisplay.resetEdgeColours();
+                    graphDisplay.colourEdges(element.getId());
                 }
             }
         });

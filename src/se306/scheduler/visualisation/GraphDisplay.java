@@ -12,6 +12,7 @@ import se306.scheduler.graph.PartialSchedule;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * Creates a graph during the parsing of the dot file.
@@ -93,7 +94,7 @@ public class GraphDisplay {
 
         //Add weight label and set edge label & arrow style
         edge.setAttribute("ui.label", edgeWeight);
-        edge.setAttribute("ui.style", "fill-color: rgb(100,100,100);" +
+        edge.setAttribute("ui.style", "fill-color: rgba(100,100,100,175);" +
                 "text-background-mode: plain;text-size: 20px;" +
                 "arrow-size: 10px;text-font: Consolas;");
     }
@@ -165,5 +166,22 @@ public class GraphDisplay {
                 xCoOrd += scale * 2;
             }
         }
+    }
+
+    /**
+     * Method to reset the colour of every edge in the graph to their initial one.
+     */
+    public void resetEdgeColours(){
+        graph.edges().forEach(edge -> edge.setAttribute("ui.style", "fill-color: rgba(100,100,100,175);"));
+    }
+
+    /**
+     * Method to change the colour of the incoming and outgoing edges of a node.
+     * @param nodeID The ID of the node which will have its edge colours changed
+     */
+    public void colourEdges(String nodeID){
+        graph.getNode(nodeID).enteringEdges().forEach(edge -> edge.setAttribute("ui.style", "fill-color: rgb(255,0,0);"));
+        graph.getNode(nodeID).leavingEdges().forEach(edge -> edge.setAttribute("ui.style", "fill-color: rgb(0,255,0);"));
+
     }
 }

@@ -60,16 +60,18 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
 	}
 
 	public void parse(String[] args) {
-        SimpleJSAP jsap = buildParser();
-        config = jsap.parse(args);
-        if (!config.success()) {
-            System.out.println("Usage: java -jar scheduler.jar "  + jsap.getUsage() + "\n");
-            System.out.println(jsap.getHelp(JSAP.DEFAULT_SCREENWIDTH, ""));
-            System.exit(1);
-        }
+		SimpleJSAP jsap = buildParser();
+		config = jsap.parse(args);
+		if (!config.success()) {
+			if (!config.getBoolean("help")) {
+				System.out.println("Usage: java -jar scheduler.jar " + jsap.getUsage() + "\n");
+				System.out.println(jsap.getHelp(JSAP.DEFAULT_SCREENWIDTH, ""));
+			}
+			System.exit(1);
+		}
 
-        numProcessors = config.getInt("P");
-        numThreads = config.getInt("N");
+		numProcessors = config.getInt("P");
+		numThreads = config.getInt("N");
 	}
 	
 	public void schedule(String[] args) {

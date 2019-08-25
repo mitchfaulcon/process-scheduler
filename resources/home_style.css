@@ -36,11 +36,6 @@
     -fx-font-size: 55px;
 }
 
-.timer .text {
-    -fx-stroke: black;
-    -fx-stroke-width: 1px;
-}
-
 .footer {
     -fx-background-color:  linear-gradient(from 0% 0% to 0% 100%, #6ea1ff, #2a4386);
 }

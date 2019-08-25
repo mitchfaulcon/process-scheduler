@@ -1,19 +1,16 @@
 package se306.scheduler.graph;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class PartialSchedule {
     private List<Node> nodes; // all nodes in the graph
     private List<Node> visited; // all scheduled tasks
     private List<Node> unvisited; // all unscheduled tasks
-    private HashMap<Node, Integer> processorMap;
-    private HashMap<Node, Integer> startTimes;
+    private Map<Node, Integer> processorMap; // the processors that scheduled tasks are assigned to
+    private Map<Node, Integer> startTimes; // the start times of all scheduled tasks
     private Set<Integer> traversedProcessors; // all processors that at least one task has been placed on
-    
+    private String ID;
+
     public PartialSchedule() {
         nodes = new ArrayList<>();
         visited = new ArrayList<>();
@@ -45,6 +42,22 @@ public class PartialSchedule {
         this.visited = new ArrayList<>(paritalSchedule.getVisited());
         this.unvisited = new ArrayList<>(paritalSchedule.getUnvisited());
         this.traversedProcessors = new HashSet<Integer>(paritalSchedule.getTraversedProcessors());
+        updateID();
+    }
+
+    private void updateID() {
+        String[] processorIDs = new String[processorMap.values().size()];
+        Arrays.fill(processorIDs, "");
+        for (int i = 0; i < processorMap.values().size(); i++) {
+            for (Node node: visited) {
+                if (processorMap.get(node) == i) {
+                    String id = node.getName() + startTimes.get(node);
+                    processorIDs[i] += (id);
+                }
+            }
+        }
+        Arrays.sort(processorIDs);
+        ID = Arrays.toString(processorIDs);
     }
 
     /**
@@ -54,36 +67,51 @@ public class PartialSchedule {
         return unvisited.isEmpty();
     }
 
+    /**
+     * Returns a list of all unvisited nodes.
+     */
     public List<Node> getUnvisitedNodes() {
         return new ArrayList<>(unvisited);
     }
 
     /**
-     * Returns a set of all unvisited node names.
+     * Returns a list of all unvisited node names.
      */
     private List<Node> getUnvisited() {
         return unvisited;
     }
     
     /**
-     * Returns a set of all visited node names.
+     * Returns a list of all visited node names.
      */
     public List<Node> getVisited() {
         return visited;
     }
 
-    public HashMap<Node, Integer> getProcessorMap() {
+    /**
+     * Returns the map of scheduled nodes to their processors.
+     */
+    public Map<Node, Integer> getProcessorMap() {
         return processorMap;
     }
 
-    public HashMap<Node, Integer> getStartTimes() {
+    /**
+     * Returns the map of scheduled nodes to their start times.
+     */
+    public Map<Node, Integer> getStartTimes() {
         return startTimes;
     }
 
+    /**
+     * Return the processor a given `node` is scheduled on.
+     */
     public int getProcessor(Node node) {
         return processorMap.get(node);
     }
 
+    /**
+     * Returns the start time of a given `node` if it has been assigned to a processor.
+     */
     public int getStartTime(Node node) {
         return startTimes.get(node);
     }
@@ -106,7 +134,8 @@ public class PartialSchedule {
         
         visited.add(node);
         unvisited.remove(node);
-        
+        updateID();
+
         if (!traversedProcessors.contains(processor)) {
             traversedProcessors.add(processor);
             return true;
@@ -181,6 +210,9 @@ public class PartialSchedule {
     	return !traversedProcessors.contains(processor);
     }
     
+    /**
+     * Returns all the nodes in the graph.
+     */
     public List<Node> getNodes() {
         return nodes;
     }
@@ -204,12 +236,11 @@ public class PartialSchedule {
         return null;
     }
     
+    /**
+     * Returns a string representation of this schedule.
+     */
     @Override
     public String toString() {
-        List<String> strings = new ArrayList<String>();
-        for (Node node: visited) {
-            strings.add(node.toString());
-        }
-        return String.join(", ", strings);
+        return ID;
     }
 }

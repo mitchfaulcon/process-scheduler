@@ -1,9 +1,6 @@
 package se306.scheduler.logic;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.List;
+import java.util.*;
 
 import se306.scheduler.graph.Node;
 import se306.scheduler.graph.PartialSchedule;
@@ -14,6 +11,7 @@ import se306.scheduler.graph.PartialSchedule;
  * is worth exploring.
  */
 public class BNBAlgorithm extends Algorithm {
+    private HashSet<String> addedScheduleIDs;
     protected volatile int bestMakespan = Integer.MAX_VALUE;
     protected PartialSchedule bestSchedule = null;
 
@@ -26,6 +24,14 @@ public class BNBAlgorithm extends Algorithm {
         Deque<PartialSchedule> stack = new ArrayDeque<>();
         // add initial state
         stack.push(new PartialSchedule(graph));
+        addedScheduleIDs = new HashSet<>();
+
+        bestSchedule = greedySchedule();
+        addedScheduleIDs.add(bestSchedule.toString());
+
+        // use a greedy algorithm to find a decent initial bound
+        bestMakespan = bestSchedule.getMakespan();
+        updateSchedule(bestSchedule);
 
         setLowerBounds();
         while (!stack.isEmpty()) {
@@ -35,14 +41,14 @@ public class BNBAlgorithm extends Algorithm {
         }
         completed(bestSchedule);
     }
-    
+
     protected boolean bnb(PartialSchedule state, Deque<PartialSchedule> stack) {
 //		total.incrementAndGet();
 		int makespan = state.getMakespan();
 		if(makespan >= bestMakespan) {
 			return false;
 		}
-		
+
 		// all nodes have been assigned to a processor
 		if (state.allVisited()) {
 //			int makespan = state.getMakespan();
@@ -90,7 +96,7 @@ public class BNBAlgorithm extends Algorithm {
 									if (endTime < bestEndTime) {
 										bestEndTime = endTime;
 									}
-									
+
 									// no need to check other processors as the resultant schedules would be equivalent
 									if (state.isProcessorEmpty(processor)) {
 										break;
@@ -112,12 +118,13 @@ public class BNBAlgorithm extends Algorithm {
 					// then partial schedule is not added to stack
 					if (bestStart + node.getLBWeight() < bestMakespan) {
 						// add the node at this time
-
+                        if (addedScheduleIDs.contains(newState.toString())) {
+                            break;
+                        }
+                        addedScheduleIDs.add(newState.toString());
 						stack.addFirst(newState);
-						// if this task is placed as the first task on a processor then trying to place
-						// the
-						// task on any subsequent processor will create an effectively identical
-						// schedule
+						// if this task is placed as the first task on a processor then trying to place the
+						// task on any subsequent processor will create an effectively identical schedule
 						if (isFirstOnProcessor) {
 								updateBranchCut(newState.getUnvisitedNodes().size(), numProcessors - p);
 							break;
@@ -175,8 +182,7 @@ public class BNBAlgorithm extends Algorithm {
      * processor can run them first.
      * @return A greedy schedule to be used for setting the initial best.
      */
-    @Deprecated
-    protected PartialSchedule GreedySchedule() {
+    protected PartialSchedule greedySchedule() {
         List<Node> unreached = new ArrayList<>(graph);
         PartialSchedule schedule = new PartialSchedule(graph);
         int i = 0;

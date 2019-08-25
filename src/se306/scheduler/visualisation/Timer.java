@@ -117,7 +117,13 @@ public class Timer {
     }
 
     public String getSeconds(){
-        return Integer.toString((int)time/100) + "." + Integer.toString((int)time % 100);
+        String[] split = getMSMsTimeFormat();
+
+        int totalSeconds = Integer.parseInt(split[1]) + Integer.parseInt(split[0])*60;
+        String s = Integer.toString(totalSeconds);
+        String ms = split[2].length() == 1 ? "0" + split[2] : split[2].substring(0, 2);
+
+        return (s + "." + ms);
     }
 
     private String[] getMSMsTimeFormat(){

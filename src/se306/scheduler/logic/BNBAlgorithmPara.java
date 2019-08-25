@@ -122,7 +122,7 @@ public class BNBAlgorithmPara extends Algorithm {
 			// check if the current solution is better than the best one found so far
 			synchronized (this) {
 				if (makespan < bestMakespan) {
-					System.out.println(Thread.currentThread().getName() + ": New best " + makespan + " Stack " + stack.size());//+ " After: " + total);
+					//System.out.println(Thread.currentThread().getName() + ": New best " + makespan + " Stack " + stack.size());//+ " After: " + total);
 
 					bestMakespan = makespan;
 					bestSchedule = state;

@@ -3,6 +3,8 @@ package se306.scheduler.logic;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 import se306.scheduler.graph.PartialSchedule;
@@ -65,7 +67,18 @@ public class BNBAlgorithmPara extends BNBAlgorithm {
 
 	@Override
 	public void schedule() {
-		setLowerBounds();
+	    addedScheduleIDs = new ConcurrentHashMap<>();
+
+//        bestSchedule = greedySchedule();
+//        addedScheduleIDs.put(bestSchedule.toString(), null);
+
+        // use a greedy algorithm to find a decent initial bound
+//        bestMakespan = bestSchedule.getMakespan();
+//        updateSchedule(bestSchedule);
+
+
+
+        setLowerBounds();
 
 		Deque<PartialSchedule> temp = new ArrayDeque<>();
 		temp.add(new PartialSchedule(graph));

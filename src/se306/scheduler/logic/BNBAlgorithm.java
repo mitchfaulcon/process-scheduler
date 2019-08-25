@@ -77,73 +77,71 @@ public class BNBAlgorithm extends Algorithm {
 			return makespan == state.getVisited().get(0).getLBWeight();
 		}
 		for (Node node : state.getUnvisitedNodes()) {
-			// check if the node's parents have all been scheduled
-			if (state.dependenciesSatisfied(node)) {
-				// create new states by adding the new node to every processor
-				processorLoop:
-				for (int p = 1; p <= numProcessors; p++) {
-					// find the earliest time the new node can be added on this processor
-					int bestStart = state.findBestStartTime(node, p);
-					List<Node> otherNodes = new ArrayList<>(state.getUnvisitedNodes());
-					otherNodes.remove(node);
-					// this loop finds the lower bound on all the other dependency-met nodes after
-					// the node is scheduled to see if any of lower bounds are higher than the
-					// current max
-					for (Node node2 : otherNodes) {
-						// tests if scheduling on this processor would be too slow
-						if (state.dependenciesSatisfied(node2) && bestStart + node.getWeight() + node2.getLBWeight() > bestMakespan) {
-							int bestEndTime = Integer.MAX_VALUE;
-							for (int processor = 1; processor <= numProcessors; processor++) {
-								// tests for all the other processors
-								if (processor != p) {
-									int endTime = state.findBestStartTime(node2, processor) + node2.getLBWeight();
-									if (endTime < bestEndTime) {
-										bestEndTime = endTime;
-									}
-
-									// no need to check other processors as the resultant schedules would be equivalent
-									if (state.isProcessorEmpty(processor)) {
-										break;
-									}
-								}
-							}
-							if (bestEndTime >= bestMakespan) {
-								// if the lower bound is too high, then the new state is not made and we move to
-								// the next processor
-								updateBranchCut(state.getUnvisitedNodes().size() - 1, 1);
-								continue processorLoop;
-							}
-						}
-					}
-					PartialSchedule newState = new PartialSchedule(state);
-					boolean isFirstOnProcessor = newState.scheduleTask(node, p, bestStart);
-					// if the lower bound for scheduling this node here on this processor is worse
-					// than best so far then partial schedule is not added to stack
-					if (bestStart + node.getLBWeight() < bestMakespan) {
-					    // if the new schedule made has a matching ID to one in addedScheduleIDs, then it is effectively
-                        // a duplicate
-                        if (addedScheduleIDs.containsKey(newState.toString())) {
-                            updateBranchCut(newState.getUnvisitedNodes().size(), numProcessors - p + 1);
-                            break;
+            if (!state.dependenciesSatisfied(node)) {
+                // if the node's dependencies aren't met, all branches stemming from the states where the node is added
+                // to one of the processors are cut, and we move to the next node
+                updateBranchCut(state.getUnvisitedNodes().size() - 1, numProcessors);
+                continue;
+            }
+            // create new states by adding the new node to every processor
+            processorLoop:
+            for (int p = 1; p <= numProcessors; p++) {
+                // find the earliest time the new node can be added on this processor
+                int bestStart = state.findBestStartTime(node, p);
+                List<Node> otherNodes = new ArrayList<>(state.getUnvisitedNodes());
+                otherNodes.remove(node);
+                // this loop finds the lower bound on all the other dependency-met nodes after the node is scheduled to
+                // see if any of lower bounds aren't lower than the current max
+                for (Node node2 : otherNodes) {
+                    // If scheduling on this processor is too slow, then the others are tried
+                    if (state.dependenciesSatisfied(node2) && bestStart + node.getWeight() + node2.getLBWeight() > bestMakespan) {
+                        int bestEndTime = Integer.MAX_VALUE;
+                        for (int processor = 1; processor <= numProcessors; processor++) {
+                            // tests for all the other processors
+                            if (processor != p) {
+                                int endTime = state.findBestStartTime(node2, processor) + node2.getLBWeight();
+                                if (endTime < bestEndTime) {
+                                    bestEndTime = endTime;
+                                }
+                                // checks if this node would be the first on the processor, if it would be, then
+                                // no need to check other processors as the resultant schedules would be equivalent
+                                if (state.isProcessorEmpty(processor)) {
+                                    break;
+                                }
+                            }
                         }
-                        addedScheduleIDs.put(newState.toString(), dummyValue);
-						stack.addFirst(newState);
-						// if this task is placed as the first task on a processor then trying to place the
-						// task on any subsequent processor will create an effectively identical schedule
-						if (isFirstOnProcessor) {
-						    updateBranchCut(newState.getUnvisitedNodes().size(), numProcessors - p);
-							break;
-						}
-					} else {
-						updateBranchCut(newState.getUnvisitedNodes().size(), 1);
-					}
-				}
-			} else {
-			    // if the node's dependencies aren't met, all branches stemming from the states where the node is added
-                // to one of the processors are cut.
-				updateBranchCut(state.getUnvisitedNodes().size() - 1, numProcessors);
-			}
-		}
+                        if (bestEndTime >= bestMakespan) {
+                            // if the lower bound is too high, then the new state is not made and we move to
+                            // the next processor
+                            updateBranchCut(state.getUnvisitedNodes().size() - 1, 1);
+                            continue processorLoop;
+                        }
+                    }
+                }
+                PartialSchedule newState = new PartialSchedule(state);
+                boolean isFirstOnProcessor = newState.scheduleTask(node, p, bestStart);
+                // if the lower bound for scheduling this node on this processor is not better than the current best,
+                // or a schedule has already been made with the same generated ID (meaning this is duplicate), then
+                // schedule is not made
+                if (bestStart + node.getLBWeight() >= bestMakespan || addedScheduleIDs.containsKey(newState.toString())) {
+                    // if this is the first node to be scheduled to a processor, then scheduling the node to any
+                    // subsequent processors will create a duplicate, so loop is broken
+                    if (isFirstOnProcessor) {
+                        updateBranchCut(newState.getUnvisitedNodes().size(), numProcessors - p + 1);
+                        break;
+                    }
+                    updateBranchCut(newState.getUnvisitedNodes().size(), 1);
+                    continue;
+                }
+                addedScheduleIDs.put(newState.toString(), dummyValue);
+                stack.addFirst(newState);
+                if (isFirstOnProcessor) {
+                    // same as before, but remove fewer branches as one has been added
+                    updateBranchCut(newState.getUnvisitedNodes().size(), numProcessors - p);
+                    break;
+                }
+            }
+        }
 		return false;
 	}
 
@@ -189,7 +187,7 @@ public class BNBAlgorithm extends Algorithm {
      * processor can run them first.
      * @return A greedy schedule to be used for setting the initial best.
      */
-    protected PartialSchedule greedySchedule() {
+    private PartialSchedule greedySchedule() {
         PartialSchedule schedule = new PartialSchedule(graph);
         int i = 0;
         // finding some node with no parents to set as root

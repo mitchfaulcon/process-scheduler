@@ -11,7 +11,7 @@ import java.util.*;
  * is worth exploring.
  */
 public class BNBAlgorithm extends Algorithm {
-
+    private HashSet<String> addedScheduleIDs;
     public BNBAlgorithm(int numProcessors) {
         super(numProcessors);
     }
@@ -21,9 +21,11 @@ public class BNBAlgorithm extends Algorithm {
         Stack<PartialSchedule> stack = new Stack<>();
         // add initial state
         stack.push(new PartialSchedule(graph));
+        addedScheduleIDs = new HashSet<>();
 
-        PartialSchedule bestSchedule = null;
-        int bestMakespan = Integer.MAX_VALUE;
+        PartialSchedule bestSchedule = GreedySchedule();
+        addedScheduleIDs.add(bestSchedule.toString());
+        int bestMakespan = bestSchedule.getMakespan();
 
         setLowerBounds();
         while (!stack.isEmpty()) {
@@ -95,8 +97,13 @@ public class BNBAlgorithm extends Algorithm {
                         // then partial schedule is not added to stack
                         if (bestStart + node.getLBWeight() < bestMakespan) {
                             // add the node at this time
-
+                            if (addedScheduleIDs.contains(newState.toString())) {
+                                break;
+                            }
+                            addedScheduleIDs.add(newState.toString());
                             stack.push(newState);
+
+
 
                             // if this task is placed as the first task on a processor then trying to place the
                             // task on any subsequent processor will create an effectively identical schedule

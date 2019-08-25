@@ -1,10 +1,6 @@
 package se306.scheduler.graph;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class PartialSchedule {
     private List<Node> nodes; // all nodes in the graph
@@ -13,6 +9,7 @@ public class PartialSchedule {
     private HashMap<Node, Integer> processorMap;
     private HashMap<Node, Integer> startTimes;
     private Set<Integer> traversedProcessors; // all processors that at least one task has been placed on
+    private String ID;
     
     public PartialSchedule() {
         nodes = new ArrayList<>();
@@ -45,6 +42,22 @@ public class PartialSchedule {
         this.visited = new ArrayList<>(paritalSchedule.getVisited());
         this.unvisited = new ArrayList<>(paritalSchedule.getUnvisited());
         this.traversedProcessors = new HashSet<Integer>(paritalSchedule.getTraversedProcessors());
+        updateID();
+    }
+
+    private void updateID() {
+        String[] processorIDs = new String[processorMap.values().size()];
+        Arrays.fill(processorIDs, "");
+        for (int i = 0; i < processorMap.values().size(); i++) {
+            for (Node node: visited) {
+                if (processorMap.get(node) == i) {
+                    String id = node.getName() + startTimes.get(node);
+                    processorIDs[i] += (id);
+                }
+            }
+        }
+        Arrays.sort(processorIDs);
+        ID = Arrays.toString(processorIDs);
     }
 
     /**
@@ -106,6 +119,7 @@ public class PartialSchedule {
         
         visited.add(node);
         unvisited.remove(node);
+        updateID();
         
         if (!traversedProcessors.contains(processor)) {
             traversedProcessors.add(processor);
@@ -206,10 +220,6 @@ public class PartialSchedule {
     
     @Override
     public String toString() {
-        List<String> strings = new ArrayList<String>();
-        for (Node node: visited) {
-            strings.add(node.toString());
-        }
-        return String.join(", ", strings);
+        return ID;
     }
 }

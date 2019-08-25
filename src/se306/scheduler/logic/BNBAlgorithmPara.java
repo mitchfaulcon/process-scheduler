@@ -3,6 +3,8 @@ package se306.scheduler.logic;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 import se306.scheduler.graph.PartialSchedule;
@@ -65,7 +67,9 @@ public class BNBAlgorithmPara extends BNBAlgorithm {
 
 	@Override
 	public void schedule() {
-		setLowerBounds();
+	    addedScheduleIDs = new ConcurrentHashMap<>();
+
+        setLowerBounds();
 
 		Deque<PartialSchedule> temp = new ArrayDeque<>();
 		temp.add(new PartialSchedule(graph));
@@ -81,7 +85,6 @@ public class BNBAlgorithmPara extends BNBAlgorithm {
 			stacks.get(i % nThreads).addLast(temp.pollFirst());
 		}
 
-		System.out.println("Creating threads");
 		Thread[] threads = new Thread[nThreads];
 		for (int i = 0; i < nThreads; i++) {
 			Thread thread = new Thread(new BNBTask(i, stacks), "BNB Thread " + i);
@@ -92,11 +95,9 @@ public class BNBAlgorithmPara extends BNBAlgorithm {
 			for (Thread thread : threads) {
 				thread.start();
 			}
-			System.out.println("Waiting for threads");
 			for (Thread thread : threads) {
 				thread.join();
 			}
-			System.out.println("Completed");
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

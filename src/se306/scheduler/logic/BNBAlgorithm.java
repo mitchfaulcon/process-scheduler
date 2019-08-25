@@ -1,9 +1,7 @@
 package se306.scheduler.logic;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import se306.scheduler.graph.Node;
 import se306.scheduler.graph.PartialSchedule;
@@ -14,8 +12,11 @@ import se306.scheduler.graph.PartialSchedule;
  * is worth exploring.
  */
 public class BNBAlgorithm extends Algorithm {
+    protected Map<String, Object> addedScheduleIDs;
     protected volatile int bestMakespan = Integer.MAX_VALUE;
     protected PartialSchedule bestSchedule = null;
+    private static Object dummyValue = new Object();
+
 
     public BNBAlgorithm(int numProcessors) {
         super(numProcessors);
@@ -26,6 +27,14 @@ public class BNBAlgorithm extends Algorithm {
         Deque<PartialSchedule> stack = new ArrayDeque<>();
         // add initial state
         stack.push(new PartialSchedule(graph));
+        addedScheduleIDs = new HashMap<>();
+
+        bestSchedule = greedySchedule();
+        addedScheduleIDs.put(bestSchedule.toString(), dummyValue);
+
+        // use a greedy algorithm to find a decent initial bound
+        bestMakespan = bestSchedule.getMakespan();
+        updateSchedule(bestSchedule);
 
         setLowerBounds();
         while (!stack.isEmpty()) {
@@ -35,14 +44,15 @@ public class BNBAlgorithm extends Algorithm {
         }
         completed(bestSchedule);
     }
-    
+
     protected boolean bnb(PartialSchedule state, Deque<PartialSchedule> stack) {
 //		total.incrementAndGet();
 		int makespan = state.getMakespan();
 		if(makespan >= bestMakespan) {
+		    updateBranchCut(state.getUnvisitedNodes().size(), 1);
 			return false;
 		}
-		
+
 		// all nodes have been assigned to a processor
 		if (state.allVisited()) {
 //			int makespan = state.getMakespan();
@@ -50,7 +60,6 @@ public class BNBAlgorithm extends Algorithm {
 			// check if the current solution is better than the best one found so far
 			synchronized (this) {
 				if (makespan < bestMakespan) {
-					System.out.println(Thread.currentThread().getName() + ": New best " + makespan + " Stack " + stack.size());//+ " After: " + total);
 
 					bestMakespan = makespan;
 					bestSchedule = state;
@@ -90,7 +99,7 @@ public class BNBAlgorithm extends Algorithm {
 									if (endTime < bestEndTime) {
 										bestEndTime = endTime;
 									}
-									
+
 									// no need to check other processors as the resultant schedules would be equivalent
 									if (state.isProcessorEmpty(processor)) {
 										break;
@@ -112,14 +121,16 @@ public class BNBAlgorithm extends Algorithm {
 					// then partial schedule is not added to stack
 					if (bestStart + node.getLBWeight() < bestMakespan) {
 						// add the node at this time
-
+                        if (addedScheduleIDs.containsKey(newState.toString())) {
+                            updateBranchCut(newState.getUnvisitedNodes().size(), numProcessors - p + 1);
+                            break;
+                        }
+                        addedScheduleIDs.put(newState.toString(), dummyValue);
 						stack.addFirst(newState);
-						// if this task is placed as the first task on a processor then trying to place
-						// the
-						// task on any subsequent processor will create an effectively identical
-						// schedule
+						// if this task is placed as the first task on a processor then trying to place the
+						// task on any subsequent processor will create an effectively identical schedule
 						if (isFirstOnProcessor) {
-								updateBranchCut(newState.getUnvisitedNodes().size(), numProcessors - p);
+						    updateBranchCut(newState.getUnvisitedNodes().size(), numProcessors - p);
 							break;
 						}
 					} else {
@@ -175,8 +186,7 @@ public class BNBAlgorithm extends Algorithm {
      * processor can run them first.
      * @return A greedy schedule to be used for setting the initial best.
      */
-    @Deprecated
-    protected PartialSchedule GreedySchedule() {
+    protected PartialSchedule greedySchedule() {
         List<Node> unreached = new ArrayList<>(graph);
         PartialSchedule schedule = new PartialSchedule(graph);
         int i = 0;

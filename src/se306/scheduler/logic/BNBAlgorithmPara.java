@@ -115,9 +115,14 @@ public class BNBAlgorithmPara extends Algorithm {
 
 	private boolean bnb(PartialSchedule state, Deque<PartialSchedule> stack) {
 //		total.incrementAndGet();
+		int makespan = state.getMakespan();
+		if(makespan >= bestMakespan) {
+			return false;
+		}
+		
 		// all nodes have been assigned to a processor
 		if (state.allVisited()) {
-			int makespan = state.getMakespan();
+//			int makespan = state.getMakespan();
 
 			// check if the current solution is better than the best one found so far
 			synchronized (this) {
@@ -199,7 +204,7 @@ public class BNBAlgorithmPara extends Algorithm {
 					}
 				}
 			} else {
-					updateBranchCut(state.getUnvisitedNodes().size() - 1, numProcessors);
+				updateBranchCut(state.getUnvisitedNodes().size() - 1, numProcessors);
 			}
 		}
 		return false;

@@ -45,7 +45,6 @@ public class ParallelBruteForceAlgorithm extends Algorithm {
                             if (deque.isEmpty()) { // there is no work for this thread to do
                                 if (activeThreads.get() == 1) { // all threads have no work to do
                                     activeThreads.decrementAndGet();
-//                                    System.out.println(bestSchedule);
                                     completed(bestSchedule);
                                     updateSchedule(bestSchedule);
                                     break;

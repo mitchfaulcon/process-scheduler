@@ -25,7 +25,6 @@ public class BNBAlgorithmPara extends Algorithm {
 	private PartialSchedule bestSchedule = null;
 	private volatile int bestMakespan = Integer.MAX_VALUE;
 	private volatile boolean earlyStop = false;
-//	private AtomicInteger total = new AtomicInteger(); // remove or add as stat
 
 	class BNBTask implements Runnable {
 		ConcurrentLinkedDeque<PartialSchedule> stack;
@@ -61,11 +60,9 @@ public class BNBAlgorithmPara extends Algorithm {
 				PartialSchedule stolen = other.pollLast();
 				if(stolen != null) {
 					bnb(stolen, stack);
-//					System.out.println(threadNum + " Stole");
 					return true;
 				}
 			}
-//			System.out.println(threadNum + " Quitting");
 			return false;
 		}
 
@@ -109,12 +106,10 @@ public class BNBAlgorithmPara extends Algorithm {
 			e.printStackTrace();
 		}
 
-//		System.out.println("Visited " + total.get());
 		completed(bestSchedule);
 	}
 
 	private boolean bnb(PartialSchedule state, Deque<PartialSchedule> stack) {
-//		total.incrementAndGet();
 		int makespan = state.getMakespan();
 		if(makespan >= bestMakespan) {
 			return false;
@@ -122,13 +117,9 @@ public class BNBAlgorithmPara extends Algorithm {
 		
 		// all nodes have been assigned to a processor
 		if (state.allVisited()) {
-//			int makespan = state.getMakespan();
-
 			// check if the current solution is better than the best one found so far
 			synchronized (this) {
 				if (makespan < bestMakespan) {
-					//System.out.println(Thread.currentThread().getName() + ": New best " + makespan + " Stack " + stack.size());//+ " After: " + total);
-
 					bestMakespan = makespan;
 					bestSchedule = state;
 

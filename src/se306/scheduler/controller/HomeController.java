@@ -190,8 +190,6 @@ public class HomeController implements Initializable, AlgorithmListener {
         timer.stopTimer();
 
         Platform.runLater(() -> {
-//            timeDisplay.getStyleClass().add("timer-done");
-//            timeTitleLabel.getStyleClass().addAll("timer-done", "timer-done-title");
             bottomPane.getStyleClass().add("footer-done");
             timerboxPane.getStyleClass().add("timer-box-done");
             headerPane1.getStyleClass().add("header-done");

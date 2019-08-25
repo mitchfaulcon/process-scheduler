@@ -54,6 +54,7 @@ public class BNBAlgorithmParaTest {
         try {
 			makespanResult = makespan.get();
 		} catch (InterruptedException | ExecutionException e) {
+			fail("Could not find makespan.");
 			e.printStackTrace();
 		}
         

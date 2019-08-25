@@ -164,7 +164,6 @@ public class PartialSchedule {
             int edgeCost = newNode.getIncomingEdges().get(parent);
             // edge costs only are counted if the node is on a different processor to its parent
             if (processorMap.get(parent) != processor) {
-                // TODO: node should have weights stored with parents not with children
                 int newStartTime = startTimes.get(parent) + parent.getWeight() + edgeCost;
                 if (newStartTime > bestStartTime) {
                     bestStartTime = newStartTime;

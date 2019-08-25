@@ -2,18 +2,26 @@ package se306.scheduler.visualisation;
 
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
-import se306.scheduler.graph.Node;
 import org.graphstream.graph.implementations.SingleGraph;
-import org.graphstream.ui.geom.Point2;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants;
 import org.graphstream.ui.spriteManager.Sprite;
 import org.graphstream.ui.spriteManager.SpriteManager;
+import se306.scheduler.graph.Node;
 import se306.scheduler.graph.PartialSchedule;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
+/**
+ * Creates a graph during the parsing of the dot file.
+ * All the nodes and edges are converted to be displayable
+ * via the GraphStream library.
+ *
+ * <a href="http://graphstream-project.org"/>
+ */
 public class GraphDisplay {
-
+    //Singleton object
     private static final GraphDisplay graphDisplay = new GraphDisplay();
 
     private Graph graph = new SingleGraph("graphDisplay", false, true);
@@ -74,13 +82,13 @@ public class GraphDisplay {
     /**
      * Method to add an edge to the graph display
      *
-     * @param node1      The parent node
-     * @param node2      The child node
+     * @param parent     The parent node
+     * @param child      The child node
      * @param edgeWeight The weight of the edge to be added
      */
-    private void addEdge(Node node1, Node node2, int edgeWeight) {
-        String edgeID = node1.getName() + node2.getName();
-        graph.addEdge(edgeID, node1.getName(), node2.getName(), true);
+    private void addEdge(Node parent, Node child, int edgeWeight) {
+        String edgeID = parent.getName() + child.getName();
+        graph.addEdge(edgeID, parent.getName(), child.getName(), true);
         Edge edge = graph.getEdge(edgeID);
 
         //Add weight label and set edge label & arrow style

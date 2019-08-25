@@ -5,7 +5,6 @@ import java.math.BigInteger;
 import java.net.URL;
 import java.util.*;
 
-import org.graphstream.graph.Element;
 import org.graphstream.ui.fx_viewer.FxDefaultView;
 import org.graphstream.ui.fx_viewer.FxViewer;
 import org.graphstream.ui.fx_viewer.util.FxMouseManager;
@@ -37,7 +36,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-import org.graphstream.ui.view.util.InteractiveElement;
 import se306.scheduler.ProcessScheduler;
 import se306.scheduler.graph.Node;
 import se306.scheduler.graph.PartialSchedule;
@@ -277,16 +275,17 @@ public class HomeController implements Initializable, AlgorithmListener {
 
     /**
      * Apply a translation animation to the Node.
-     * All animations used in this program only change the y value,
-     * so and x parameter is not needed.
+     * Moves Node towards the entered x,y value
      *
      * @param node Node to apply animation to
+     * @param x value of x to move node towards
      * @param y value of y to move node towards
      * @param duration how long it takes to reach the y value.
      * @return The translation object with the applied animation
      */
-    private TranslateTransition animation(javafx.scene.Node node, double y, Duration duration) {
+    private TranslateTransition animation(javafx.scene.Node node, double x, double y, Duration duration) {
         TranslateTransition transition = new TranslateTransition(duration, node);
+        transition.setToX(x);
         transition.setToY(y);
         transition.setAutoReverse(true);
 
@@ -296,25 +295,22 @@ public class HomeController implements Initializable, AlgorithmListener {
     /**
      * Makes the AnchorPane move upwards by 20 units
      *
-     * @see #animation(javafx.scene.Node, double, Duration)
+     * @see #animation(javafx.scene.Node, double, double, Duration)
      */
     private TranslateTransition paneUpAnimation(AnchorPane pane, Duration duration) {
-        TranslateTransition transition = animation(pane, -20, duration);
+        TranslateTransition transition = animation(pane, 0, -20, duration);
         transition.play();
 
         return transition;
     }
 
     /**
-     * Makes the AnchorPane appear to move back downwards.
-     * Does not acutally move it downwards, but returns the pane
-     * back to its original position, as this method is only called
-     * after {@link #paneUpAnimation(AnchorPane, Duration)}
+     * Returns the pane back to its original position
      *
-     * @see #animation(javafx.scene.Node, double, Duration)
+     * @see #animation(javafx.scene.Node, double, double, Duration)
      */
-    private TranslateTransition paneDownAnimation(AnchorPane pane, Duration duration) {
-        TranslateTransition transition = animation(pane, 0, duration);
+    private TranslateTransition resetAnimation(javafx.scene.Node node, Duration duration) {
+        TranslateTransition transition = animation(node, 0, 0, duration);
         transition.play();
 
         return transition;
@@ -331,7 +327,7 @@ public class HomeController implements Initializable, AlgorithmListener {
         final Duration DURATION = Duration.millis(100);
 
         pane.setOnMouseEntered(e -> paneUpAnimation(pane, DURATION));
-        pane.setOnMouseExited(e -> paneDownAnimation(pane, DURATION));
+        pane.setOnMouseExited(e -> resetAnimation(pane, DURATION));
     }
 
     /**
@@ -350,10 +346,10 @@ public class HomeController implements Initializable, AlgorithmListener {
         TranslateTransition up4 = paneUpAnimation(checkedPane, DURATION);
 
         // Get translation animations of all panes moving down
-        TranslateTransition down1 = paneDownAnimation(numProcPane, DURATION);
-        TranslateTransition down2 = paneDownAnimation(numThreadsPane, DURATION);
-        TranslateTransition down3 = paneDownAnimation(bestTimePane, DURATION);
-        TranslateTransition down4 = paneDownAnimation(checkedPane, DURATION);
+        TranslateTransition down1 = resetAnimation(numProcPane, DURATION);
+        TranslateTransition down2 = resetAnimation(numThreadsPane, DURATION);
+        TranslateTransition down3 = resetAnimation(bestTimePane, DURATION);
+        TranslateTransition down4 = resetAnimation(checkedPane, DURATION);
 
         PauseTransition pt = new PauseTransition(Duration.millis(200)); // Duration is equal to 2 up-animations
 

@@ -11,6 +11,9 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * This class is responsible for parsing the input and output of a dot file
+ */
 public class DotFile {
 
     private File file;
@@ -30,21 +33,24 @@ public class DotFile {
      * Struct to represent a line in a DOT file, so we can keep track of their order
      */
     public class LineRecord {
-        public boolean isDependency; // each record will be either a dependency or a task
-        public String taskName1;
-        public String taskName2; // will be empty if line is a task
+        boolean isDependency; // each record will be either a dependency or a task
+        String taskName1;
+        String taskName2; // will be empty if line is a task
         
-        public LineRecord(boolean isDependency, String taskName1) {
+        LineRecord(boolean isDependency, String taskName1) {
             this(isDependency, taskName1, "");
         }
         
-        public LineRecord(boolean isDependency, String taskName1, String taskName2) {
+        LineRecord(boolean isDependency, String taskName1, String taskName2) {
             this.isDependency = isDependency;
             this.taskName1 = taskName1;
             this.taskName2 = taskName2;
         }
     }
 
+    /**
+     * Constructor that only accepts .dot files
+     */
     public DotFile(String fileName) throws InvalidFileFormatException {
         if (fileName.endsWith(".dot")) {
             lines = new ArrayList<>();
@@ -68,7 +74,6 @@ public class DotFile {
         while (sc.hasNextLine()) {
             lines.add(sc.nextLine());
         }
-        
         sc.close();
 
         // Iterate through each line and add nodes or dependencies

@@ -21,8 +21,10 @@ import se306.scheduler.graph.PartialSchedule;
 
 import java.util.*;
 
-/* Class to display output schedule in a graph
- * Adapted from code at https://stackoverflow.com/questions/27975898/gantt-chart-from-scratch
+/** Class to display the current optimal schedule as a Gantt chart
+ *
+ * Adapted code from
+ * <a href="https://stackoverflow.com/questions/27975898/gantt-chart-from-scratch"/>
  */
 public class OutputSchedule<X,Y> extends XYChart<X,Y>{
 

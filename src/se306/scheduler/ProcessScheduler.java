@@ -77,8 +77,11 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
 	}
 	
 	public void schedule(String[] args) {
-        if (config.getInt("N") == 1) {
-            // Singlethreaded BNB
+		if (config.getInt("P") == 1){
+			//Fast algorithm for scheduling on one processor
+			algorithm = new SequentialAlgorithm();
+		} else if (config.getInt("N") == 1) {
+			// Singlethreaded BNB
             algorithm = new BNBAlgorithm(config.getInt("P"));
         } else {
         	// Multithreaded BNB

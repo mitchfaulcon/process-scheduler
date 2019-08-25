@@ -49,6 +49,7 @@ public class BNBAlgorithm extends Algorithm {
 //		total.incrementAndGet();
 		int makespan = state.getMakespan();
 		if(makespan >= bestMakespan) {
+		    updateBranchCut(state.getUnvisitedNodes().size(), 1);
 			return false;
 		}
 
@@ -59,7 +60,6 @@ public class BNBAlgorithm extends Algorithm {
 			// check if the current solution is better than the best one found so far
 			synchronized (this) {
 				if (makespan < bestMakespan) {
-					System.out.println(Thread.currentThread().getName() + ": New best " + makespan + " Stack " + stack.size());//+ " After: " + total);
 
 					bestMakespan = makespan;
 					bestSchedule = state;
@@ -122,6 +122,7 @@ public class BNBAlgorithm extends Algorithm {
 					if (bestStart + node.getLBWeight() < bestMakespan) {
 						// add the node at this time
                         if (addedScheduleIDs.containsKey(newState.toString())) {
+                            updateBranchCut(newState.getUnvisitedNodes().size(), numProcessors - p + 1);
                             break;
                         }
                         addedScheduleIDs.put(newState.toString(), dummyValue);
@@ -129,7 +130,7 @@ public class BNBAlgorithm extends Algorithm {
 						// if this task is placed as the first task on a processor then trying to place the
 						// task on any subsequent processor will create an effectively identical schedule
 						if (isFirstOnProcessor) {
-								updateBranchCut(newState.getUnvisitedNodes().size(), numProcessors - p);
+						    updateBranchCut(newState.getUnvisitedNodes().size(), numProcessors - p);
 							break;
 						}
 					} else {

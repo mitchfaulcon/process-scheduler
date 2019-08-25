@@ -175,6 +175,13 @@ public class PartialSchedule {
         return bestStartTime;
     }
     
+    /**
+     * Returns true if no tasks have been scheduled on `processor`.
+     */
+    public boolean isProcessorEmpty(int processor) {
+    	return !traversedProcessors.contains(processor);
+    }
+    
     public List<Node> getNodes() {
         return nodes;
     }

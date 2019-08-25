@@ -78,6 +78,11 @@ public class BNBAlgorithm extends Algorithm {
                                         if (endTime < bestEndTime) {
                                             bestEndTime = endTime;
                                         }
+    									
+    									// no need to check other processors as the resultant schedules would be equivalent
+    									if (state.isProcessorEmpty(processor)) {
+    										break;
+    									}
                                     }
                                 }
                                 if (bestEndTime >= bestMakespan) {

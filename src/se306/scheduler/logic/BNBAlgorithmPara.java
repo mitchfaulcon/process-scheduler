@@ -21,7 +21,6 @@ public class BNBAlgorithmPara extends BNBAlgorithm {
 
 	private int nThreads;
 	private volatile boolean earlyStop = false;
-//	private AtomicInteger total = new AtomicInteger(); // remove or add as stat
 
 	class BNBTask implements Runnable {
 		Deque<PartialSchedule> stack;
@@ -57,11 +56,9 @@ public class BNBAlgorithmPara extends BNBAlgorithm {
 				PartialSchedule stolen = other.pollLast();
 				if(stolen != null) {
 					bnb(stolen, stack);
-//					System.out.println(threadNum + " Stole");
 					return true;
 				}
 			}
-//			System.out.println(threadNum + " Quitting");
 			return false;
 		}
 	}
@@ -104,7 +101,6 @@ public class BNBAlgorithmPara extends BNBAlgorithm {
 			e.printStackTrace();
 		}
 
-//		System.out.println("Visited " + total.get());
 		completed(bestSchedule);
 	}
 }

@@ -64,7 +64,6 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
 	}
 
 	public void parse(String[] args) {
-//        System.err.close();  // Workaround to stop help being printed twice
         SimpleJSAP jsap = buildParser();
         config = jsap.parse(args);
         if (!config.success()) {
@@ -75,22 +74,14 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
 
         numProcessors = config.getInt("P");
         numThreads = config.getInt("N");
-        
-        // Call methods with these values
-//      System.out.println("Input file: " + config.getString("INPUT"));
-//      System.out.println("N Processors: " + config.getInt("P"));
-//      System.out.println("Cores to use: " + config.getInt("N"));
-//      System.out.println("Visualise: " + config.getBoolean("V"));
-//      System.out.println("Output file: " + config.getString("OUTPUT", config.getString("INPUT") + "-output.dot"));
 	}
 	
 	public void schedule(String[] args) {
-//        algorithm = new SequentialAlgorithm();
-        //algorithm = new DFSAlgorithm(config.getInt("P"));
         if (config.getInt("N") == 1) {
-            //Sequential algorithm
+            // Singlethreaded BNB
             algorithm = new BNBAlgorithm(config.getInt("P"));
         } else {
+        	// Multithreaded BNB
             algorithm = new BNBAlgorithmPara(config.getInt("P"), config.getInt("N"));
         }
         scheduler = new Scheduler(algorithm);
@@ -174,11 +165,6 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
 	public void newOptimalFound(PartialSchedule schedule) {
 
 	}
-
-//	@Override
-//	public void updateSchedulesChecked(long schedules) {
-//
-//	}
 
     public static int getNumProcessors(){
 		return numProcessors;

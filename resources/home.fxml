@@ -34,8 +34,8 @@
             </rowConstraints>
             <children>
                 <ScrollPane fx:id="scrollPane" minHeight="0.0" minWidth="0.0" prefHeight="558.0" prefWidth="710.0" GridPane.columnIndex="1" GridPane.valignment="BOTTOM" />
-            <Label fx:id="filenameLabel" alignment="TOP_LEFT" contentDisplay="TOP" prefHeight="30.0" prefWidth="673.0" stylesheets="@home_style.css" translateX="10.0" translateY="-5.0" GridPane.halignment="LEFT" GridPane.valignment="BOTTOM" />
-                <Pane fx:id="graphPane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="543.0" prefWidth="708.0" GridPane.valignment="TOP" />
+            <Label fx:id="filenameLabel" alignment="TOP_LEFT" contentDisplay="TOP" prefHeight="30.0" prefWidth="680.0" stylesheets="@home_style.css" translateX="-10.0" translateY="-5.0" GridPane.halignment="RIGHT" GridPane.valignment="BOTTOM" />
+                <Pane fx:id="graphPane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="543.0" prefWidth="690.0" GridPane.halignment="RIGHT" GridPane.valignment="TOP" />
             </children>
         </GridPane>
         <Pane fx:id="bottomPane" prefHeight="153.0" prefWidth="1420.0" styleClass="footer" stylesheets="@home_style.css" GridPane.rowIndex="1">

@@ -27,10 +27,6 @@ public class BNBAlgorithm extends Algorithm {
         // add initial state
         stack.push(new PartialSchedule(graph));
 
-        /*PartialSchedule bestSchedule =  GreedySchedule();
-        int bestMakespan = bestSchedule.getMakespan();
-        updateSchedule(bestSchedule);*/
-
         setLowerBounds();
         while (!stack.isEmpty()) {
             if(bnb(stack.pop(), stack)) {

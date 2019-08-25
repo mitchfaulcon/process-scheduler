@@ -3,17 +3,11 @@ package se306.scheduler.logic;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 import se306.scheduler.graph.PartialSchedule;
 
-/**
- * Branch and Bound DFS implementation to find the optimal schedule for a list
- * of tasks. Much like DFS, but creates a lower-bound estimate on each branch
- * before exploring it in order to gauge whether it is worth exploring.
- */
 public class BNBAlgorithmPara extends BNBAlgorithm {
 
 	public BNBAlgorithmPara(int numProcessors, int nThreads) {
@@ -32,9 +26,12 @@ public class BNBAlgorithmPara extends BNBAlgorithm {
 		public BNBTask(int threadNum, ArrayList<Deque<PartialSchedule>> stacks) {
 			this.stack = stacks.get(threadNum);
 			this.stacks = stacks;
-			this.threadNum = threadNum;
 		}
 
+		/**
+		 * Same as sequential method
+		 * @see BNBAlgorithm#schedule();
+		 */
 		@Override
 		public void run() {
 			do {
@@ -51,6 +48,7 @@ public class BNBAlgorithmPara extends BNBAlgorithm {
 
 		/**
 		 * Steals schedules from other threads if we're done
+		 * @return true if more work was found, else false
 		 */
 		private boolean findMore() {
 			for(Deque<PartialSchedule> other: stacks) {
@@ -71,12 +69,15 @@ public class BNBAlgorithmPara extends BNBAlgorithm {
 
         setLowerBounds();
 
+        
+        // Generate enough schedules to split across the threads.
 		Deque<PartialSchedule> temp = new ArrayDeque<>();
 		temp.add(new PartialSchedule(graph));
 		while (temp.size() < nThreads) {
 			bnb(temp.pollFirst(), temp);
 		}
 
+		// Assign schedules
 		ArrayList<Deque<PartialSchedule>> stacks = new ArrayList<>();
 		for (int i = 0; i < nThreads; i++) {
 			stacks.add(new ConcurrentLinkedDeque<>());
@@ -85,6 +86,7 @@ public class BNBAlgorithmPara extends BNBAlgorithm {
 			stacks.get(i % nThreads).addLast(temp.pollFirst());
 		}
 
+		// Create worker threads
 		Thread[] threads = new Thread[nThreads];
 		for (int i = 0; i < nThreads; i++) {
 			Thread thread = new Thread(new BNBTask(i, stacks), "BNB Thread " + i);

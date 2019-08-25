@@ -1,7 +1,11 @@
 package se306.scheduler.logic;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import se306.scheduler.graph.Node;
 import se306.scheduler.graph.PartialSchedule;
@@ -46,7 +50,6 @@ public class BNBAlgorithm extends Algorithm {
     }
 
     protected boolean bnb(PartialSchedule state, Deque<PartialSchedule> stack) {
-//		total.incrementAndGet();
 		int makespan = state.getMakespan();
 		if(makespan >= bestMakespan) {
 		    updateBranchCut(state.getUnvisitedNodes().size(), 1);
@@ -55,8 +58,6 @@ public class BNBAlgorithm extends Algorithm {
 
 		// all nodes have been assigned to a processor
 		if (state.allVisited()) {
-//			int makespan = state.getMakespan();
-
 			// check if the current solution is better than the best one found so far
 			synchronized (this) {
 				if (makespan < bestMakespan) {
@@ -117,8 +118,7 @@ public class BNBAlgorithm extends Algorithm {
 					PartialSchedule newState = new PartialSchedule(state);
 					boolean isFirstOnProcessor = newState.scheduleTask(node, p, bestStart);
 					// if the lower bound for scheduling this node here on this processor is worse
-					// than best so far
-					// then partial schedule is not added to stack
+					// than best so far then partial schedule is not added to stack
 					if (bestStart + node.getLBWeight() < bestMakespan) {
 						// add the node at this time
                         if (addedScheduleIDs.containsKey(newState.toString())) {

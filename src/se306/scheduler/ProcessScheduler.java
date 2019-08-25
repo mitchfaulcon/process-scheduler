@@ -33,10 +33,6 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
 
 	    System.exit(0);
 	}
-	
-	public ProcessScheduler() {
-	    
-	}
 
 	public static String getFileName() {
 		return fileName;

@@ -65,7 +65,8 @@ public class SequentialAlgorithm extends Algorithm {
             }
             unreached.remove(j);
         }
-        
+
+        updateSchedule(schedule);
         completed(schedule);
     }
 

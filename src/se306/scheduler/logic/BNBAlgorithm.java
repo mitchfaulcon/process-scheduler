@@ -26,6 +26,11 @@ public class BNBAlgorithm extends Algorithm {
         Deque<PartialSchedule> stack = new ArrayDeque<>();
         // add initial state
         stack.push(new PartialSchedule(graph));
+        
+        // use a greedy algorithm to find a decent initial bound
+        bestSchedule = greedySchedule();
+        bestMakespan = bestSchedule.getMakespan();
+        updateSchedule(bestSchedule);
 
         setLowerBounds();
         while (!stack.isEmpty()) {
@@ -175,8 +180,7 @@ public class BNBAlgorithm extends Algorithm {
      * processor can run them first.
      * @return A greedy schedule to be used for setting the initial best.
      */
-    @Deprecated
-    protected PartialSchedule GreedySchedule() {
+    protected PartialSchedule greedySchedule() {
         List<Node> unreached = new ArrayList<>(graph);
         PartialSchedule schedule = new PartialSchedule(graph);
         int i = 0;

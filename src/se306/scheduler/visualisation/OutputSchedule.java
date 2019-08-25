@@ -1,7 +1,6 @@
 package se306.scheduler.visualisation;
 
 import javafx.collections.FXCollections;
-import javafx.geometry.Pos;
 import javafx.scene.chart.Axis;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
@@ -22,11 +21,16 @@ import se306.scheduler.graph.PartialSchedule;
 
 import java.util.*;
 
-/* Class to display output schedule in a graph
- * Adapted from code at https://stackoverflow.com/questions/27975898/gantt-chart-from-scratch
+/** Class to display the current optimal schedule as a Gantt chart
+ *
+ * Adapted code from
+ * <a href="https://stackoverflow.com/questions/27975898/gantt-chart-from-scratch"/>
  */
 public class OutputSchedule<X,Y> extends XYChart<X,Y>{
 
+    /**
+     * Class to contain extra information about each bar in the graph
+     */
     public static class ExtraData {
 
         public int length;
@@ -59,13 +63,14 @@ public class OutputSchedule<X,Y> extends XYChart<X,Y>{
     private int numProcessors;
     private Map<String, String> nodeColours;
 
-    public void update(PartialSchedule newSchedule){
+	public void update(PartialSchedule newSchedule){
 
+	    //Remove all bars from the current graph before updtaing it
         this.getData().clear();
 
         //Run through each processor
         for (int processor=0; processor<labels.length; processor++){
-            Series series = new Series();
+            Series<X, Y> series = new Series<>();
 
             //Check if any node is scheduled in that processor
             for (Node node: newSchedule.getNodes()){
@@ -73,11 +78,14 @@ public class OutputSchedule<X,Y> extends XYChart<X,Y>{
                     //Add node data to graph
                     String colour = String.format(nodeColours.get(node.getName()), "0.5");
                     ExtraData extraData = new ExtraData(node.getWeight(), "status-"+node.getName(), colour, node.getName());
-                    Data data = new Data<>(newSchedule.getStartTime(node), labels[numProcessors - processor - 1], extraData);
+
+                    //Add tooltip for when hovering over section
+                    Data<X, Y> data = (Data<X, Y>) new Data<Integer, String>(newSchedule.getStartTime(node), labels[numProcessors - processor - 1], extraData);
                     data.setNode(new StackPane());
                     Tooltip.install(data.getNode(),new Tooltip("Node: " + node.getName() +"\n" +
                             "Start Time: " + newSchedule.getStartTime(node) +"\n" +
                             "Finish Time: " + Integer.toString(newSchedule.getStartTime(node) + node.getWeight())));
+
                     series.getData().add(data);
                 }
             }
@@ -104,6 +112,7 @@ public class OutputSchedule<X,Y> extends XYChart<X,Y>{
         setData(FXCollections.observableArrayList());
         ((CategoryAxis) yAxis).setCategories(FXCollections.observableArrayList(Arrays.asList(labels)));
 
+        //Remove minor ticks on X-axis
         ((NumberAxis) xAxis).setMinorTickCount(0);
 
         this.setAnimated(false);
@@ -152,11 +161,13 @@ public class OutputSchedule<X,Y> extends XYChart<X,Y>{
                         region.setScaleShape(false);
                         region.setCenterShape(false);
                         region.setCacheShape(false);
+                        //Add border to boxes
                         region.setBorder(new Border(new BorderStroke(Paint.valueOf("black"), BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(1))));
 
                         block.setLayoutX(x);
                         block.setLayoutY(y);
-                        
+
+                        //Add a text label for the node name on the boxes
                         Text text = new Text(((ExtraData) item.getExtraValue()).getName());
                         text.setFont(new Font("Consolas", 16));
                         region.getChildren().addAll(text);
@@ -212,7 +223,8 @@ public class OutputSchedule<X,Y> extends XYChart<X,Y>{
             container = new StackPane();
             item.setNode(container);
         }
-        
+
+        //Set colour of boxes
         String colour = ((ExtraData) item.getExtraValue()).getColour();
         container.setStyle("-fx-background-color:" + colour + ";");
 

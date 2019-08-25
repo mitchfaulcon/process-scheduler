@@ -1,11 +1,15 @@
 package se306.scheduler.logic;
 
 import se306.scheduler.graph.Node;
+import se306.scheduler.graph.PartialSchedule;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 /**
  * This class tests various methods within {@link Scheduler}
@@ -19,6 +23,8 @@ class SchedulerClassTest {
     private Node nodeC = new Node("c", 1);
     private Node nodeD = new Node("d", 2);
     private Node nodeE = new Node("e", 1);
+    
+    private CompletableFuture<PartialSchedule> outputSchedule;
     
     /**
      * Initialise graph structure before each test case
@@ -35,6 +41,21 @@ class SchedulerClassTest {
     void graphSetup(){
         Algorithm algorithm = new SequentialAlgorithm();
         scheduler = new Scheduler(algorithm);
+        
+        outputSchedule = new CompletableFuture<PartialSchedule>();
+        algorithm.addListener(new AlgorithmListener() {
+
+			@Override
+			public void algorithmCompleted(PartialSchedule schedule) {
+				outputSchedule.complete(schedule);
+			}
+
+			@Override
+			public void newOptimalFound(PartialSchedule schedule) {
+				
+			}
+        	
+        });
         
         scheduler.addNode(nodeA);
         scheduler.addNode(nodeB);
@@ -64,40 +85,47 @@ class SchedulerClassTest {
      */
     @Test
     void testChildAdded(){
-        /*assertEquals(0, nodeA.getIncomingEdges().size(), "Node A should have 0 parents");
+        assertEquals(0, nodeA.getIncomingEdges().size(), "Node A should have 0 parents");
         assertEquals(0, nodeB.getIncomingEdges().size(), "Node B should have 0 parents");
         assertEquals(1, nodeC.getIncomingEdges().size(), "Node C should have 1 parent");
-        assertTrue(nodeC.getIncomingEdges().contains(Node.IncomingEdge(nodeA, 1)), "Node C should have Node A as its parent");
+        assertTrue(nodeC.getIncomingEdges().containsKey(nodeA), "Node C should have Node A as its parent");
         assertEquals(2, nodeD.getIncomingEdges().size(), "Node D should have 2 parents");
-        assertTrue(nodeD.getIncomingEdges().contains(new Node.IncomingEdge(nodeA, 1)), "Node D should have Node A as its parent");
-        assertTrue(nodeD.getIncomingEdges().containsKey("b"), "Node D should have Node B as its parent");
+        assertTrue(nodeD.getIncomingEdges().containsKey(nodeA), "Node D should have Node A as its parent");
+        assertTrue(nodeD.getIncomingEdges().containsKey(nodeB), "Node D should have Node B as its parent");
         assertEquals(2, nodeE.getIncomingEdges().size(), "Node E should have 2 parents");
-        assertTrue(nodeE.getIncomingEdges().containsKey("c"), "Node E should have Node C as its parent");
-        assertTrue(nodeE.getIncomingEdges().containsKey("d"), "Node E should have Node D as its parent");*/
+        assertTrue(nodeE.getIncomingEdges().containsKey(nodeC), "Node E should have Node C as its parent");
+        assertTrue(nodeE.getIncomingEdges().containsKey(nodeD), "Node E should have Node D as its parent");
     }
 
     /**
      * Tests that the schedule method produces a valid output
      */
-    /*@Test
+    @Test
     void testFirstMilestoneSchedule(){
-        assertNotEquals(nodeA.getStartTime(), nodeB.getStartTime(),
+    	PartialSchedule schedule = null;
+		try {
+			schedule = outputSchedule.get();
+		} catch (InterruptedException | ExecutionException e) {
+			fail(":(");
+			e.printStackTrace();
+		}
+        assertNotEquals(schedule.getStartTime(nodeA), schedule.getStartTime(nodeB),
                 "Nodes A & B should have different start times");
-        assertTrue(nodeA.getStartTime() < nodeC.getStartTime(),
+        assertTrue(schedule.getStartTime(nodeA) < schedule.getStartTime(nodeC),
                 "Node A should be scheduled before Node C");
-        assertTrue(nodeA.getStartTime() < nodeD.getStartTime(),
+        assertTrue(schedule.getStartTime(nodeA) < schedule.getStartTime(nodeD),
                 "Node A should be scheduled before Node D");
 
-        assertNotEquals(nodeC.getStartTime(), nodeD.getStartTime());
-        assertTrue(nodeB.getStartTime() < nodeD.getStartTime(),
+        assertNotEquals(schedule.getStartTime(nodeC), schedule.getStartTime(nodeD));
+        assertTrue(schedule.getStartTime(nodeB) < schedule.getStartTime(nodeD),
                 "Node B should be scheduled before Node D");
 
-        assertTrue(nodeC.getStartTime() < nodeE.getStartTime(),
+        assertTrue(schedule.getStartTime(nodeC) < schedule.getStartTime(nodeE),
                 "Node C should be scheduled before Node E");
-        assertTrue(nodeD.getStartTime() < nodeE.getStartTime(),
+        assertTrue(schedule.getStartTime(nodeD) < schedule.getStartTime(nodeE),
                 "Node D should be scheduled before Node E");
     }
-*/
+
     @Test
     void testInvalidChild(){
         try {

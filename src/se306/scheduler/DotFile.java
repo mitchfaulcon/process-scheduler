@@ -2,7 +2,6 @@ package se306.scheduler;
 
 import se306.scheduler.exception.InvalidFileFormatException;
 import se306.scheduler.graph.PartialSchedule;
-import se306.scheduler.visualisation.GraphDisplay;
 import se306.scheduler.graph.Node;
 import se306.scheduler.logic.Scheduler;
 
@@ -12,6 +11,9 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * This class is responsible for parsing the input and output of a dot file
+ */
 public class DotFile {
 
     private File file;
@@ -20,7 +22,6 @@ public class DotFile {
     private List<LineRecord> lineRecords = new ArrayList<>();
     
     private Scheduler scheduler;
-    private GraphDisplay graphDisplay = GraphDisplay.getGraphDisplay();
 
     private static String NAME_REGEX = "\t\\w+\t";
     private static String WEIGHT_REGEX = "=\\d+\\]";
@@ -32,21 +33,24 @@ public class DotFile {
      * Struct to represent a line in a DOT file, so we can keep track of their order
      */
     public class LineRecord {
-        public boolean isDependency; // each record will be either a dependency or a task
-        public String taskName1;
-        public String taskName2; // will be empty if line is a task
+        boolean isDependency; // each record will be either a dependency or a task
+        String taskName1;
+        String taskName2; // will be empty if line is a task
         
-        public LineRecord(boolean isDependency, String taskName1) {
+        LineRecord(boolean isDependency, String taskName1) {
             this(isDependency, taskName1, "");
         }
         
-        public LineRecord(boolean isDependency, String taskName1, String taskName2) {
+        LineRecord(boolean isDependency, String taskName1, String taskName2) {
             this.isDependency = isDependency;
             this.taskName1 = taskName1;
             this.taskName2 = taskName2;
         }
     }
 
+    /**
+     * Constructor that only accepts .dot files
+     */
     public DotFile(String fileName) throws InvalidFileFormatException {
         if (fileName.endsWith(".dot")) {
             lines = new ArrayList<>();
@@ -70,7 +74,6 @@ public class DotFile {
         while (sc.hasNextLine()) {
             lines.add(sc.nextLine());
         }
-        
         sc.close();
 
         // Iterate through each line and add nodes or dependencies
@@ -174,7 +177,6 @@ public class DotFile {
      */
     public void write(String fileName, PartialSchedule schedule) throws IOException {
         //Create correct name for top of dot file
-        // TODO use graph name read from file instead of filename
         String dotFileName = file.getName();
         String extensionRemoved;
         String capitalised = dotFileName;

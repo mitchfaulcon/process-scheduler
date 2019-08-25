@@ -5,12 +5,8 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import se306.scheduler.controller.HomeController;
 import se306.scheduler.exception.InvalidFileFormatException;
 import se306.scheduler.graph.PartialSchedule;
 import se306.scheduler.logic.*;
@@ -18,11 +14,9 @@ import se306.scheduler.visualisation.Timer;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Map;
 
 public class ProcessScheduler extends Application implements AlgorithmListener {
 
-    private HomeController homeController;
     private JSAPResult config;
     private DotFile dot;
     private static Scheduler scheduler;
@@ -30,8 +24,7 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
     private static int numProcessors;
     private static int numThreads;
     private static String fileName;
-    private Map<String, String> nodeColours;
-    private Timer timer = Timer.getInstance();
+    private Timer timer = Timer.getInstance(false);
     
 	public static void main(String[] args) {
 	    ProcessScheduler processScheduler = new ProcessScheduler();
@@ -39,10 +32,6 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
 	    processScheduler.schedule(args);
 
 	    System.exit(0);
-	}
-	
-	public ProcessScheduler() {
-	    
 	}
 
 	public static String getFileName() {
@@ -71,7 +60,6 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
 	}
 
 	public void parse(String[] args) {
-//        System.err.close();  // Workaround to stop help being printed twice
         SimpleJSAP jsap = buildParser();
         config = jsap.parse(args);
         if (!config.success()) {
@@ -82,24 +70,18 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
 
         numProcessors = config.getInt("P");
         numThreads = config.getInt("N");
-        
-        // Call methods with these values
-//      System.out.println("Input file: " + config.getString("INPUT"));
-//      System.out.println("N Processors: " + config.getInt("P"));
-//      System.out.println("Cores to use: " + config.getInt("N"));
-//      System.out.println("Visualise: " + config.getBoolean("V"));
-//      System.out.println("Output file: " + config.getString("OUTPUT", config.getString("INPUT") + "-output.dot"));
 	}
 	
 	public void schedule(String[] args) {
-//        algorithm = new SequentialAlgorithm();
-        //algorithm = new DFSAlgorithm(config.getInt("P"));
-        if (config.getInt("N") == 1) {
-            //Sequential algorithm
+		if (config.getInt("P") == 1){
+			//Fast algorithm for scheduling on one processor
+			algorithm = new SequentialAlgorithm();
+		} else if (config.getInt("N") == 1) {
+			// Singlethreaded BNB
             algorithm = new BNBAlgorithm(config.getInt("P"));
         } else {
-            //TODO Change this to parallelised algorithm
-            algorithm = new BNBAlgorithm(config.getInt("P"));
+        	// Multithreaded BNB
+            algorithm = new BNBAlgorithmPara(config.getInt("P"), config.getInt("N"));
         }
         scheduler = new Scheduler(algorithm);
         
@@ -182,11 +164,6 @@ public class ProcessScheduler extends Application implements AlgorithmListener {
 	public void newOptimalFound(PartialSchedule schedule) {
 
 	}
-
-//	@Override
-//	public void updateSchedulesChecked(long schedules) {
-//
-//	}
 
     public static int getNumProcessors(){
 		return numProcessors;

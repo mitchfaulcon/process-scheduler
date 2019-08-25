@@ -48,8 +48,8 @@ public abstract class Algorithm {
      * nodesRemaining nodes.
      * @param nodesRemaining the total nodes to schedule - number of nodes in partial schedule
      **/
-    protected synchronized void updateBranchCut(int nodesRemaining) {
-        schedulesChecked = schedulesChecked.add(BigInteger.valueOf(this.numProcessors).pow(nodesRemaining).multiply(factorial(nodesRemaining)));
+    protected synchronized void updateBranchCut(int nodesRemaining, int factor) {
+        schedulesChecked = schedulesChecked.add(BigInteger.valueOf(this.numProcessors).pow(nodesRemaining).multiply(factorial(nodesRemaining)).multiply(BigInteger.valueOf(factor)));
     }
 
     public static BigInteger getBigSchedulesChecked(){

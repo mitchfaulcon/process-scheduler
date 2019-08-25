@@ -182,7 +182,7 @@ public class HomeController implements Initializable, AlgorithmListener {
             protected void elementMoving(GraphicElement element, MouseEvent event) {
                 //Only move if the weight labels aren't clicked (i.e. only the nodes can be moved)
                 //Also cannot move the invisible buddy nodes
-                if(!element.getSelectorType().equals(Selector.Type.SPRITE) && !element.getId().equals("invisible" + element.getId())){
+                if(!element.getSelectorType().equals(Selector.Type.SPRITE) && !element.getId().contains("invisible")){
                     view.moveElementAtPx(element, event.getX(), event.getY());
                     //Move invisible buddy node with normal node
                     GraphicElement graphicElement = (GraphicElement) graph.getNode("invisible" + element.getId());

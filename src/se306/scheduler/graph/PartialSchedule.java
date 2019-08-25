@@ -45,16 +45,18 @@ public class PartialSchedule {
         updateID();
     }
 
+    /**
+     * Updates teh ID field, which is returned by PartialSchedule.toString(). Partial schedules that are practically the
+     * same will have the same ID. The ID is made by concatenating all the node names in their scheduled order for each
+     * processor, then sorting these strings to make the ID the same for schedules that are effectively the same but with
+     * a processor switched. The ID is the concatenation of all these strings.
+     */
     private void updateID() {
         String[] processorIDs = new String[processorMap.values().size()];
+        // so that there is a string to concatenate on to.
         Arrays.fill(processorIDs, "");
-        for (int i = 0; i < processorMap.values().size(); i++) {
-            for (Node node: visited) {
-                if (processorMap.get(node) == i) {
-                    String id = node.getName() + startTimes.get(node);
-                    processorIDs[i] += (id);
-                }
-            }
+        for (Node node : visited) {
+            processorIDs[processorMap.get(node) - 1] += node.getName();
         }
         Arrays.sort(processorIDs);
         ID = Arrays.toString(processorIDs);

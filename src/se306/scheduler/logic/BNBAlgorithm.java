@@ -88,42 +88,43 @@ public class BNBAlgorithm extends Algorithm {
             for (int p = 1; p <= numProcessors; p++) {
                 // find the earliest time the new node can be added on this processor
                 int bestStart = state.findBestStartTime(node, p);
-                List<Node> otherNodes = new ArrayList<>(state.getUnvisitedNodes());
-                otherNodes.remove(node);
+                PartialSchedule newState = new PartialSchedule(state);
+                boolean isFirstOnProcessor = newState.scheduleTask(node, p, bestStart);
                 // this loop finds the lower bound on all the other dependency-met nodes after the node is scheduled to
                 // see if any of lower bounds aren't lower than the current max
-                for (Node node2 : otherNodes) {
-                    // If scheduling on this processor is too slow, then the others are tried
-                    if (state.dependenciesSatisfied(node2) && bestStart + node.getWeight() + node2.getLBWeight() > bestMakespan) {
+                for (Node node2 : newState.getUnvisitedNodes()) {
+                    if (newState.dependenciesSatisfied(node2)) {
+                        // finds the best end time for this node across all processors
                         int bestEndTime = Integer.MAX_VALUE;
                         for (int processor = 1; processor <= numProcessors; processor++) {
                             // tests for all the other processors
-                            if (processor != p) {
-                                int endTime = state.findBestStartTime(node2, processor) + node2.getLBWeight();
-                                if (endTime < bestEndTime) {
-                                    bestEndTime = endTime;
-                                }
-                                // checks if this node would be the first on the processor, if it would be, then
-                                // no need to check other processors as the resultant schedules would be equivalent
-                                if (state.isProcessorEmpty(processor)) {
-                                    break;
-                                }
+                            int endTime = newState.findBestStartTime(node2, processor) + node2.getLBWeight();
+                            if (endTime < bestEndTime) {
+                                bestEndTime = endTime;
+                            }
+                            // checks if this node would be the first on the processor, if it would be, then
+                            // no need to check other processors as the resultant schedules would be equivalent
+                            if (newState.isProcessorEmpty(processor)) {
+                                break;
                             }
                         }
                         if (bestEndTime >= bestMakespan) {
                             // if the lower bound is too high, then the new state is not made and we move to
                             // the next processor
-                            updateBranchCut(state.getUnvisitedNodes().size() - 1, 1);
+                            if (isFirstOnProcessor) {
+                                updateBranchCut(newState.getUnvisitedNodes().size(), numProcessors - p + 1);
+                                break processorLoop;
+                            }
+                            updateBranchCut(newState.getUnvisitedNodes().size(), 1);
                             continue processorLoop;
                         }
                     }
                 }
-                PartialSchedule newState = new PartialSchedule(state);
-                boolean isFirstOnProcessor = newState.scheduleTask(node, p, bestStart);
+
                 // if the lower bound for scheduling this node on this processor is not better than the current best,
                 // or a schedule has already been made with the same generated ID (meaning this is duplicate), then
                 // schedule is not made
-                if (bestStart + node.getLBWeight() >= bestMakespan || addedScheduleIDs.containsKey(newState.toString())) {
+                if (addedScheduleIDs.containsKey(newState.toString())) {
                     // if this is the first node to be scheduled to a processor, then scheduling the node to any
                     // subsequent processors will create a duplicate, so loop is broken
                     if (isFirstOnProcessor) {
@@ -194,24 +195,25 @@ public class BNBAlgorithm extends Algorithm {
         while (!schedule.getNodes().get(i).getIncomingEdges().isEmpty()) {
             i++;
         }
-        schedule.scheduleTask(schedule.getNodes().get(i), 0, 0);
+        schedule.scheduleTask(schedule.getNodes().get(i), 1, 0);
         // iterates until all nodes reached
         while (!schedule.getUnvisitedNodes().isEmpty()) {
             for (Node node: schedule.getUnvisitedNodes()) {
-                if (schedule.dependenciesSatisfied(node)) {
-                    // schedules node at the processor/time that is immediately best (greedy)
-                    int bestStart = Integer.MAX_VALUE;
-                    int bestProcessor = 0;
-                    for (int k = 1; k <= numProcessors; k++) {
-                        int start = schedule.findBestStartTime(node, k);
-                        if (start < bestStart) {
-                            bestStart = start;
-                            bestProcessor = k;
-                        }
-                    }
-                    schedule.scheduleTask(node, bestProcessor, bestStart);
-                    break;
+                if (!schedule.dependenciesSatisfied(node)) {
+                    continue;
                 }
+                // schedules node at the processor/time that is immediately best (greedy)
+                int bestStart = Integer.MAX_VALUE;
+                int bestProcessor = 0;
+                for (int k = 1; k <= numProcessors; k++) {
+                    int start = schedule.findBestStartTime(node, k);
+                    if (start < bestStart) {
+                        bestStart = start;
+                        bestProcessor = k;
+                    }
+                }
+                schedule.scheduleTask(node, bestProcessor, bestStart);
+                break;
             }
         }
         return schedule;

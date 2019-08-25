@@ -120,7 +120,8 @@ public class BNBAlgorithm extends Algorithm {
 					// if the lower bound for scheduling this node here on this processor is worse
 					// than best so far then partial schedule is not added to stack
 					if (bestStart + node.getLBWeight() < bestMakespan) {
-						// add the node at this time
+					    // if the new schedule made has a matching ID to one in addedScheduleIDs, then it is effectively
+                        // a duplicate
                         if (addedScheduleIDs.containsKey(newState.toString())) {
                             updateBranchCut(newState.getUnvisitedNodes().size(), numProcessors - p + 1);
                             break;
@@ -138,6 +139,8 @@ public class BNBAlgorithm extends Algorithm {
 					}
 				}
 			} else {
+			    // if the node's dependencies aren't met, all branches stemming from the states where the node is added
+                // to one of the processors are cut.
 				updateBranchCut(state.getUnvisitedNodes().size() - 1, numProcessors);
 			}
 		}
@@ -187,35 +190,31 @@ public class BNBAlgorithm extends Algorithm {
      * @return A greedy schedule to be used for setting the initial best.
      */
     protected PartialSchedule greedySchedule() {
-        List<Node> unreached = new ArrayList<>(graph);
         PartialSchedule schedule = new PartialSchedule(graph);
         int i = 0;
         // finding some node with no parents to set as root
         while (!schedule.getNodes().get(i).getIncomingEdges().isEmpty()) {
             i++;
         }
-        unreached.remove(schedule.getNodes().get(i));
         schedule.scheduleTask(schedule.getNodes().get(i), 0, 0);
         // iterates until all nodes reached
-        while (!unreached.isEmpty()) {
-            int j;
-            for (j = 0; j < unreached.size(); j++) {
-                if (schedule.dependenciesSatisfied(unreached.get(j))) {
+        while (!schedule.getUnvisitedNodes().isEmpty()) {
+            for (Node node: schedule.getUnvisitedNodes()) {
+                if (schedule.dependenciesSatisfied(node)) {
                     // schedules node at the processor/time that is immediately best (greedy)
                     int bestStart = Integer.MAX_VALUE;
                     int bestProcessor = 0;
                     for (int k = 1; k <= numProcessors; k++) {
-                        int start = schedule.findBestStartTime(unreached.get(j), k);
+                        int start = schedule.findBestStartTime(node, k);
                         if (start < bestStart) {
                             bestStart = start;
                             bestProcessor = k;
                         }
                     }
-                    schedule.scheduleTask(unreached.get(j), bestProcessor, bestStart);
+                    schedule.scheduleTask(node, bestProcessor, bestStart);
                     break;
                 }
             }
-            unreached.remove(j);
         }
         return schedule;
     }

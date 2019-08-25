@@ -26,4 +26,4 @@ These optional arguments are:
 ## Other Info
 * Our team meeting minutes can be found on the meetings [wiki page](https://github.com/mitchfaulcon/process-scheduler/wiki/Meetings).  
 * A copy of our other files (planning, presentations, etc.) can be found [here](https://drive.google.com/drive/folders/13yAeFWhUZUvv9ybfBkAa7boKlnE2WNVv?usp=sharing).  
-* Older versions of the application can be found on the [releases](https://github.com/mitchfaulcon/process-scheduler/releases) page.
+* Different versions of the application can be found on the [releases](https://github.com/mitchfaulcon/process-scheduler/releases) page.
